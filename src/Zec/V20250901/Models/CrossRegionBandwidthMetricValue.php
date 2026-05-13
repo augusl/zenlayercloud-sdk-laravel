@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
+
+use ZenlayerCloud\Laravel\Common\AbstractModel;
+
+/**
+ * CrossRegionBandwidthMetricValue 描述内网跨区域带宽的监控指标数据。
+ */
+class CrossRegionBandwidthMetricValue extends AbstractModel
+{
+    /**
+     * Time 数据点时间。
+     */
+    public ?string $time = null;
+
+    /**
+     * InValue 入方向值。
+     */
+    public ?float $inValue = null;
+
+    /**
+     * OutValue 入方向值。
+     */
+    public ?float $outValue = null;
+}

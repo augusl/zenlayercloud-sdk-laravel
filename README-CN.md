@@ -5,68 +5,61 @@
 [![PHP](https://img.shields.io/badge/php-%5E8.2-777BB4.svg)]()
 [![Laravel](https://img.shields.io/badge/laravel-11%20%7C%2012%20%7C%2013-FF2D20.svg)]()
 
-[中文文档](README-CN.md) · English
+中文 · [English](README.md)
 
-> **Unofficial, community-maintained SDK.** This package is **not** affiliated
-> with or endorsed by Zenlayer Inc. It is built and maintained by community
-> contributors against the public Zenlayer Cloud OpenAPI documentation.
-> Bug reports and feature requests belong here; Zenlayer Cloud product
-> questions belong on the [official documentation site](https://docs.console.zenlayer.com/api-reference/cn).
+> **非官方、社区维护的 SDK。** 本项目与 Zenlayer 公司**没有任何隶属关系**，也
+> **未获得**其官方授权或背书；由社区贡献者依据 Zenlayer Cloud 的公开 OpenAPI
+> 文档独立实现。Bug 反馈和功能建议提到本仓库；Zenlayer Cloud 产品问题请咨询
+> [官方文档站](https://docs.console.zenlayer.com/api-reference/cn)。
 
-A first-class Laravel package for talking to [Zenlayer Cloud](https://www.zenlayer.com/)
-OpenAPI services. Designed to feel native — service providers, facades,
-configurable connections, the standard `Illuminate\Http\Client` for transport,
-and `Http::fake()` support out of the box.
+为 [Zenlayer Cloud](https://www.zenlayer.com/) 提供原生的 Laravel 集成：自动注册
+ServiceProvider 与 Facade、可发布的连接配置、基于 `Illuminate\Http\Client`
+的传输层（开箱支持 `Http::fake()` 单测拦截）。
 
-The `v0.1.x` line covers the **Compute** product group:
+`v0.1.x` 覆盖**算力**产品组：
 
-- **Virtual Machine (VM)** — API version `2026-04-01`, 61 actions.
-- **Elastic Compute (ZEC)** — API version `2025-09-01`, 197 actions.
+- **虚拟机 (VM)** — API 版本 `2026-04-01`，共 61 个 Action。
+- **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 197 个 Action。
 
-Every Zenlayer Cloud Action is exposed as a typed PHP method backed by typed
-Request and Response model classes, so IDEs autocomplete the entire surface
-area.
+每个 Action 都映射为一个带强类型 Request / Response 的 PHP 方法，IDE 全程提示。
 
 ---
 
-## Requirements
+## 环境要求
 
-| Component  | Version                  |
+| 组件       | 版本                     |
 |------------|--------------------------|
 | PHP        | `^8.2`                   |
 | Laravel    | `11.x` · `12.x` · `13.x` |
-| `ext-json` | enabled (default)        |
-| `ext-hash` | enabled (default)        |
+| `ext-json` | 内置启用                 |
+| `ext-hash` | 内置启用                 |
 
-## Installation
+## 安装
 
 ```bash
 composer require augusl/zenlayercloud-laravel-sdk
 ```
 
-Publish the configuration file:
+发布配置文件：
 
 ```bash
 php artisan vendor:publish --tag=zenlayercloud-config
 ```
 
-Set credentials in your `.env`:
+`.env` 写入凭证：
 
 ```dotenv
-ZENLAYER_SECRET_KEY_ID=AKID-your-key-id
-ZENLAYER_SECRET_KEY_PASSWORD=your-secret-key-password
+ZENLAYER_SECRET_KEY_ID=AKID-你的密钥ID
+ZENLAYER_SECRET_KEY_PASSWORD=你的密钥密码
 ```
 
-The package supports Laravel's auto-discovery — the service provider and
-the `ZenlayerCloud` facade are registered for you.
+Laravel package discovery 会自动注册 ServiceProvider 和 `ZenlayerCloud` Facade。
 
 ---
 
-## Quick start
+## 快速上手
 
-### Resolve clients
-
-There are three equivalent ways to obtain a client:
+### 三种取客户端的方式
 
 ```php
 use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
@@ -76,14 +69,14 @@ use ZenlayerCloud\Laravel\Zec\V20250901\ZecClient;
 // 1. Facade
 $vm = ZenlayerCloud::vm();
 
-// 2. Container resolution (defaults to the 'default' connection)
+// 2. 容器解析（默认连接）
 $vm = app(VmClient::class);
 
-// 3. Constructor injection
+// 3. 构造器注入
 public function __construct(private VmClient $vm) {}
 ```
 
-### List availability zones
+### 查询可用区
 
 ```php
 use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
@@ -96,7 +89,7 @@ foreach ($response->response->zoneSet as $zone) {
 }
 ```
 
-### Create a virtual machine
+### 创建虚拟机
 
 ```php
 use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
@@ -117,13 +110,13 @@ $req->systemDisk->diskSize          = 50;
 
 $resp = ZenlayerCloud::vm()->CreateInstances($req);
 
-logger()->info('Order placed', [
+logger()->info('订单已下达', [
     'order'     => $resp->response->orderNumber,
     'instances' => $resp->response->instanceIdSet ?? [],
 ]);
 ```
 
-### Elastic Compute (ZEC)
+### 弹性算力 (ZEC)
 
 ```php
 use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
@@ -136,9 +129,9 @@ foreach ($resp->response->dataSet as $vpc) {
 }
 ```
 
-### Error handling
+### 错误处理
 
-Every transport- and API-level failure surfaces as one typed exception:
+所有传输层与 API 错误统一抛 `ZenlayerCloudSdkException`：
 
 ```php
 use ZenlayerCloud\Laravel\Common\Exception\ZenlayerCloudSdkException;
@@ -148,7 +141,7 @@ try {
 } catch (ZenlayerCloudSdkException $e) {
     report($e);
     abort(502, sprintf(
-        'Zenlayer error %s (request %s): %s',
+        'Zenlayer 错误 %s (RequestId %s): %s',
         $e->errorCode,
         $e->requestId ?? '-',
         $e->getMessage(),
@@ -156,16 +149,15 @@ try {
 }
 ```
 
-The exception exposes `$e->errorCode` (e.g. `INVALID_PARAMETER`,
-`NETWORK_ERROR`, `CREDENTIAL_VALUE_MISSING`, `CONFIG_INVALID`) and
-`$e->requestId` for log correlation.
+异常对象提供 `$e->errorCode`（取值如 `INVALID_PARAMETER`、`NETWORK_ERROR`、
+`CREDENTIAL_VALUE_MISSING`、`CONFIG_INVALID`）和 `$e->requestId`（用于日志关联）。
 
 ---
 
-## Configuration
+## 配置
 
-The published `config/zenlayercloud.php` file follows Laravel's "connection"
-convention used by the database, cache, and mail components:
+发布出来的 `config/zenlayercloud.php` 遵循 Laravel database/cache/mail 一致的
+"connection" 约定：
 
 ```php
 return [
@@ -186,26 +178,26 @@ return [
         ],
 
         'staging' => [
-            // a second account, used per-call: ZenlayerCloud::vm('staging')
+            // 第二套账号，按调用切换：ZenlayerCloud::vm('staging')
         ],
     ],
 ];
 ```
 
-Switch between connections with the optional argument to the manager:
+切换连接：
 
 ```php
-ZenlayerCloud::vm();              // 'default'
-ZenlayerCloud::vm('staging');     // named connection
-ZenlayerCloud::zec('production'); // any name from the 'connections' map
+ZenlayerCloud::vm();              // default
+ZenlayerCloud::vm('staging');     // 命名连接
+ZenlayerCloud::zec('production'); // connections 配置中的任意 key
 ```
 
 ---
 
-## Testing the SDK in your app
+## 在你自己的项目里测试
 
-The transport layer is built on `Illuminate\Http\Client`, so Laravel's
-built-in `Http::fake()` is the only thing you need to mock the API:
+传输层基于 `Illuminate\Http\Client`，因此 Laravel 自带的 `Http::fake()` 就足够
+mock 全部交互：
 
 ```php
 use Illuminate\Support\Facades\Http;
@@ -231,65 +223,59 @@ Http::assertSent(fn ($r) => $r->header('x-zc-action')[0] === 'DescribeZones');
 
 ---
 
-## Conventions
+## 约定
 
-- **Method names follow the upstream Action names (PascalCase)** — e.g.
-  `DescribeInstances`, `CreateInstances`, `ModifyInstancesAttribute`. This
-  keeps copy-paste from the Zenlayer Cloud API reference unambiguous. The
-  shipped `pint.json` does not enforce PSR-12 camelCase on those generated
-  client methods.
-- **Models are plain data objects** — public typed nullable properties for
-  every field on the Action's schema. Null fields are omitted from the JSON
-  body sent over the wire.
-- **Responses come in wrappers** — every Action returns a
-  `XxxResponse` whose `requestId` lives at the top level and whose payload
-  lives under `response`. Access fields via `$resp->response->...`.
+- **方法名沿用 Action 原始 PascalCase**——如 `DescribeInstances`、`CreateInstances`、
+  `ModifyInstancesAttribute`。这样从 Zenlayer API 文档复制方法名到 PHP 代码不会有
+  大小写歧义。仓库自带的 `pint.json` 不对这些生成的客户端方法强制 PSR-12 camelCase。
+- **模型是纯数据对象**——所有字段都是 public typed nullable property。未赋值的字段
+  不会出现在最终发送的 JSON 里。
+- **响应统一为包装对象**——每个 Action 返回 `XxxResponse`，顶层有 `requestId`，业务字段在
+  `response` 嵌套对象里。访问示例：`$resp->response->...`。
 
 ---
 
-## Local development
+## 本地开发
 
 ```bash
-# Install dev dependencies
+# 安装开发依赖
 composer install
 
-# Run the test suite (Orchestra Testbench + PHPUnit)
+# 跑测试套件（Orchestra Testbench + PHPUnit）
 composer test
 
-# Run code-style checks
+# 代码风格检查
 composer lint
 composer lint:fix
 
-# Run static analysis
+# 静态分析
 composer analyse
 
-# Regenerate the client + model classes from the upstream schema
+# 从上游 schema 重新生成 Client + Model 类
 ZENLAYER_SCHEMA_SRC=/path/to/upstream/schema composer codegen
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contributor workflow.
+完整贡献者流程参考 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ---
 
 ## Roadmap
 
-The first release line (`v0.1.x`) covers VM + ZEC. Other Zenlayer Cloud
-product groups (BMC, CCS, Traffic, ZDNS, ZGA, ZLB, ZLS, ZOS, ZRM, etc.) are
-deferred to subsequent minor versions; contributions are welcome.
+首个发布周期 `v0.1.x` 覆盖 VM + ZEC。其他产品组（BMC、CCS、Traffic、ZDNS、ZGA、
+ZLB、ZLS、ZOS、ZRM 等）排入后续 minor 版本，欢迎 PR。
 
-## Security
+## 安全
 
-Found a vulnerability? Please follow the responsible-disclosure process
-described in [SECURITY.md](SECURITY.md) — do not file a public issue.
+发现漏洞？请按 [SECURITY.md](SECURITY.md) 流程**私下**披露，**不要**直接开公开
+issue。
 
 ## License
 
-Apache-2.0 — see [LICENSE](LICENSE).
+Apache-2.0 — 见 [LICENSE](LICENSE)。
 
-## Disclaimer
+## 免责声明
 
-This is an **unofficial, community-maintained** Laravel SDK. It is provided
-as-is, with no affiliation with, sponsorship from, or endorsement by
-Zenlayer Inc. or any of its subsidiaries. "Zenlayer" and "Zenlayer Cloud"
-are trademarks of their respective owners; this project uses those names
-solely to describe the upstream service it integrates with.
+本项目是**非官方、社区维护**的 Laravel SDK，按现状（as-is）提供，与 Zenlayer
+公司及其关联公司**无任何隶属关系**、**未获得授权**或背书。"Zenlayer" 和
+"Zenlayer Cloud" 为各自商标所有人的商标；本项目仅为说明所集成的上游服务而
+使用上述名称。

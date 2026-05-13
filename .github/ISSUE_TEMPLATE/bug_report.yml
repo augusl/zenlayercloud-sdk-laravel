@@ -1,0 +1,65 @@
+name: Bug report
+description: Something is not working as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: A clear and concise description of the bug.
+      placeholder: e.g. "DescribeInstances throws on Laravel 12.x"
+    validations:
+      required: true
+  - type: input
+    id: php_version
+    attributes:
+      label: PHP version
+      placeholder: e.g. 8.3.10
+    validations:
+      required: true
+  - type: input
+    id: laravel_version
+    attributes:
+      label: Laravel version
+      placeholder: e.g. 12.5.0
+    validations:
+      required: true
+  - type: input
+    id: sdk_version
+    attributes:
+      label: augusl/zenlayercloud-laravel-sdk version
+      placeholder: e.g. 0.1.0
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: |
+        Minimal code or, ideally, a failing PHPUnit test that demonstrates
+        the issue. Please redact any real credentials.
+      render: php
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: |
+        Include the full exception message and stack trace if applicable.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: |
+        Anything else that might help — logs, proxy settings, custom HTTP
+        middleware, etc.

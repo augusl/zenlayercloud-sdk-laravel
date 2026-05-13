@@ -1,0 +1,12 @@
+parameters:
+    level: 8
+    paths:
+        - src
+    excludePaths:
+        # Generated code has fewer typing guarantees than the hand-written
+        # core; analyse only the layers we maintain by hand. Each refresh of
+        # the generated tree is verified via the test suite instead.
+        - src/Vm/V20260401/Models
+        - src/Zec/V20250901/Models
+        - src/Vm/V20260401/VmClient.php
+        - src/Zec/V20250901/ZecClient.php

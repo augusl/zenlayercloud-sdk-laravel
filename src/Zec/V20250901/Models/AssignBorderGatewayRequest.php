@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
+
+use ZenlayerCloud\Laravel\Common\AbstractModel;
+
+/**
+ * AssignBorderGatewayRequest
+ */
+class AssignBorderGatewayRequest extends AbstractModel
+{
+    /**
+     * ZbgId 边界网关ID。
+     */
+    public ?string $zbgId = null;
+
+    /**
+     * NatId NAT网关ID。
+     */
+    public ?string $natId = null;
+}

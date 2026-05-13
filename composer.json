@@ -1,0 +1,65 @@
+{
+    "name": "augusl/zenlayercloud-laravel-sdk",
+    "description": "Laravel SDK for Zenlayer Cloud — Virtual Machine (VM) and Elastic Compute (ZEC) services.",
+    "type": "library",
+    "license": "Apache-2.0",
+    "keywords": ["laravel", "zenlayer", "zenlayercloud", "sdk", "cloud", "vm", "zec"],
+    "homepage": "https://github.com/augusl/zenlayercloud-sdk-laravel",
+    "support": {
+        "issues": "https://github.com/augusl/zenlayercloud-sdk-laravel/issues",
+        "source": "https://github.com/augusl/zenlayercloud-sdk-laravel"
+    },
+    "authors": [
+        {
+            "name": "Zenlayer Cloud Laravel SDK Contributors"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-json": "*",
+        "ext-hash": "*",
+        "illuminate/support": "^11.0 || ^12.0 || ^13.0",
+        "illuminate/http": "^11.0 || ^12.0 || ^13.0",
+        "illuminate/contracts": "^11.0 || ^12.0 || ^13.0",
+        "guzzlehttp/guzzle": "^7.5"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0 || ^10.0 || ^11.0",
+        "phpunit/phpunit": "^10.5 || ^11.0 || ^12.0",
+        "mockery/mockery": "^1.6",
+        "laravel/pint": "^1.13",
+        "phpstan/phpstan": "^1.10 || ^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ZenlayerCloud\\Laravel\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ZenlayerCloud\\Laravel\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "lint": "vendor/bin/pint --test",
+        "lint:fix": "vendor/bin/pint",
+        "analyse": "vendor/bin/phpstan analyse",
+        "codegen": "php bin/codegen.php"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ZenlayerCloud\\Laravel\\ZenlayerCloudServiceProvider"
+            ],
+            "aliases": {
+                "ZenlayerCloud": "ZenlayerCloud\\Laravel\\Facades\\ZenlayerCloud"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    }
+}

@@ -1,0 +1,41 @@
+# Keep the Packagist tarball small: exclude development-only paths from
+# `composer require` installs. Anyone who needs them can `git clone` the
+# repo directly.
+
+# Root-level files
+.editorconfig          export-ignore
+.gitattributes         export-ignore
+.gitignore             export-ignore
+CODE_OF_CONDUCT.md     export-ignore
+CONTRIBUTING.md        export-ignore
+SECURITY.md            export-ignore
+PROJECT_OVERVIEW.md    export-ignore
+composer.lock          export-ignore
+phpstan.neon           export-ignore
+phpunit.xml            export-ignore
+pint.json              export-ignore
+
+# Directories (patterns must end with /** to recurse)
+.github/**             export-ignore
+.phpunit.cache/**      export-ignore
+bin/**                 export-ignore
+build/**               export-ignore
+coverage/**            export-ignore
+examples/**            export-ignore
+tests/**               export-ignore
+vendor/**              export-ignore
+
+# Linguist hints — keep generated code out of GitHub stats so the language
+# breakdown reflects what humans actually maintain.
+src/Vm/V20260401/Models/**   linguist-generated=true
+src/Zec/V20250901/Models/**  linguist-generated=true
+src/Vm/V20260401/VmClient.php   linguist-generated=true
+src/Zec/V20250901/ZecClient.php linguist-generated=true
+
+# Normalize line endings — keep LF on all checkouts.
+* text=auto eol=lf
+*.php text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.neon text eol=lf

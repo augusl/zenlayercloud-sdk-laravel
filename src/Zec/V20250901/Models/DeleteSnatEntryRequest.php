@@ -1,0 +1,15 @@
+<?php
+
+declare(strict_types=1);
+
+namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
+
+use ZenlayerCloud\Laravel\Common\AbstractModel;
+
+class DeleteSnatEntryRequest extends AbstractModel
+{
+    /**
+     * SnatEntryId SNAT规则 ID。
+     */
+    public ?string $snatEntryId = null;
+}

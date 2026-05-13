@@ -1,0 +1,39 @@
+name: Feature request
+description: Suggest a new feature or improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: |
+        Describe the use case. Even if you already know what you want, the
+        underlying problem often suggests better approaches.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: |
+        How would you like this to behave? Pseudocode or method signatures
+        are very welcome.
+      render: php
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Affected scope
+      multiple: true
+      options:
+        - Virtual Machine (VM) service
+        - Elastic Compute (ZEC) service
+        - Common layer (signing, client, models)
+        - Laravel integration (service provider, facade, manager)
+        - Tooling / codegen / CI
+        - Documentation

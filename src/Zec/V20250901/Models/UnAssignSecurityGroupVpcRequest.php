@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
+
+use ZenlayerCloud\Laravel\Common\AbstractModel;
+
+/**
+ * UnAssignSecurityGroupVpcRequest
+ */
+class UnAssignSecurityGroupVpcRequest extends AbstractModel
+{
+    /**
+     * VpcId 要解绑的VPC ID。
+     */
+    public ?string $vpcId = null;
+}
