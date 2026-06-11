@@ -39,6 +39,16 @@ class InstanceTypeQuotaItem extends AbstractModel
     public ?int $memory = null;
 
     /**
+     * Bps 单张网卡的带宽上限。单位：比特/秒。
+     */
+    public ?int $bps = null;
+
+    /**
+     * Pps 单张网卡的收发包上限。单位：个/秒。
+     */
+    public ?int $pps = null;
+
+    /**
      * InternetMaxBandwidthOutLimit 最大出口带宽限制。
      */
     public ?int $internetMaxBandwidthOutLimit = null;

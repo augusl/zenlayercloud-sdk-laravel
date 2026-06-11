@@ -77,4 +77,18 @@ final class ConfigTest extends TestCase
 
         self::assertSame('app_v1.2-rc.3, build-42; release.candidate', $c->requestClient);
     }
+
+    public function test_invalid_scheme_falls_back_to_https(): void
+    {
+        self::assertSame('https', (new Config(scheme: 'ftp'))->scheme);
+        self::assertSame('https', (new Config(scheme: 'HTTPS'))->scheme);
+        self::assertSame('http', (new Config(scheme: 'HTTP'))->scheme);
+    }
+
+    public function test_verify_defaults_to_true_and_accepts_path_or_false(): void
+    {
+        self::assertTrue((new Config)->verify);
+        self::assertSame('/etc/ssl/zenlayer-ca.pem', (new Config(verify: '/etc/ssl/zenlayer-ca.pem'))->verify);
+        self::assertFalse((new Config(verify: false))->verify);
+    }
 }

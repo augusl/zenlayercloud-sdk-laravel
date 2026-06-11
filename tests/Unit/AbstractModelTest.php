@@ -117,6 +117,24 @@ final class AbstractModelTest extends TestCase
         self::assertSame('{}', (new TestRootModel)->toJson());
     }
 
+    public function test_to_json_emits_empty_nested_model_as_object_not_array(): void
+    {
+        // An all-null nested model must encode as `{}`, not `[]` — matching
+        // Go's json.Marshal of an empty struct.
+        $req = new TestRootModel;
+        $req->nested = new TestNestedModel; // all fields null
+
+        self::assertSame('{"nested":{}}', $req->toJson());
+    }
+
+    public function test_to_json_emits_array_of_empty_nested_models_as_objects(): void
+    {
+        $req = new TestRootModel;
+        $req->items = [new TestItemModel, new TestItemModel]; // all fields null
+
+        self::assertSame('{"items":[{},{}]}', $req->toJson());
+    }
+
     public function test_to_json_preserves_unicode_unescaped(): void
     {
         $req = new TestRootModel;

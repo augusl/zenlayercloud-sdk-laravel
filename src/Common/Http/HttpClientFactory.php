@@ -29,8 +29,12 @@ final class HttpClientFactory
         $request = $this->factory->timeout($config->timeout);
 
         if ($config->retry) {
+            // Retry network-level failures ONLY (connection refused, DNS,
+            // timeout) — never HTTP error responses, which may belong to
+            // non-idempotent Actions like CreateInstances. `retryMax` counts
+            // extra retries, so total attempts = retryMax + 1.
             $request = $request->retry(
-                times: $config->retryMax,
+                times: $config->retryMax + 1,
                 sleepMilliseconds: 200,
                 when: static fn ($exception): bool => $exception instanceof ConnectionException,
                 throw: false,
@@ -40,6 +44,11 @@ final class HttpClientFactory
         $options = [];
         if ($config->proxy !== null && $config->proxy !== '') {
             $options['proxy'] = $config->proxy;
+        }
+        if ($config->verify !== true) {
+            // Custom CA bundle path, or `false` to disable verification for
+            // self-signed staging endpoints. Defaults to full verification.
+            $options['verify'] = $config->verify;
         }
         if ($config->debug) {
             $options['debug'] = true;

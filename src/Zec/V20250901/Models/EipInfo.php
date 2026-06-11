@@ -114,6 +114,15 @@ class EipInfo extends AbstractModel
     public ?float $flowPackage = null;
 
     /**
+     * FlowPackages EIP 多方向流量包列表。
+     * 仅当网络计费方式为流量计费时可取到值。
+     * 该字段可能为null。
+     *
+     * @var FlowPackageResponseItem[]|null
+     */
+    public ?array $flowPackages = null;
+
+    /**
      * Bandwidth EIP 的带宽限速。
      * 单位为Mbps。
      */
@@ -171,6 +180,7 @@ class EipInfo extends AbstractModel
 
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
+        'flowPackages' => FlowPackageResponseItem::class,
         'eipGeoRefs' => EipGeoInfo::class,
         'blockInfoList' => BlockInfo::class,
     ];

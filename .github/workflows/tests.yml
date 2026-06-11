@@ -45,6 +45,14 @@ jobs:
             "illuminate/contracts:${{ matrix.laravel }}" \
             --no-update
 
+      # Laravel 11 is past its security-fix window, so Composer >= 2.9 refuses
+      # to resolve it while advisories remain open. Testing the LTS-tail leg is
+      # exactly the point of this matrix entry, so disable the resolution block
+      # for it only.
+      - name: Allow advisory-affected framework (Laravel 11 leg only)
+        if: matrix.laravel == '11.*'
+        run: composer config policy.advisories.block false
+
       - name: Install dependencies
         run: composer update --prefer-dist --no-interaction --no-progress
 

@@ -47,8 +47,7 @@ class UnmanagedEgressIpInfo extends AbstractModel
     public ?string $internetChargeType = null;
 
     /**
-     * BandwidthCap 带宽上限，单位 Mbps。
-     * 无固定带宽时为 null。
+     * BandwidthCap 带宽上限，单位 Mbps。资源未单独配置带宽时返回团队默认带宽上限。
      */
     public ?int $bandwidthCap = null;
 

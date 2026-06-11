@@ -27,11 +27,15 @@ final class Config
     public function __construct(
         string $endpoint = 'console.zenlayer.com',
         string $scheme = 'https',
+        // Seconds. Raise it (ZENLAYER_TIMEOUT) when provisioning slow
+        // resources; most Zenlayer Actions are async/poll-based so 60s is a
+        // safer web-request default than the Go SDK's 300s.
         public readonly int $timeout = 60,
         public readonly bool $retry = false,
         public readonly int $retryMax = 3,
         public readonly bool $debug = false,
         public readonly ?string $proxy = null,
+        public readonly bool|string $verify = true,
         ?string $requestClient = null,
     ) {
         // Tolerate the common copy-paste shape `https://host/` so the URL
@@ -41,7 +45,9 @@ final class Config
             $endpoint = $m[2];
         }
         $this->endpoint = rtrim($endpoint, '/');
-        $this->scheme = strtolower($scheme);
+
+        // Anything other than plain "http" falls back to HTTPS.
+        $this->scheme = strtolower($scheme) === 'http' ? 'http' : 'https';
 
         $this->requestClient = $requestClient !== null && $requestClient !== ''
             ? self::sanitizeRequestClient($requestClient)
@@ -52,7 +58,12 @@ final class Config
      * Apply the same constraints to the request-client identifier that the
      * Zenlayer Cloud API expects: max 128 characters, and only the
      * characters listed in {@see self::REQUEST_CLIENT_PATTERN}. Trailing
-     * over-length input is truncated; invalid characters fail loudly.
+     * over-length input is truncated.
+     *
+     * Intentional deviation from the upstream SDKs: where they silently log
+     * and drop an invalid value, we throw. The value is embedded into an HTTP
+     * header, so failing fast prevents CRLF header injection from a
+     * misconfigured value rather than silently shipping a broken request.
      */
     private static function sanitizeRequestClient(string $value): string
     {

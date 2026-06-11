@@ -41,6 +41,22 @@ composer lint:fix   # Pint, fix in place
 composer analyse    # PHPStan
 ```
 
+### Testing against older Laravel versions locally
+
+Laravel 11 is past its security-fix window, so Composer ≥ 2.9 blocks
+resolving it while advisories remain open. To run the suite against the
+Laravel 11 leg locally:
+
+```bash
+composer config policy.advisories.block false   # temporary, do not commit
+composer update --with="illuminate/support:^11.0" \
+                --with="illuminate/http:^11.0" \
+                --with="illuminate/contracts:^11.0" \
+                --with="orchestra/testbench:^9.0"
+composer test
+composer config --unset policy                  # restore the default
+```
+
 ## Writing tests
 
 - Unit tests live under `tests/Unit/`. Pure PHP, no Laravel boot.

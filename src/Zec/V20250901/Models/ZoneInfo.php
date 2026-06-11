@@ -57,4 +57,9 @@ class ZoneInfo extends AbstractModel
      * CountryName 可用区所在的国家名称。
      */
     public ?string $countryName = null;
+
+    /**
+     * SupportHaVip 可用区是否支持高可用虚拟IP（HaVip）。
+     */
+    public ?bool $supportHaVip = null;
 }

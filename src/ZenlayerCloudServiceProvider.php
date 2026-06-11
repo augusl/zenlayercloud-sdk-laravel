@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ZenlayerCloud\Laravel;
 
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Http\Client\Factory as HttpFactory;
 use Illuminate\Support\ServiceProvider;
 use ZenlayerCloud\Laravel\Common\Http\HttpClientFactory;
@@ -14,11 +13,14 @@ use ZenlayerCloud\Laravel\Vm\V20260401\VmClient;
 use ZenlayerCloud\Laravel\Zec\V20250901\ZecClient;
 
 /**
- * Deferred — Laravel only loads this provider when one of the classes listed
- * in {@see self::provides()} is resolved (or when `vendor:publish` runs).
- * Apps that never touch the SDK pay zero boot cost.
+ * Not deferred on purpose: a deferred provider's boot() only runs once one of
+ * its provided classes is resolved, which never happens during
+ * `php artisan vendor:publish` — so deferring would silently break publishing
+ * the config file (the documented install step). The boot cost here is
+ * negligible: register() only merges the config array and registers lazy
+ * singletons.
  */
-class ZenlayerCloudServiceProvider extends ServiceProvider implements DeferrableProvider
+class ZenlayerCloudServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
@@ -56,19 +58,5 @@ class ZenlayerCloudServiceProvider extends ServiceProvider implements Deferrable
                 __DIR__.'/../config/zenlayercloud.php' => $this->app->configPath('zenlayercloud.php'),
             ], 'zenlayercloud-config');
         }
-    }
-
-    /**
-     * @return array<int,string>
-     */
-    public function provides(): array
-    {
-        return [
-            Signer::class,
-            HttpClientFactory::class,
-            ZenlayerCloudManager::class,
-            VmClient::class,
-            ZecClient::class,
-        ];
     }
 }

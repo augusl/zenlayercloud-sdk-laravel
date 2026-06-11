@@ -6,6 +6,7 @@ namespace ZenlayerCloud\Laravel\Common;
 
 use Illuminate\Http\Client\ConnectionException;
 use JsonException;
+use TypeError;
 use ZenlayerCloud\Laravel\Common\Exception\ZenlayerCloudSdkException;
 use ZenlayerCloud\Laravel\Common\Http\HttpClientFactory;
 
@@ -29,7 +30,7 @@ abstract class AbstractClient
     public const SDK_LANG = 'PHP';
 
     public function __construct(
-        protected readonly Credential $credential,
+        protected readonly CredentialInterface $credential,
         protected readonly Config $config,
         protected readonly HttpClientFactory $http,
         protected readonly Signer $signer,
@@ -48,31 +49,38 @@ abstract class AbstractClient
     protected function call(string $action, AbstractModel $request, string $responseClass): AbstractModel
     {
         $payload = $request->toJson();
-        $timestamp = time();
         $host = $this->config->endpoint;
-
-        $authorization = $this->signer->sign(
-            method: 'POST',
-            host: $host,
-            contentType: 'application/json',
-            payload: $payload,
-            timestamp: $timestamp,
-            secretKeyId: $this->credential->secretKeyId,
-            secretKeyPassword: $this->credential->getSecretKeyPassword(),
-        );
 
         $headers = [
             'Content-Type' => 'application/json',
             'Host' => $host,
-            'Authorization' => $authorization,
             'x-zc-version' => $this->apiVersion(),
             'x-zc-action' => $action,
             'x-zc-service' => $this->service(),
-            'x-zc-signature-method' => Signer::ALGORITHM,
-            'x-zc-timestamp' => (string) $timestamp,
             'x-zc-sdk-version' => 'SDK_PHP_'.self::SDK_VERSION,
             'x-zc-sdk-lang' => self::SDK_LANG,
         ];
+
+        // Two authentication modes, matching the upstream SDKs: a Bearer token
+        // takes precedence and skips signing; otherwise sign with the AccessKey
+        // pair (which also adds the timestamp + signature-method headers).
+        $token = $this->credential->getToken();
+        if ($token !== null) {
+            $headers['Authorization'] = 'Bearer '.$token;
+        } else {
+            $timestamp = time();
+            $headers['x-zc-signature-method'] = Signer::ALGORITHM;
+            $headers['x-zc-timestamp'] = (string) $timestamp;
+            $headers['Authorization'] = $this->signer->sign(
+                method: 'POST',
+                host: $host,
+                contentType: 'application/json',
+                payload: $payload,
+                timestamp: $timestamp,
+                secretKeyId: $this->credential->getSecretKeyId(),
+                secretKeyPassword: $this->credential->getSecretKeyPassword(),
+            );
+        }
 
         if ($this->config->requestClient !== null && $this->config->requestClient !== '') {
             $headers['x-zc-request-client'] = $this->config->requestClient;
@@ -119,7 +127,20 @@ abstract class AbstractClient
 
         /** @var TResp $response */
         $response = new $responseClass;
-        $response->fromArray($body);
+
+        try {
+            $response->fromArray($body);
+        } catch (TypeError $e) {
+            // The API returned a value whose type contradicts the documented
+            // schema (e.g. an int where a string is declared). Surface it as
+            // a parse failure rather than leaking a raw TypeError.
+            throw new ZenlayerCloudSdkException(
+                ZenlayerCloudSdkException::ERR_JSON_PARSE,
+                sprintf('Response shape mismatch for %s: %s', $responseClass, $e->getMessage()),
+                isset($body['requestId']) ? (string) $body['requestId'] : null,
+                $e,
+            );
+        }
 
         return $response;
     }
@@ -143,8 +164,12 @@ abstract class AbstractClient
             );
         }
 
+        // Real Zenlayer error envelopes always carry a `code`. If one is
+        // missing, fall back to an HTTP-status code rather than reusing
+        // ERR_NETWORK — that constant means "the request never reached the
+        // server", which is not the case here (we got an HTTP response).
         return new ZenlayerCloudSdkException(
-            (string) ($body['code'] ?? ZenlayerCloudSdkException::ERR_NETWORK),
+            (string) ($body['code'] ?? 'HTTP_'.$status),
             (string) ($body['message'] ?? sprintf('HTTP %d (no message)', $status)),
             isset($body['requestId']) ? (string) $body['requestId'] : null,
         );

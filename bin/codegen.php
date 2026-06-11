@@ -43,7 +43,6 @@ final class SchemaParser
     public function __construct(
         public readonly string $modelsSrcPath,
         public readonly string $clientSrcPath,
-        public readonly string $wrapperPrefix,    // 'Vm' or 'Zec' — disambiguates inline struct names
     ) {}
 
     public function parse(): void
@@ -474,7 +473,6 @@ $jobs = [
         'nsPrefix' => 'ZenlayerCloud\\Laravel\\Vm\\V20260401',
         'outClient' => ROOT.'/src/Vm/V20260401/VmClient.php',
         'outModels' => ROOT.'/src/Vm/V20260401/Models',
-        'wrapperPfx' => 'Vm',
         'description' => 'Zenlayer Cloud Virtual Machine (VM)',
     ],
     [
@@ -486,7 +484,6 @@ $jobs = [
         'nsPrefix' => 'ZenlayerCloud\\Laravel\\Zec\\V20250901',
         'outClient' => ROOT.'/src/Zec/V20250901/ZecClient.php',
         'outModels' => ROOT.'/src/Zec/V20250901/Models',
-        'wrapperPfx' => 'Zec',
         'description' => 'Zenlayer Cloud Elastic Compute (ZEC)',
     ],
 ];
@@ -506,7 +503,7 @@ foreach ($jobs as $job) {
         }
     }
 
-    $parser = new SchemaParser($job['modelsSrc'], $job['clientSrc'], $job['wrapperPfx']);
+    $parser = new SchemaParser($job['modelsSrc'], $job['clientSrc']);
     $parser->parse();
     $emitter = new PhpEmitter(
         parser: $parser,

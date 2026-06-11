@@ -39,6 +39,11 @@ class AssociateEipAddressRequest extends AbstractModel
     public ?array $eipIds = null;
 
     /**
+     * HaVipId 高可用虚拟IP的ID。
+     */
+    public ?string $haVipId = null;
+
+    /**
      * BindType 绑定类型。
      * 当绑定的是网卡时生效。
      * 默认为普通NAT模式。

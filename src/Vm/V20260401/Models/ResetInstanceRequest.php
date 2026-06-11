@@ -42,4 +42,9 @@ class ResetInstanceRequest extends AbstractModel
      * LanName 内网网卡名称。
      */
     public ?string $lanName = null;
+
+    /**
+     * InitScript 初始化脚本。
+     */
+    public ?string $initScript = null;
 }

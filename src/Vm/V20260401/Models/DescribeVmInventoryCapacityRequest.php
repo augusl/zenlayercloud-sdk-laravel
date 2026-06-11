@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace ZenlayerCloud\Laravel\Vm\V20260401\Models;
+
+use ZenlayerCloud\Laravel\Common\AbstractModel;
+
+/**
+ * DescribeVmInventoryCapacityRequest
+ */
+class DescribeVmInventoryCapacityRequest extends AbstractModel
+{
+    /**
+     * ZoneId 可用区ID。
+     */
+    public ?string $zoneId = null;
+}

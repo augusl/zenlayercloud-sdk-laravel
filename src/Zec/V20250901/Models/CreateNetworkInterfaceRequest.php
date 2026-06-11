@@ -71,6 +71,17 @@ class CreateNetworkInterfaceRequest extends AbstractModel
     public ?string $clusterId = null;
 
     /**
+     * EipBindType 公网IP的绑定模式。
+     * 当分配公网IP时需要指定。
+     */
+    public ?string $eipBindType = null;
+
+    /**
+     * EipIds 配置在网卡的公网IP ID集合。
+     */
+    public ?array $eipIds = null;
+
+    /**
      * MarketingOptions 市场营销相关的选项。
      */
     public ?MarketingInfo $marketingOptions = null;

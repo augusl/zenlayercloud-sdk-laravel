@@ -27,7 +27,7 @@ class SubnetInfo extends AbstractModel
     public ?string $name = null;
 
     /**
-     * CidrBlock 子网的CIDR地址。
+     * CidrBlock 子网的IPv4 CIDR地址段。
      */
     public ?string $cidrBlock = null;
 
@@ -37,8 +37,7 @@ class SubnetInfo extends AbstractModel
     public ?string $gatewayIpAddress = null;
 
     /**
-     * Ipv6CidrBlock 子网的IPv6 CIDR地址段。
-     * 如果子网的IP堆栈类型不包括V6,该字段取不到值。
+     * Ipv6CidrBlock 子网的IPv6 CIDR地址段。当IP堆栈类型不包含IPv6时为null。
      */
     public ?string $ipv6CidrBlock = null;
 
@@ -53,8 +52,7 @@ class SubnetInfo extends AbstractModel
     public ?string $stackType = null;
 
     /**
-     * Ipv6Type 子网上IPv6类型。
-     * 如果子网的IP堆栈类型不包括V6,该字段取不到值。
+     * Ipv6Type 子网的IPv6类型。可选值：Private（内网）、Public（公网）。当IP堆栈类型不包含IPv6时为null。
      */
     public ?string $ipv6Type = null;
 
@@ -84,7 +82,7 @@ class SubnetInfo extends AbstractModel
     public ?string $createTime = null;
 
     /**
-     * IsDefault 子网是否为默认。
+     * IsDefault 是否为默认子网。
      */
     public ?bool $isDefault = null;
 
@@ -94,8 +92,7 @@ class SubnetInfo extends AbstractModel
     public ?string $dhcpOptionsSetId = null;
 
     /**
-     * Ipv6MaskLength 分配给网卡的IPv6掩码长度。
-     * 如果子网的IP堆栈类型不包括V6,该字段取不到值。
+     * Ipv6MaskLength 分配给虚拟机的IPv6前缀长度。当IP堆栈类型不包含IPv6时为null。
      */
     public ?int $ipv6MaskLength = null;
 }

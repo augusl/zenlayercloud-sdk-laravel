@@ -56,4 +56,9 @@ class SecurityGroupInfo extends AbstractModel
      * LoadBalancerIdList 关联安全组的负载均衡ID列表。
      */
     public ?array $loadBalancerIdList = null;
+
+    /**
+     * HaVipIdList 关联安全组的高可用虚拟IP ID列表。
+     */
+    public ?array $haVipIdList = null;
 }

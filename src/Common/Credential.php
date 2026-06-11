@@ -13,8 +13,8 @@ use ZenlayerCloud\Laravel\Common\Exception\ZenlayerCloudSdkException;
  *
  * The secret-key password is intentionally NOT stored in a declared property.
  * It lives inside a private closure so that `var_export()`, `var_dump()`,
- * `print_r()`, exception stack traces, and serialization (`serialize()` /
- * `__sleep`) all fail to find the plaintext value.
+ * `print_r()`, and exception stack traces cannot reach the plaintext value;
+ * `serialize()` is additionally blocked outright by `__serialize()`.
  *
  *     $cred = new Credential('AKID-...', 'SECRET');
  *     var_export($cred);  // → no SECRET in output
@@ -22,7 +22,7 @@ use ZenlayerCloud\Laravel\Common\Exception\ZenlayerCloudSdkException;
  *     $cred->secretKeyId;            // readable: public readonly
  *     $cred->getSecretKeyPassword(); // explicit retrieval only
  */
-final class Credential
+final class Credential implements CredentialInterface
 {
     public readonly string $secretKeyId;
 
@@ -32,6 +32,13 @@ final class Credential
         string $secretKeyId,
         #[SensitiveParameter] string $secretKeyPassword,
     ) {
+        // Trim surrounding whitespace — a trailing newline in a .env value is
+        // a common footgun that otherwise produces a cryptic 401 (the byte is
+        // signed but the server's stored key has no newline). Matches the
+        // upstream Python SDK's credential handling.
+        $secretKeyId = trim($secretKeyId);
+        $secretKeyPassword = trim($secretKeyPassword);
+
         if ($secretKeyId === '' || $secretKeyPassword === '') {
             throw new ZenlayerCloudSdkException(
                 ZenlayerCloudSdkException::ERR_CREDENTIAL_MISSING,
@@ -40,10 +47,12 @@ final class Credential
         }
 
         $this->secretKeyId = $secretKeyId;
-        // Bind the secret inside a closure: it lives in the closure's captured
-        // scope, never as an object property, so var_export and serialize
-        // cannot reach it.
         $this->secret = static fn (): string => $secretKeyPassword;
+    }
+
+    public function getSecretKeyId(): string
+    {
+        return $this->secretKeyId;
     }
 
     /**
@@ -53,6 +62,14 @@ final class Credential
     public function getSecretKeyPassword(): string
     {
         return ($this->secret)();
+    }
+
+    /**
+     * HMAC credentials never carry a Bearer token.
+     */
+    public function getToken(): ?string
+    {
+        return null;
     }
 
     /**

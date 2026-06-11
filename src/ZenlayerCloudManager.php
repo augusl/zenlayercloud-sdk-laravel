@@ -8,9 +8,11 @@ use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Container\Container;
 use ZenlayerCloud\Laravel\Common\Config;
 use ZenlayerCloud\Laravel\Common\Credential;
+use ZenlayerCloud\Laravel\Common\CredentialInterface;
 use ZenlayerCloud\Laravel\Common\Exception\ZenlayerCloudSdkException;
 use ZenlayerCloud\Laravel\Common\Http\HttpClientFactory;
 use ZenlayerCloud\Laravel\Common\Signer;
+use ZenlayerCloud\Laravel\Common\TokenCredential;
 use ZenlayerCloud\Laravel\Vm\V20260401\VmClient;
 use ZenlayerCloud\Laravel\Zec\V20250901\ZecClient;
 
@@ -105,9 +107,17 @@ class ZenlayerCloudManager
         return $conn;
     }
 
-    private function credential(string $name): Credential
+    private function credential(string $name): CredentialInterface
     {
         $c = $this->connectionConfig($name);
+
+        // A configured Bearer token takes precedence over the AccessKey pair,
+        // matching the upstream SDKs (a connection is either token- or
+        // key-authenticated, never both).
+        $token = $c['token'] ?? null;
+        if (is_string($token) && trim($token) !== '') {
+            return new TokenCredential($token);
+        }
 
         return new Credential(
             (string) ($c['secret_key_id'] ?? ''),
@@ -119,6 +129,8 @@ class ZenlayerCloudManager
     {
         $c = $this->connectionConfig($name);
 
+        $verify = $c['verify'] ?? true;
+
         return new Config(
             endpoint: (string) ($c['endpoint'] ?? 'console.zenlayer.com'),
             scheme: (string) ($c['scheme'] ?? 'https'),
@@ -127,6 +139,7 @@ class ZenlayerCloudManager
             retryMax: (int) ($c['retry_max'] ?? 3),
             debug: (bool) ($c['debug'] ?? false),
             proxy: isset($c['proxy']) ? (string) $c['proxy'] : null,
+            verify: is_string($verify) ? $verify : (bool) $verify,
             requestClient: isset($c['request_client']) ? (string) $c['request_client'] : null,
         );
     }

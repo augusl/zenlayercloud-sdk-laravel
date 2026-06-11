@@ -49,6 +49,11 @@ abstract class TestCase extends Orchestra
                     'proxy' => null,
                     'request_client' => 'tests-suite-1.0',
                 ],
+                'token' => [
+                    'token' => 'PAT-token-test-xyz',
+                    'endpoint' => 'console.zenlayer.com',
+                    'scheme' => 'https',
+                ],
             ],
         ]);
     }

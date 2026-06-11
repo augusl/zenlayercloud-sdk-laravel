@@ -45,6 +45,11 @@ class CreateBorderGatewayRequest extends AbstractModel
     public ?string $advertisedSubnet = null;
 
     /**
+     * AdvertisedSubnetIds 子网ID集合。
+     */
+    public ?array $advertisedSubnetIds = null;
+
+    /**
      * AdvertisedCidrs IPv4 Cidr集合。
      */
     public ?array $advertisedCidrs = null;

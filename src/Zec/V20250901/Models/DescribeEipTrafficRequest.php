@@ -38,7 +38,13 @@ class DescribeEipTrafficRequest extends AbstractModel
     public ?int $step = null;
 
     /**
-     * WanIp 指定IP查询，该字段用于三线IP,可以指定IP地址查询流量。
+     * WanIp 指定IP查询，可以指定IP地址查询流量。
      */
     public ?string $wanIp = null;
+
+    /**
+     * Direction 流量方向。
+     * 仅 PathBasedBandwidthIP 类型有效；不传则返回全部方向数据。
+     */
+    public ?string $direction = null;
 }

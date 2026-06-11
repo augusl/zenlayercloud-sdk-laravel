@@ -53,6 +53,14 @@ class VmClient extends AbstractClient
     }
 
     /**
+     * 获取可用区库存。
+     */
+    public function DescribeVmInventoryCapacity(Models\DescribeVmInventoryCapacityRequest $request): Models\DescribeVmInventoryCapacityResponse
+    {
+        return $this->call('DescribeVmInventoryCapacity', $request, Models\DescribeVmInventoryCapacityResponse::class);
+    }
+
+    /**
      * 创建一个或多个指定配置的虚拟机实例。
      */
     public function CreateInstances(Models\CreateInstancesRequest $request): Models\CreateInstancesResponse

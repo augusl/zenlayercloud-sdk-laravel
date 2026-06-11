@@ -31,7 +31,6 @@ class DescribeUnmanagedEgressIpsRequest extends AbstractModel
 
     /**
      * PageNum 返回的分页页码。
-     * 默认为1。
      */
     public ?int $pageNum = null;
 }
