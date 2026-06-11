@@ -84,6 +84,13 @@ class DescribeNetworkInterfacesRequest extends AbstractModel
      */
     public ?array $tags = null;
 
+    /**
+     * NicSubnetType 根据网卡堆栈类型筛选。
+     * 枚举值：IPv4 / IPv4_IPv6 / IPv6。
+     * 配合subnetId使用可查出子网内持有IPv6的全部网卡。
+     */
+    public ?string $nicSubnetType = null;
+
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'tags' => Tag::class,

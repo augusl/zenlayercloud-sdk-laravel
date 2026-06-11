@@ -8,14 +8,16 @@ All notable changes to this project are documented here. This project follows
 
 ### Added
 - Initial release of the Zenlayer Cloud Laravel SDK.
-- Common layer: `Credential`, `Config`, `Signer` (ZC2-HMAC-SHA256),
-  `AbstractClient`, `AbstractModel`, `HttpClientFactory`,
-  `ZenlayerCloudSdkException`.
+- Common layer: `Credential`, `TokenCredential`, `CredentialInterface`,
+  `Config`, `Signer` (ZC2-HMAC-SHA256), `AbstractClient`, `AbstractModel`,
+  `HttpClientFactory`, `ZenlayerCloudSdkException`.
+- Two authentication modes: AccessKey pair (HMAC signing) and personal
+  access token (`Authorization: Bearer`), selectable per connection.
 - Virtual Machine (VM) service client at API version `2026-04-01`,
-  covering all 61 Actions with 209 typed Request/Response/nested model
+  covering all 62 Actions with 213 typed Request/Response/nested model
   classes.
 - Elastic Compute (ZEC) service client at API version `2025-09-01`,
-  covering all 197 Actions with 660 typed model classes.
+  covering all 214 Actions with 717 typed model classes.
 - Laravel integration: `ZenlayerCloudServiceProvider` (auto-discovered),
   `ZenlayerCloudManager` (multi-connection support with caching), and
   the `ZenlayerCloud` facade.

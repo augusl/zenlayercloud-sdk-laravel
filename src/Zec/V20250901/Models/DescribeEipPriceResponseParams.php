@@ -25,7 +25,20 @@ class DescribeEipPriceResponseParams extends AbstractModel
     public ?PriceItem $bandwidthPrice = null;
 
     /**
+     * BandwidthPrices 各流量方向的带宽价格明细。
+     * PathBasedBandwidthIP 线路返回多项（bandwidthPrice 为 null）；其他线路返回单项（trafficType=ALL）。
+     *
+     * @var BandwidthPriceResponseItem[]|null
+     */
+    public ?array $bandwidthPrices = null;
+
+    /**
      * RemoteBandwidthPrice Remote IPT的带宽价格。
      */
     public ?PriceItem $remoteBandwidthPrice = null;
+
+    /** @var array<string,class-string<AbstractModel>> */
+    protected static array $_typeMap = [
+        'bandwidthPrices' => BandwidthPriceResponseItem::class,
+    ];
 }

@@ -32,9 +32,9 @@ Two services under the **算力 / Compute** product group:
 
 | Service | API version | Actions | Generated model classes |
 |---------|-------------|--------:|------------------------:|
-| Virtual Machine (VM) | `2026-04-01` | **61** | 209 |
-| Elastic Compute (ZEC) | `2025-09-01` | **197** | 660 |
-| **Total** | | **258** | **869** |
+| Virtual Machine (VM) | `2026-04-01` | **62** | 213 |
+| Elastic Compute (ZEC) | `2025-09-01` | **214** | 717 |
+| **Total** | | **276** | **930** |
 
 Out of scope for v0.1.x (deferred to later minors): BMC, CCS, IPT, SDN,
 Traffic, User, ZBC, ZDNS, ZGA, ZLB, ZLS, ZOS, ZRM, Alarm, Maintenance,
@@ -73,7 +73,7 @@ Three-layer design, top-down:
                        │
         ┌──────────────▼──────────────┐
         │  Integration layer          │
-        │   - ZenlayerCloudServiceProvider (deferred)
+        │   - ZenlayerCloudServiceProvider (auto-discovered)
         │   - ZenlayerCloudManager (multi-connection cache)
         │   - Facades\ZenlayerCloud
         │   - config/zenlayercloud.php  ← published
@@ -81,10 +81,10 @@ Three-layer design, top-down:
                        │
         ┌──────────────▼──────────────┐
         │  Service layer (generated)  │
-        │   - Vm\V20260401\VmClient (61 Action methods)
-        │   - Zec\V20250901\ZecClient (197 Action methods)
-        │   - Vm\V20260401\Models\* (209 typed Request/Response/nested)
-        │   - Zec\V20250901\Models\* (660 typed Request/Response/nested)
+        │   - Vm\V20260401\VmClient (62 Action methods)
+        │   - Zec\V20250901\ZecClient (214 Action methods)
+        │   - Vm\V20260401\Models\* (213 typed Request/Response/nested)
+        │   - Zec\V20250901\Models\* (717 typed Request/Response/nested)
         └──────────────┬──────────────┘
                        │
         ┌──────────────▼──────────────┐
@@ -98,16 +98,34 @@ Three-layer design, top-down:
         └─────────────────────────────┘
 ```
 
-Hand-written code is **1 375 LOC** across **11 files**. Generated code is
-**~24 000 LOC** across **871 files** (209 + 660 models + 2 clients).
+Hand-written code is **~1 550 LOC** across **13 files**. Generated code is
+**~26 000 LOC** across **932 files** (213 + 717 models + 2 clients).
+
+### Authentication modes
+
+Mirroring the official SDKs, two credential types implement a shared
+`CredentialInterface` (`getSecretKeyId` / `getSecretKeyPassword` /
+`getToken`):
+
+- `Credential` — AccessKey id + password, authenticated by `ZC2-HMAC-SHA256`
+  request signing.
+- `TokenCredential` — a personal access token sent as
+  `Authorization: Bearer <token>`, which skips signing entirely.
+
+The Manager picks the type per connection: a non-empty `token` config key
+wins; otherwise the AccessKey pair is used. Both credential types hold
+their secret inside a closure (never a declared property) so it cannot
+leak through `var_export` / `serialize`.
 
 ### Key Laravel idioms used
 
 1. **Auto-discovery** via `extra.laravel.providers` + `aliases` in
    `composer.json` — no manual registration needed.
-2. **Deferrable service provider** (`implements DeferrableProvider`) —
-   the SDK is only booted when actually used, zero impact on app boot
-   time otherwise.
+2. **Eagerly-registered service provider** (intentionally NOT deferred) —
+   a deferred provider's `boot()` never runs during `vendor:publish`, which
+   would silently break publishing the config. The boot cost is negligible
+   (config merge + lazy singleton bindings), so the provider is registered
+   normally.
 3. **Connection / multi-account convention** matching the database,
    cache, and mail components: `config/zenlayercloud.php` defines named
    connections; `ZenlayerCloud::vm('staging')` picks one by name.
@@ -182,6 +200,18 @@ for success vs failure:
 - **Malformed JSON** in either branch → `ZenlayerCloudSdkException` with
   `errorCode = JSON_PARSE_FAILED`.
 
+- **Transport failures** (DNS, connection refused, TLS handshake,
+  timeout) are caught and re-thrown as `ZenlayerCloudSdkException` with
+  `errorCode = NETWORK_ERROR` — callers never need to catch Laravel's
+  `ConnectionException` directly.
+- **Response shape mismatches** (the API returns a type that contradicts
+  the documented schema) surface as `JSON_PARSE_FAILED`, not a raw
+  `TypeError`.
+- **Retry semantics** (when `retry` is enabled): only network-level
+  failures are retried, with `retry_max` extra attempts after the first.
+  HTTP error responses are never retried, so non-idempotent Actions such
+  as `CreateInstances` cannot execute twice.
+
 Error codes exposed on the exception:
 
 - `JSON_PARSE_FAILED`
@@ -216,6 +246,7 @@ return [
             'retry_max'           => (int) env('ZENLAYER_RETRY_MAX', 3),
             'debug'               => (bool) env('ZENLAYER_DEBUG', false),
             'proxy'               => env('ZENLAYER_PROXY'),
+            'verify'              => env('ZENLAYER_VERIFY', true), // true | false | CA bundle path
             'request_client'      => env('ZENLAYER_REQUEST_CLIENT'),
         ],
 
@@ -342,7 +373,7 @@ composer codegen    # regenerate src/Vm + src/Zec from schema
 | Laravel Pint | `preset: laravel` + custom (strict_types required, ordered_imports, no_unused_imports) | passed |
 | PHPStan | `level: 8` over `src/Common` + `src/Facades` + integration layer (generated tree excluded) | 0 errors |
 | `composer validate --strict` | — | valid |
-| PHP `-l` lint | every file (914 tracked) | 0 errors |
+| PHP `-l` lint | every file (979 tracked) | 0 errors |
 | Codegen idempotency | `git diff src/` after rerun | empty (byte-identical) |
 
 ---
@@ -361,7 +392,7 @@ All standard files in place at repo root or under `.github/`:
 - `.gitignore` — only `vendor/`, lock, caches, IDE
 - `.gitattributes` — `export-ignore` for `tests/`, `bin/`, `examples/`,
   `.github/`, and dev-only root files so the Packagist tarball ships
-  887 files instead of all 914
+  950 files instead of all 979
 - `.github/workflows/tests.yml` — CI matrix, declares
   `permissions: contents: read` (least privilege)
 - `.github/dependabot.yml` — Composer + GitHub-Actions update PRs
@@ -442,8 +473,82 @@ before claiming green. A non-exhaustive log:
     - Added 6 new tests (var_export leak guard, var_dump leak guard,
       print_r leak guard, serialize blocked, full CreateInstances
       round-trip with nested models, forward-compat unknown fields).
+11. Runtime-behavior re-diff against the upstream reference SDKs (retry
+    semantics, transport-error wrapping, TLS options) with live
+    reproductions, discovered:
+    - Connection-level failures (DNS / refused / timeout) escaped as raw
+      `Illuminate\Http\Client\ConnectionException` instead of the typed
+      `NETWORK_ERROR` exception the README promises. Fixed by catching
+      and wrapping in `AbstractClient::call()`.
+    - Retry attempt count was off by one versus the upstream contract
+      (`retry_max` should mean *extra retries*, so total attempts =
+      `retry_max + 1`). Fixed.
+    - Response-shape mismatches (API returning a type that contradicts
+      the schema) leaked a raw `TypeError`; now wrapped as
+      `JSON_PARSE_FAILED` with the requestId attached.
+    - Scheme values other than `http` now fall back to `https`, matching
+      the upstream normalization rule.
+    - Added the `verify` connection option (true / false / CA bundle
+      path) for TLS verification control, mirroring the upstream
+      Python SDK's `certification` setting.
+    - Added 6 regression tests covering all of the above (58 tests /
+      134 assertions total).
+12. Line-by-line re-diff of the common layer against both official SDKs,
+    discovered the biggest functional gap so far:
+    - **Bearer-token authentication was entirely missing.** Both official
+      SDKs expose a `TokenCredential` (personal access token →
+      `Authorization: Bearer <token>`, signing skipped) behind a shared
+      credential interface; ours only supported HMAC, so token-auth users
+      could not authenticate at all. Added `CredentialInterface`,
+      `TokenCredential`, the Bearer branch in `AbstractClient`, and the
+      Manager wiring (a `token` config key wins over the AccessKey pair).
+    - Credential inputs are now trimmed (matching the Python SDK) so a
+      trailing newline in a `.env` value no longer produces a cryptic 401.
+    - Added 8 regression tests (TokenCredential unit suite + a live Bearer
+      header assertion). Total: 66 tests / 152 assertions.
+    - **Regenerated the entire model/client tree from the current upstream
+      schema.** The committed tree had drifted from `composer codegen`
+      output (the idempotency contract was silently broken). Regeneration
+      (a) fixed a real correctness bug — `InstanceStatus` had been
+      generated with 13 nullable-string properties named after status
+      *values* (`$PENDING`, `$RUNNING`, …) instead of the actual
+      `{instanceId, instanceStatus}` shape, so `DescribeInstancesStatus`
+      responses never deserialized; and (b) picked up Actions/fields the
+      upstream added within the same API versions (HaVip family,
+      `DescribeVmInventoryCapacity`, IPv6 unassign, more `InquiryPrice*`,
+      `initScript`, …). New totals: VM 62 Actions / 213 models, ZEC 214
+      Actions / 717 models. Idempotency re-verified (two consecutive runs
+      are byte-identical).
+13. A 35-agent automated workflow re-audited every layer line-by-line
+    against the official Go/Python SDKs, plus an independent diff of all
+    276 Action names against the live API docs
+    (docs.console.zenlayer.com/api-reference/compute/{vm,zec}) — VM 62/62
+    and ZEC 214/214 match the docs exactly, with zero missing and zero
+    stray actions. The audit found **no request-breaking bugs**; the fixes
+    applied were:
+    - **Reverted the round-3 deferred provider.** A `DeferrableProvider`'s
+      `boot()` never fires during `vendor:publish` (nothing resolves an SDK
+      class to trigger it), so deferring silently broke the documented
+      config-publish install step. The Testbench publish test passed only
+      because Testbench force-boots the provider, masking the production
+      bug. The provider is now eagerly registered (negligible cost) and a
+      publish-group regression test was added.
+    - **Empty nested model now serializes as `{}` not `[]`** (an all-null
+      nested model went through `toArray()` → `[]` → JSON `[]`); fixed in
+      `AbstractModel::normalizeValue` to match Go's empty-struct marshal.
+    - **Non-200 responses without a `code` field** no longer borrow the
+      `NETWORK_ERROR` transport code; they fall back to `HTTP_<status>` so
+      transport vs. API failures stay distinguishable.
+    - Removed dead plumbing (the unused `wrapperPrefix` codegen parameter)
+      and corrected two docblocks (a phantom `__sleep` reference, a
+      duplicated comment); documented the intentional `request_client`
+      fail-fast deviation and the 60s-timeout rationale.
+    - The audit explicitly confirmed the credential closure-hiding,
+      `__serialize` guard, and `TokenCredential` stubs are intentional and
+      should be KEPT — not over-engineering. Total: 71 tests / 164
+      assertions.
 
-Across the ten rounds, **44+ distinct issues** were caught and fixed.
+Across the thirteen rounds, **50+ distinct issues** were caught and fixed.
 This list is preserved here so the reviewer can spot-check the kinds of
 problems that have already been ruled out — and look for ones that
 haven't.
@@ -471,7 +576,7 @@ When reviewing, the highest-signal places to look:
    trailing slash stripping), `request_client` regex.
 6. **`src/ZenlayerCloudManager.php`** — multi-connection caching,
    `flushClients()`, unknown-connection error path.
-7. **`src/ZenlayerCloudServiceProvider.php`** — deferred provider, binding
+7. **`src/ZenlayerCloudServiceProvider.php`** — provider + binding
    list matches `provides()`.
 8. **`bin/codegen.php`** — single PHP file, no external deps. Verify the
    Go-style → PHP type mapping table is exhaustive (no warnings emitted

@@ -20,8 +20,8 @@ and `Http::fake()` support out of the box.
 
 The `v0.1.x` line covers the **Compute** product group:
 
-- **Virtual Machine (VM)** — API version `2026-04-01`, 61 actions.
-- **Elastic Compute (ZEC)** — API version `2025-09-01`, 197 actions.
+- **Virtual Machine (VM)** — API version `2026-04-01`, 62 actions.
+- **Elastic Compute (ZEC)** — API version `2025-09-01`, 214 actions.
 
 Every Zenlayer Cloud Action is exposed as a typed PHP method backed by typed
 Request and Response model classes, so IDEs autocomplete the entire surface
@@ -50,11 +50,18 @@ Publish the configuration file:
 php artisan vendor:publish --tag=zenlayercloud-config
 ```
 
-Set credentials in your `.env`:
+Set credentials in your `.env`. Either an AccessKey pair (HMAC signing):
 
 ```dotenv
 ZENLAYER_SECRET_KEY_ID=AKID-your-key-id
 ZENLAYER_SECRET_KEY_PASSWORD=your-secret-key-password
+```
+
+…or a personal access token (Bearer auth — takes precedence when set,
+generate one at <https://console.zenlayer.com/accessToken>):
+
+```dotenv
+ZENLAYER_TOKEN=your-personal-access-token
 ```
 
 The package supports Laravel's auto-discovery — the service provider and
@@ -158,7 +165,13 @@ try {
 
 The exception exposes `$e->errorCode` (e.g. `INVALID_PARAMETER`,
 `NETWORK_ERROR`, `CREDENTIAL_VALUE_MISSING`, `CONFIG_INVALID`) and
-`$e->requestId` for log correlation.
+`$e->requestId` for log correlation. Transport-level failures (DNS,
+connection refused, TLS, timeout) are wrapped with code `NETWORK_ERROR`;
+you never need to catch Laravel's `ConnectionException` separately.
+
+When `retry` is enabled, **only network-level failures are retried** —
+HTTP error responses are never retried, so non-idempotent Actions such as
+`CreateInstances` cannot run twice.
 
 ---
 
@@ -175,6 +188,7 @@ return [
         'default' => [
             'secret_key_id'       => env('ZENLAYER_SECRET_KEY_ID'),
             'secret_key_password' => env('ZENLAYER_SECRET_KEY_PASSWORD'),
+            'token'               => env('ZENLAYER_TOKEN'), // Bearer auth; wins over the key pair when set
             'endpoint'            => env('ZENLAYER_ENDPOINT', 'console.zenlayer.com'),
             'scheme'              => env('ZENLAYER_SCHEME', 'https'),
             'timeout'             => (int) env('ZENLAYER_TIMEOUT', 60),
@@ -182,6 +196,7 @@ return [
             'retry_max'           => (int) env('ZENLAYER_RETRY_MAX', 3),
             'debug'               => (bool) env('ZENLAYER_DEBUG', false),
             'proxy'               => env('ZENLAYER_PROXY'),
+            'verify'              => env('ZENLAYER_VERIFY', true), // true | false | CA bundle path
             'request_client'      => env('ZENLAYER_REQUEST_CLIENT'),
         ],
 

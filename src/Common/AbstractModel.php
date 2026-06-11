@@ -132,7 +132,12 @@ abstract class AbstractModel
     private function normalizeValue(mixed $value): mixed
     {
         if ($value instanceof self) {
-            return $value->toArray();
+            $nested = $value->toArray();
+
+            // An all-null nested model must serialize as a JSON object `{}`,
+            // not an array `[]` — matching Go's json.Marshal of an empty
+            // struct. Returning an empty PHP array would encode as `[]`.
+            return $nested === [] ? new \stdClass : $nested;
         }
         if (is_array($value)) {
             $out = [];

@@ -43,7 +43,7 @@ class DescribeSubnetsRequest extends AbstractModel
     public ?int $pageNum = null;
 
     /**
-     * VpcIds VPC的ID集合。
+     * VpcIds 根据所属VPC的ID进行筛选。最多支持100个VPC ID。
      */
     public ?array $vpcIds = null;
 

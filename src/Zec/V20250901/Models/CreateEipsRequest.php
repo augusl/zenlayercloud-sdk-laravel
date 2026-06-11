@@ -47,6 +47,7 @@ class CreateEipsRequest extends AbstractModel
     public ?string $networkLineType = null;
 
     /**
+     * Deprecated: PrimaryIsp 已废弃，请不要使用。
      * PrimaryIsp 主公网IP的运营商。
      * 该字段仅作用于三线IP(`ThreeLine`)。
      */

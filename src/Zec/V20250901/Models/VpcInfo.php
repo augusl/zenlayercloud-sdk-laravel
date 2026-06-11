@@ -33,7 +33,7 @@ class VpcInfo extends AbstractModel
     public ?string $ipv6CidrBlock = null;
 
     /**
-     * Mtu mtu值。
+     * Mtu VPC的MTU（最大传输单元），单位字节。
      */
     public ?int $mtu = null;
 
@@ -48,12 +48,12 @@ class VpcInfo extends AbstractModel
     public ?string $createTime = null;
 
     /**
-     * UsageIpv4Count VPC里已使用IPv4数量。
+     * UsageIpv4Count VPC内已分配的IPv4地址数量。
      */
     public ?int $usageIpv4Count = null;
 
     /**
-     * UsageIpv6Count VPC里已使用IPv6数量。
+     * UsageIpv6Count VPC内已分配的IPv6地址数量。
      */
     public ?int $usageIpv6Count = null;
 

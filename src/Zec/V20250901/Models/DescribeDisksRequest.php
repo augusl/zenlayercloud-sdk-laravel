@@ -47,13 +47,13 @@ class DescribeDisksRequest extends AbstractModel
     public ?string $zoneId = null;
 
     /**
-     * PageNum 返回的分页大小。
-     * 默认为20，最大为1000。
+     * PageNum 返回的分页数。
      */
     public ?int $pageNum = null;
 
     /**
-     * PageSize 返回的分页数。
+     * PageSize 返回的分页大小。
+     * 默认为20，最大为1000。
      */
     public ?int $pageSize = null;
 

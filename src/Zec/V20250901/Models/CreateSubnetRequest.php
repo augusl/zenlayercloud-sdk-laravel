@@ -25,12 +25,12 @@ class CreateSubnetRequest extends AbstractModel
     public ?string $name = null;
 
     /**
-     * RegionId 子网所在的节点ID。
+     * RegionId 子网所在节点的ID。必须是VPC所在节点之一。
      */
     public ?string $regionId = null;
 
     /**
-     * StackType 子网的IP堆栈类型。
+     * StackType 子网的IP堆栈类型。可选值：IPv4（仅IPv4）、IPv4_IPv6（IPv4和IPv6双栈）、IPv6（仅IPv6）。
      */
     public ?string $stackType = null;
 

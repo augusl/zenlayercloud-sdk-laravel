@@ -18,8 +18,8 @@ ServiceProvider 与 Facade、可发布的连接配置、基于 `Illuminate\Http\
 
 `v0.1.x` 覆盖**算力**产品组：
 
-- **虚拟机 (VM)** — API 版本 `2026-04-01`，共 61 个 Action。
-- **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 197 个 Action。
+- **虚拟机 (VM)** — API 版本 `2026-04-01`，共 62 个 Action。
+- **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 214 个 Action。
 
 每个 Action 都映射为一个带强类型 Request / Response 的 PHP 方法，IDE 全程提示。
 
@@ -46,11 +46,18 @@ composer require augusl/zenlayercloud-laravel-sdk
 php artisan vendor:publish --tag=zenlayercloud-config
 ```
 
-`.env` 写入凭证：
+`.env` 写入凭证。可以用 AccessKey 密钥对（HMAC 签名）：
 
 ```dotenv
 ZENLAYER_SECRET_KEY_ID=AKID-你的密钥ID
 ZENLAYER_SECRET_KEY_PASSWORD=你的密钥密码
+```
+
+也可以用个人访问令牌（Bearer 认证，设置后优先于密钥对，
+在 <https://console.zenlayer.com/accessToken> 生成）：
+
+```dotenv
+ZENLAYER_TOKEN=你的个人访问令牌
 ```
 
 Laravel package discovery 会自动注册 ServiceProvider 和 `ZenlayerCloud` Facade。
@@ -151,6 +158,11 @@ try {
 
 异常对象提供 `$e->errorCode`（取值如 `INVALID_PARAMETER`、`NETWORK_ERROR`、
 `CREDENTIAL_VALUE_MISSING`、`CONFIG_INVALID`）和 `$e->requestId`（用于日志关联）。
+传输层失败（DNS、连接拒绝、TLS、超时）统一包装为 `NETWORK_ERROR`——
+无需单独捕获 Laravel 的 `ConnectionException`。
+
+开启 `retry` 后**只重试网络层失败**——HTTP 错误响应绝不重试，因此
+`CreateInstances` 这类非幂等 Action 不会被重复执行。
 
 ---
 
@@ -167,6 +179,7 @@ return [
         'default' => [
             'secret_key_id'       => env('ZENLAYER_SECRET_KEY_ID'),
             'secret_key_password' => env('ZENLAYER_SECRET_KEY_PASSWORD'),
+            'token'               => env('ZENLAYER_TOKEN'), // Bearer 认证；设置后优先于密钥对
             'endpoint'            => env('ZENLAYER_ENDPOINT', 'console.zenlayer.com'),
             'scheme'              => env('ZENLAYER_SCHEME', 'https'),
             'timeout'             => (int) env('ZENLAYER_TIMEOUT', 60),
@@ -174,6 +187,7 @@ return [
             'retry_max'           => (int) env('ZENLAYER_RETRY_MAX', 3),
             'debug'               => (bool) env('ZENLAYER_DEBUG', false),
             'proxy'               => env('ZENLAYER_PROXY'),
+            'verify'              => env('ZENLAYER_VERIFY', true), // true | false | CA 证书路径
             'request_client'      => env('ZENLAYER_REQUEST_CLIENT'),
         ],
 

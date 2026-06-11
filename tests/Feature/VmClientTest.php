@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Tests\Feature;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use ZenlayerCloud\Laravel\Common\Exception\ZenlayerCloudSdkException;
@@ -50,6 +51,31 @@ final class VmClientTest extends TestCase
                 && str_starts_with($r->header('x-zc-sdk-version')[0], 'SDK_PHP_')
                 && str_starts_with($r->header('Authorization')[0], 'ZC2-HMAC-SHA256 Credential=AKID-default-test, SignedHeaders=content-type;host, Signature=')
                 && $r->body() === '{}';
+        });
+    }
+
+    public function test_token_connection_uses_bearer_auth_without_signing(): void
+    {
+        Http::fake([
+            'console.zenlayer.com/*' => Http::response([
+                'requestId' => 'req-tok',
+                'response' => ['requestId' => 'req-tok'],
+            ], 200),
+        ]);
+
+        ZenlayerCloud::vm('token')->DescribeZones(new Models\DescribeZonesRequest);
+
+        Http::assertSent(function (Request $r) {
+            // Bearer auth is used...
+            self::assertSame('Bearer PAT-token-test-xyz', $r->header('Authorization')[0]);
+            // ...and the HMAC-only headers are absent.
+            self::assertSame([], $r->header('x-zc-signature-method'));
+            self::assertSame([], $r->header('x-zc-timestamp'));
+            // ...while the common headers are still present.
+            self::assertSame('DescribeZones', $r->header('x-zc-action')[0]);
+            self::assertSame('vm', $r->header('x-zc-service')[0]);
+
+            return true;
         });
     }
 
@@ -217,6 +243,25 @@ final class VmClientTest extends TestCase
         }
     }
 
+    public function test_non_200_without_code_field_uses_http_status_not_network_error(): void
+    {
+        // A non-200 whose JSON body lacks `code` must NOT be labelled
+        // NETWORK_ERROR (that means "never reached the server"). We got an
+        // HTTP response, so the code falls back to HTTP_<status>.
+        Http::fake([
+            'console.zenlayer.com/*' => Http::response(['requestId' => 'r', 'message' => 'gateway down'], 503),
+        ]);
+
+        try {
+            ZenlayerCloud::vm()->DescribeZones(new Models\DescribeZonesRequest);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame('HTTP_503', $e->errorCode);
+            self::assertNotSame(ZenlayerCloudSdkException::ERR_NETWORK, $e->errorCode);
+            self::assertStringContainsString('gateway down', $e->getMessage());
+        }
+    }
+
     public function test_malformed_error_body_surfaces_as_json_parse_error(): void
     {
         Http::fake([
@@ -244,6 +289,120 @@ final class VmClientTest extends TestCase
         } catch (ZenlayerCloudSdkException $e) {
             self::assertSame(ZenlayerCloudSdkException::ERR_JSON_PARSE, $e->errorCode);
         }
+    }
+
+    public function test_connection_failure_is_wrapped_as_network_error(): void
+    {
+        // Upstream contract: transport-level failures (DNS, refused, TLS,
+        // timeout) surface as the typed exception with NETWORK_ERROR — the
+        // caller must never need to catch Laravel's ConnectionException.
+        Http::fake(function () {
+            throw new ConnectionException('cURL error 7: Failed to connect to console.zenlayer.com');
+        });
+
+        try {
+            ZenlayerCloud::vm()->DescribeZones(new Models\DescribeZonesRequest);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_NETWORK, $e->errorCode);
+            self::assertStringContainsString('cURL error 7', $e->getMessage());
+            self::assertInstanceOf(ConnectionException::class, $e->getPrevious());
+        }
+    }
+
+    public function test_http_errors_are_never_retried_even_with_retry_enabled(): void
+    {
+        // The 'staging' connection enables retry (retry_max 5). An HTTP 400
+        // must NOT be retried — Actions like CreateInstances are not
+        // idempotent, and the upstream contract retries network errors only.
+        Http::fake([
+            'staging.zenlayer.local/*' => Http::response([
+                'requestId' => 'r',
+                'code' => 'INVALID_PARAMETER',
+                'message' => 'bad request',
+            ], 400),
+        ]);
+
+        try {
+            ZenlayerCloud::vm('staging')->DescribeZones(new Models\DescribeZonesRequest);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame('INVALID_PARAMETER', $e->errorCode);
+        }
+
+        Http::assertSentCount(1);
+    }
+
+    public function test_connection_failures_are_retried_when_retry_enabled(): void
+    {
+        // 'staging' has retry_max 5 → up to 6 attempts. Fail twice with a
+        // network error, succeed on the third attempt.
+        $attempts = 0;
+        Http::fake(function () use (&$attempts) {
+            $attempts++;
+            if ($attempts < 3) {
+                throw new ConnectionException('cURL error 28: Operation timed out');
+            }
+
+            return Http::response(['requestId' => 'r', 'response' => ['requestId' => 'r']], 200);
+        });
+
+        $resp = ZenlayerCloud::vm('staging')->DescribeZones(new Models\DescribeZonesRequest);
+
+        self::assertSame('r', $resp->requestId);
+        self::assertSame(3, $attempts);
+    }
+
+    public function test_response_type_mismatch_surfaces_as_json_parse_error(): void
+    {
+        // zoneId is declared ?string; an int violates the documented schema
+        // and must surface as the JSON-parse error code — not a raw TypeError.
+        Http::fake([
+            'console.zenlayer.com/*' => Http::response([
+                'requestId' => 'req-mismatch',
+                'response' => [
+                    'requestId' => 'req-mismatch',
+                    'zoneSet' => [['zoneId' => 12345]],
+                ],
+            ], 200),
+        ]);
+
+        try {
+            ZenlayerCloud::vm()->DescribeZones(new Models\DescribeZonesRequest);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_JSON_PARSE, $e->errorCode);
+            self::assertSame('req-mismatch', $e->requestId);
+        }
+    }
+
+    public function test_describe_instances_status_deserializes_instance_status(): void
+    {
+        // Regression guard for the regenerated InstanceStatus model. An earlier
+        // generated tree modelled InstanceStatus with status-value properties
+        // ($PENDING, $RUNNING, ...) instead of {instanceId, instanceStatus},
+        // so this dataSet would have silently dropped both real fields.
+        Http::fake([
+            'console.zenlayer.com/*' => Http::response([
+                'requestId' => 'req-st',
+                'response' => [
+                    'requestId' => 'req-st',
+                    'totalCount' => 2,
+                    'dataSet' => [
+                        ['instanceId' => 'i-1', 'instanceStatus' => 'RUNNING'],
+                        ['instanceId' => 'i-2', 'instanceStatus' => 'STOPPED'],
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        $resp = ZenlayerCloud::vm()->DescribeInstancesStatus(new Models\DescribeInstancesStatusRequest);
+
+        self::assertSame(2, $resp->response->totalCount);
+        self::assertInstanceOf(Models\InstanceStatus::class, $resp->response->dataSet[0]);
+        self::assertSame('i-1', $resp->response->dataSet[0]->instanceId);
+        self::assertSame('RUNNING', $resp->response->dataSet[0]->instanceStatus);
+        self::assertSame('STOPPED', $resp->response->dataSet[1]->instanceStatus);
     }
 
     public function test_unknown_response_fields_are_ignored_forward_compat(): void

@@ -146,6 +146,11 @@ class CreateZecInstancesRequest extends AbstractModel
     public ?string $eipBindType = null;
 
     /**
+     * EipIds 配置在实例主网卡的公网IP ID集合。
+     */
+    public ?array $eipIds = null;
+
+    /**
      * Deprecated: EipV4Type 已废弃，请不要使用。
      * EipV4Type 公网IPv4的线路类型。
      * 当分配公网IP时需要指定。

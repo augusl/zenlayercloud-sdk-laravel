@@ -20,14 +20,12 @@ class CreateVpcRequest extends AbstractModel
     public ?string $name = null;
 
     /**
-     * CidrBlock VPC的CIDR地址段。
-     * 需要满足以下4种内网段内(10.0.0.0/9, 10.128.0.0/9, 172.16.0.0/12以及192.168.0.0/16)。
+     * CidrBlock VPC的CIDR地址段。必须属于以下4种内网地址段之一：10.0.0.0/9、10.128.0.0/9、172.16.0.0/12 或 192.168.0.0/16。
      */
     public ?string $cidrBlock = null;
 
     /**
-     * Mtu VPC的传输单元 MTU。
-     * 支持：1300、1500、9000。
+     * Mtu VPC的MTU（最大传输单元）。支持：1300、1500、9000。
      */
     public ?int $mtu = null;
 
@@ -45,8 +43,7 @@ class CreateVpcRequest extends AbstractModel
     public ?string $resourceGroupId = null;
 
     /**
-     * Tags 创建VPC时关联的标签。
-     * 注意：·关联`标签键`不能重复。
+     * Tags 创建VPC时关联的标签。同一资源中标签键不能重复。
      */
     public ?TagAssociation $tags = null;
 }

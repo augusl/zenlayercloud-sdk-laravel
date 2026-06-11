@@ -221,6 +221,14 @@ class ZecClient extends AbstractClient
     }
 
     /**
+     * 查询变更虚拟机实例规格后的新规格价格。
+     */
+    public function InquiryPriceModifyInstanceType(Models\InquiryPriceModifyInstanceTypeRequest $request): Models\InquiryPriceModifyInstanceTypeResponse
+    {
+        return $this->call('InquiryPriceModifyInstanceType', $request, Models\InquiryPriceModifyInstanceTypeResponse::class);
+    }
+
+    /**
      * 查询某节点支持的镜像列表。
      */
     public function DescribeImages(Models\DescribeImagesRequest $request): Models\DescribeImagesResponse
@@ -274,6 +282,14 @@ class ZecClient extends AbstractClient
     public function DeleteImageCopy(Models\DeleteImageCopyRequest $request): Models\DeleteImageCopyResponse
     {
         return $this->call('DeleteImageCopy', $request, Models\DeleteImageCopyResponse::class);
+    }
+
+    /**
+     * 查询自定义镜像在各个目标区域的复制进度。
+     */
+    public function DescribeImageCopyProgress(Models\DescribeImageCopyProgressRequest $request): Models\DescribeImageCopyProgressResponse
+    {
+        return $this->call('DescribeImageCopyProgress', $request, Models\DescribeImageCopyProgressResponse::class);
     }
 
     /**
@@ -378,6 +394,14 @@ class ZecClient extends AbstractClient
     public function DescribeDiskMonitorData(Models\DescribeDiskMonitorDataRequest $request): Models\DescribeDiskMonitorDataResponse
     {
         return $this->call('DescribeDiskMonitorData', $request, Models\DescribeDiskMonitorDataResponse::class);
+    }
+
+    /**
+     * 查询云硬盘扩容后的新价格。
+     */
+    public function InquiryPriceResizeDisk(Models\InquiryPriceResizeDiskRequest $request): Models\InquiryPriceResizeDiskResponse
+    {
+        return $this->call('InquiryPriceResizeDisk', $request, Models\InquiryPriceResizeDiskResponse::class);
     }
 
     /**
@@ -581,6 +605,14 @@ class ZecClient extends AbstractClient
     }
 
     /**
+     * 删除网卡IPv6。
+     */
+    public function UnassignNetworkInterfaceIpv6(Models\UnassignNetworkInterfaceIpv6Request $request): Models\UnassignNetworkInterfaceIpv6Response
+    {
+        return $this->call('UnassignNetworkInterfaceIpv6', $request, Models\UnassignNetworkInterfaceIpv6Response::class);
+    }
+
+    /**
      * 查询一段时间内的网卡监控指标数据。包含带宽、包量、丢包、错误包等指标。
      */
     public function DescribeNetworkInterfaceMonitorData(Models\DescribeNetworkInterfaceMonitorDataRequest $request): Models\DescribeNetworkInterfaceMonitorDataResponse
@@ -589,11 +621,27 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 修改指定公网IPv6的带宽限速模式。LOOSE为宽松模式（允许短时突发），STRICT为严格模式（不允许突发）。仅支持已配置固定带宽的IPv6。
+     * 修改指定公网IPv6的带宽限速模式。
      */
     public function ModifyNetworkInterfacePublicIPv6BandwidthLimitMode(Models\ModifyNetworkInterfacePublicIPv6BandwidthLimitModeRequest $request): Models\ModifyNetworkInterfacePublicIPv6BandwidthLimitModeResponse
     {
         return $this->call('ModifyNetworkInterfacePublicIPv6BandwidthLimitMode', $request, Models\ModifyNetworkInterfacePublicIPv6BandwidthLimitModeResponse::class);
+    }
+
+    /**
+     * 查询调整IPv6带宽后的价格。
+     */
+    public function InquiryPriceModifyIpv6Bandwidth(Models\InquiryPriceModifyIpv6BandwidthRequest $request): Models\InquiryPriceModifyIpv6BandwidthResponse
+    {
+        return $this->call('InquiryPriceModifyIpv6Bandwidth', $request, Models\InquiryPriceModifyIpv6BandwidthResponse::class);
+    }
+
+    /**
+     * 查询变更IPv6网络计费模式后的价格。
+     */
+    public function InquiryPriceChangeIpv6InternetChargeType(Models\InquiryPriceChangeIpv6InternetChargeTypeRequest $request): Models\InquiryPriceChangeIpv6InternetChargeTypeResponse
+    {
+        return $this->call('InquiryPriceChangeIpv6InternetChargeType', $request, Models\InquiryPriceChangeIpv6InternetChargeTypeResponse::class);
     }
 
     /**
@@ -877,11 +925,35 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 修改指定弹性公网IP的带宽限速模式。LOOSE为宽松模式（允许短时突发），STRICT为严格模式（不允许突发）。仅支持已配置固定带宽的IP。
+     * 修改指定弹性公网IP的带宽限速模式。
      */
     public function ModifyEipBandwidthLimitMode(Models\ModifyEipBandwidthLimitModeRequest $request): Models\ModifyEipBandwidthLimitModeResponse
     {
         return $this->call('ModifyEipBandwidthLimitMode', $request, Models\ModifyEipBandwidthLimitModeResponse::class);
+    }
+
+    /**
+     * 查询调整EIP带宽后的价格。
+     */
+    public function InquiryPriceModifyEipBandwidth(Models\InquiryPriceModifyEipBandwidthRequest $request): Models\InquiryPriceModifyEipBandwidthResponse
+    {
+        return $this->call('InquiryPriceModifyEipBandwidth', $request, Models\InquiryPriceModifyEipBandwidthResponse::class);
+    }
+
+    /**
+     * 查询调整EIP流量包后的价格。
+     */
+    public function InquiryPriceModifyEipFlowPackage(Models\InquiryPriceModifyEipFlowPackageRequest $request): Models\InquiryPriceModifyEipFlowPackageResponse
+    {
+        return $this->call('InquiryPriceModifyEipFlowPackage', $request, Models\InquiryPriceModifyEipFlowPackageResponse::class);
+    }
+
+    /**
+     * 查询变更EIP网络计费模式后的价格。
+     */
+    public function InquiryPriceChangeEipInternetChargeType(Models\InquiryPriceChangeEipInternetChargeTypeRequest $request): Models\InquiryPriceChangeEipInternetChargeTypeResponse
+    {
+        return $this->call('InquiryPriceChangeEipInternetChargeType', $request, Models\InquiryPriceChangeEipInternetChargeTypeResponse::class);
     }
 
     /**
@@ -1133,11 +1205,83 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 修改指定非托管出口IP的带宽限速模式。LOOSE为宽松模式（允许短时突发），STRICT为严格模式（不允许突发）。仅支持已配置固定带宽的IP。
+     * 修改指定非托管出口IP的带宽限速模式。
      */
     public function ModifyUnmanagedEgressIpBandwidthLimitMode(Models\ModifyUnmanagedEgressIpBandwidthLimitModeRequest $request): Models\ModifyUnmanagedEgressIpBandwidthLimitModeResponse
     {
         return $this->call('ModifyUnmanagedEgressIpBandwidthLimitMode', $request, Models\ModifyUnmanagedEgressIpBandwidthLimitModeResponse::class);
+    }
+
+    /**
+     * 查询调整非托管出口IP带宽后的价格。
+     */
+    public function InquiryPriceModifyUnmanagedEgressIpBandwidth(Models\InquiryPriceModifyUnmanagedEgressIpBandwidthRequest $request): Models\InquiryPriceModifyUnmanagedEgressIpBandwidthResponse
+    {
+        return $this->call('InquiryPriceModifyUnmanagedEgressIpBandwidth', $request, Models\InquiryPriceModifyUnmanagedEgressIpBandwidthResponse::class);
+    }
+
+    /**
+     * 查询变更非托管出口IP网络计费模式后的价格。
+     */
+    public function InquiryPriceChangeUnmanagedEgressIpInternetChargeType(Models\InquiryPriceChangeUnmanagedEgressIpInternetChargeTypeRequest $request): Models\InquiryPriceChangeUnmanagedEgressIpInternetChargeTypeResponse
+    {
+        return $this->call('InquiryPriceChangeUnmanagedEgressIpInternetChargeType', $request, Models\InquiryPriceChangeUnmanagedEgressIpInternetChargeTypeResponse::class);
+    }
+
+    /**
+     * 查询一个或多个QoS策略组的详细信息。
+     */
+    public function DescribeQosPolicyGroups(Models\DescribeQosPolicyGroupsRequest $request): Models\DescribeQosPolicyGroupsResponse
+    {
+        return $this->call('DescribeQosPolicyGroups', $request, Models\DescribeQosPolicyGroupsResponse::class);
+    }
+
+    /**
+     * 创建一个QoS策略组，将EIP、IPv6或UNMANAGED出口IP纳入同一策略组实施共享带宽限速。
+     */
+    public function CreateQosPolicyGroup(Models\CreateQosPolicyGroupRequest $request): Models\CreateQosPolicyGroupResponse
+    {
+        return $this->call('CreateQosPolicyGroup', $request, Models\CreateQosPolicyGroupResponse::class);
+    }
+
+    /**
+     * 修改QoS策略组的名称或带宽限制。
+     */
+    public function ModifyQosPolicyGroup(Models\ModifyQosPolicyGroupRequest $request): Models\ModifyQosPolicyGroupResponse
+    {
+        return $this->call('ModifyQosPolicyGroup', $request, Models\ModifyQosPolicyGroupResponse::class);
+    }
+
+    /**
+     * 向QoS策略组中添加EIP、IPv6或UNMANAGED出口IP。
+     */
+    public function AddQosPolicyGroupMembers(Models\AddQosPolicyGroupMembersRequest $request): Models\AddQosPolicyGroupMembersResponse
+    {
+        return $this->call('AddQosPolicyGroupMembers', $request, Models\AddQosPolicyGroupMembersResponse::class);
+    }
+
+    /**
+     * 从QoS策略组中移除成员。
+     */
+    public function RemoveQosPolicyGroupMembers(Models\RemoveQosPolicyGroupMembersRequest $request): Models\RemoveQosPolicyGroupMembersResponse
+    {
+        return $this->call('RemoveQosPolicyGroupMembers', $request, Models\RemoveQosPolicyGroupMembersResponse::class);
+    }
+
+    /**
+     * 删除一个QoS策略组。删除前需确保策略组内无成员。
+     */
+    public function DeleteQosPolicyGroup(Models\DeleteQosPolicyGroupRequest $request): Models\DeleteQosPolicyGroupResponse
+    {
+        return $this->call('DeleteQosPolicyGroup', $request, Models\DeleteQosPolicyGroupResponse::class);
+    }
+
+    /**
+     * 查询QoS策略组的聚合流量监控数据。
+     */
+    public function DescribeQosPolicyGroupTraffic(Models\DescribeQosPolicyGroupTrafficRequest $request): Models\DescribeQosPolicyGroupTrafficResponse
+    {
+        return $this->call('DescribeQosPolicyGroupTraffic', $request, Models\DescribeQosPolicyGroupTrafficResponse::class);
     }
 
     /**
@@ -1549,58 +1693,50 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询一个或多个QoS策略组的详细信息。
+     * 创建一个高可用虚拟IP。
      */
-    public function DescribeQosPolicyGroups(Models\DescribeQosPolicyGroupsRequest $request): Models\DescribeQosPolicyGroupsResponse
+    public function CreateHaVip(Models\CreateHaVipRequest $request): Models\CreateHaVipResponse
     {
-        return $this->call('DescribeQosPolicyGroups', $request, Models\DescribeQosPolicyGroupsResponse::class);
+        return $this->call('CreateHaVip', $request, Models\CreateHaVipResponse::class);
     }
 
     /**
-     * 创建一个QoS策略组，将EIP、IPv6或UNMANAGED出口IP纳入同一策略组实施共享带宽限速。
+     * 查询一个或多个高可用虚拟IP的详细信息。
      */
-    public function CreateQosPolicyGroup(Models\CreateQosPolicyGroupRequest $request): Models\CreateQosPolicyGroupResponse
+    public function DescribeHaVips(Models\DescribeHaVipsRequest $request): Models\DescribeHaVipsResponse
     {
-        return $this->call('CreateQosPolicyGroup', $request, Models\CreateQosPolicyGroupResponse::class);
+        return $this->call('DescribeHaVips', $request, Models\DescribeHaVipsResponse::class);
     }
 
     /**
-     * 修改QoS策略组的名称或带宽限制。
+     * 修改高可用虚拟IP的名称或绑定的安全组。
      */
-    public function ModifyQosPolicyGroup(Models\ModifyQosPolicyGroupRequest $request): Models\ModifyQosPolicyGroupResponse
+    public function ModifyHaVipAttribute(Models\ModifyHaVipAttributeRequest $request): Models\ModifyHaVipAttributeResponse
     {
-        return $this->call('ModifyQosPolicyGroup', $request, Models\ModifyQosPolicyGroupResponse::class);
+        return $this->call('ModifyHaVipAttribute', $request, Models\ModifyHaVipAttributeResponse::class);
     }
 
     /**
-     * 向QoS策略组中添加EIP、IPv6或UNMANAGED出口IP。
+     * 删除高可用虚拟IP。
      */
-    public function AddQosPolicyGroupMembers(Models\AddQosPolicyGroupMembersRequest $request): Models\AddQosPolicyGroupMembersResponse
+    public function DeleteHaVip(Models\DeleteHaVipRequest $request): Models\DeleteHaVipResponse
     {
-        return $this->call('AddQosPolicyGroupMembers', $request, Models\AddQosPolicyGroupMembersResponse::class);
+        return $this->call('DeleteHaVip', $request, Models\DeleteHaVipResponse::class);
     }
 
     /**
-     * 从QoS策略组中移除成员。
+     * 将高可用虚拟IP绑定到一台ZEC实例。
      */
-    public function RemoveQosPolicyGroupMembers(Models\RemoveQosPolicyGroupMembersRequest $request): Models\RemoveQosPolicyGroupMembersResponse
+    public function AssociateHaVip(Models\AssociateHaVipRequest $request): Models\AssociateHaVipResponse
     {
-        return $this->call('RemoveQosPolicyGroupMembers', $request, Models\RemoveQosPolicyGroupMembersResponse::class);
+        return $this->call('AssociateHaVip', $request, Models\AssociateHaVipResponse::class);
     }
 
     /**
-     * 删除一个QoS策略组。删除前需确保策略组内无成员。
+     * 将高可用虚拟IP从实例解绑。
      */
-    public function DeleteQosPolicyGroup(Models\DeleteQosPolicyGroupRequest $request): Models\DeleteQosPolicyGroupResponse
+    public function UnassociateHaVip(Models\UnassociateHaVipRequest $request): Models\UnassociateHaVipResponse
     {
-        return $this->call('DeleteQosPolicyGroup', $request, Models\DeleteQosPolicyGroupResponse::class);
-    }
-
-    /**
-     * 查询QoS策略组的聚合流量监控数据。
-     */
-    public function DescribeQosPolicyGroupTraffic(Models\DescribeQosPolicyGroupTrafficRequest $request): Models\DescribeQosPolicyGroupTrafficResponse
-    {
-        return $this->call('DescribeQosPolicyGroupTraffic', $request, Models\DescribeQosPolicyGroupTrafficResponse::class);
+        return $this->call('UnassociateHaVip', $request, Models\UnassociateHaVipResponse::class);
     }
 }

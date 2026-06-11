@@ -28,13 +28,12 @@ class InquiryPriceCreateInstanceRequest extends AbstractModel
     public ?string $eipV4Type = null;
 
     /**
-     * NetworkLineType 公网IPv4的线路类型。
-     * 目前不支持三线IP(`ThreeLine`)。
+     * NetworkLineType 公网IPv4的线路类型。当`internetChargeType`有值时必填。
      */
     public ?string $networkLineType = null;
 
     /**
-     * InternetChargeType 公网IP的网络计费类型。
+     * InternetChargeType 公网IP的网络计费类型。如果不指定，则不会询价公网IP。
      */
     public ?string $internetChargeType = null;
 
