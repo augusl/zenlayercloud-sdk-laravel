@@ -7,7 +7,14 @@ namespace ZenlayerCloud\Laravel\Tests\Feature;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\DataProvider;
+use ZenlayerCloud\Laravel\Common\AbstractClient;
+use ZenlayerCloud\Laravel\Common\Config;
+use ZenlayerCloud\Laravel\Common\Credential;
+use ZenlayerCloud\Laravel\Common\CredentialInterface;
 use ZenlayerCloud\Laravel\Common\Exception\ZenlayerCloudSdkException;
+use ZenlayerCloud\Laravel\Common\Http\HttpClientFactory;
+use ZenlayerCloud\Laravel\Common\Signer;
 use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
 use ZenlayerCloud\Laravel\Tests\TestCase;
 use ZenlayerCloud\Laravel\Vm\V20260401\Models;
@@ -41,15 +48,27 @@ final class VmClientTest extends TestCase
         self::assertTrue($resp->response->zoneSet[0]->supportIpv6);
 
         Http::assertSent(function (Request $r) {
+            $timestamp = (int) $r->header('x-zc-timestamp')[0];
+            $expectedAuthorization = (new Signer)->sign(
+                method: 'POST',
+                host: 'console.zenlayer.com',
+                contentType: 'application/json',
+                payload: '{}',
+                timestamp: $timestamp,
+                secretKeyId: 'AKID-default-test',
+                secretKeyPassword: 'SK-default-secret',
+            );
+
             return $r->method() === 'POST'
                 && $r->url() === 'https://console.zenlayer.com/api/v2/vm'
+                && $r->header('Content-Type')[0] === 'application/json'
                 && $r->header('x-zc-action')[0] === 'DescribeZones'
                 && $r->header('x-zc-service')[0] === 'vm'
                 && $r->header('x-zc-version')[0] === '2026-04-01'
                 && $r->header('x-zc-signature-method')[0] === 'ZC2-HMAC-SHA256'
                 && $r->header('x-zc-sdk-lang')[0] === 'PHP'
                 && str_starts_with($r->header('x-zc-sdk-version')[0], 'SDK_PHP_')
-                && str_starts_with($r->header('Authorization')[0], 'ZC2-HMAC-SHA256 Credential=AKID-default-test, SignedHeaders=content-type;host, Signature=')
+                && $r->header('Authorization')[0] === $expectedAuthorization
                 && $r->body() === '{}';
         });
     }
@@ -148,6 +167,8 @@ final class VmClientTest extends TestCase
         } catch (ZenlayerCloudSdkException $e) {
             self::assertSame('INVALID_PARAMETER', $e->errorCode);
             self::assertSame('req-err', $e->requestId);
+            self::assertSame('ZoneId is required.', $e->errorMessage);
+            self::assertSame('ZoneId is required.', $e->getErrorMessage());
             self::assertStringContainsString('ZoneId is required.', $e->getMessage());
         }
     }
@@ -176,9 +197,12 @@ final class VmClientTest extends TestCase
 
     public function test_connection_failure_raises_network_error(): void
     {
-        Http::fake([
-            'console.zenlayer.com/*' => Http::failedConnection('DNS lookup failed'),
-        ]);
+        // Laravel 11.0 predates the Http::failedConnection() test helper, so
+        // throw the same framework exception directly to keep the package's
+        // minimum-version test suite executable.
+        Http::fake(function () {
+            throw new ConnectionException('DNS lookup failed');
+        });
 
         try {
             ZenlayerCloud::vm()->DescribeZones(new Models\DescribeZonesRequest);
@@ -277,6 +301,43 @@ final class VmClientTest extends TestCase
         }
     }
 
+    #[DataProvider('malformedErrorEnvelopeProvider')]
+    public function test_malformed_error_envelope_field_types_are_rejected(array $body): void
+    {
+        Http::fake([
+            'console.zenlayer.com/*' => Http::response($body, 400),
+        ]);
+
+        try {
+            ZenlayerCloud::vm()->DescribeZones(new Models\DescribeZonesRequest);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_JSON_PARSE, $e->errorCode);
+        }
+    }
+
+    /** @return array<string,array{array<string,mixed>}> */
+    public static function malformedErrorEnvelopeProvider(): array
+    {
+        return [
+            'code is an object' => [[
+                'requestId' => 'r',
+                'code' => ['nested' => 'INVALID'],
+                'message' => 'bad',
+            ]],
+            'message is a list' => [[
+                'requestId' => 'r',
+                'code' => 'INVALID',
+                'message' => ['bad'],
+            ]],
+            'request id is numeric' => [[
+                'requestId' => 123,
+                'code' => 'INVALID',
+                'message' => 'bad',
+            ]],
+        ];
+    }
+
     public function test_malformed_success_body_surfaces_as_json_parse_error(): void
     {
         Http::fake([
@@ -296,8 +357,11 @@ final class VmClientTest extends TestCase
         // Upstream contract: transport-level failures (DNS, refused, TLS,
         // timeout) surface as the typed exception with NETWORK_ERROR — the
         // caller must never need to catch Laravel's ConnectionException.
-        Http::fake(function () {
-            throw new ConnectionException('cURL error 7: Failed to connect to console.zenlayer.com');
+        $proxy = 'http://proxy-user:proxy-pass@proxy.invalid:8080';
+        $this->app['config']->set('zenlayercloud.connections.default.proxy', $proxy);
+
+        Http::fake(function () use ($proxy) {
+            throw new ConnectionException("cURL error 7: SK-default-secret failed through {$proxy}");
         });
 
         try {
@@ -306,15 +370,107 @@ final class VmClientTest extends TestCase
         } catch (ZenlayerCloudSdkException $e) {
             self::assertSame(ZenlayerCloudSdkException::ERR_NETWORK, $e->errorCode);
             self::assertStringContainsString('cURL error 7', $e->getMessage());
+            self::assertStringNotContainsString('SK-default-secret', $e->getMessage());
+            self::assertStringNotContainsString('proxy-pass', $e->getMessage());
             self::assertInstanceOf(ConnectionException::class, $e->getPrevious());
+            self::assertStringNotContainsString('SK-default-secret', $e->getPrevious()->getMessage());
+            self::assertStringNotContainsString('proxy-pass', $e->getPrevious()->getMessage());
         }
+    }
+
+    public function test_transport_redaction_uses_the_exact_rotating_credential_for_the_attempt(): void
+    {
+        $credential = new class implements CredentialInterface
+        {
+            public int $secretReads = 0;
+
+            public function getSecretKeyId(): string
+            {
+                return 'overlap';
+            }
+
+            public function getSecretKeyPassword(): string
+            {
+                $this->secretReads++;
+
+                return 'overlap-long-'.$this->secretReads;
+            }
+
+            public function getToken(): ?string
+            {
+                return null;
+            }
+        };
+        $proxy = 'http://proxy-user:proxy%2Dpass@proxy.invalid:8080';
+
+        Http::fake(function () use ($proxy) {
+            throw new ConnectionException(
+                "failed with overlap-long-1 / overlap through {$proxy}; user=proxy-user pass=proxy-pass encoded=proxy%2Dpass",
+            );
+        });
+
+        $client = new VmClient(
+            $credential,
+            new Config(proxy: $proxy),
+            $this->app->make(HttpClientFactory::class),
+            $this->app->make(Signer::class),
+        );
+
+        try {
+            $client->DescribeZones(new Models\DescribeZonesRequest);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_NETWORK, $e->errorCode);
+            self::assertNotNull($e->getPrevious());
+            foreach (['overlap-long-1', 'overlap', $proxy, 'proxy-user', 'proxy-pass', 'proxy%2Dpass'] as $secret) {
+                self::assertStringNotContainsString($secret, $e->getMessage());
+                self::assertStringNotContainsString($secret, $e->getPrevious()->getMessage());
+            }
+        }
+
+        self::assertSame(1, $credential->secretReads, 'Redaction must not re-read a rotating credential.');
+    }
+
+    public function test_invalid_utf8_request_is_wrapped_before_any_http_request(): void
+    {
+        Http::fake();
+        $request = new Models\CreateInstancesRequest;
+        $request->password = "\xB1\x31";
+
+        try {
+            ZenlayerCloud::vm()->CreateInstances($request);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_INVALID_REQUEST, $e->errorCode);
+            self::assertInstanceOf(\JsonException::class, $e->getPrevious());
+        }
+
+        Http::assertNothingSent();
+    }
+
+    public function test_invalid_nested_model_list_is_wrapped_before_any_http_request(): void
+    {
+        Http::fake();
+        $request = new Models\CreateInstancesRequest;
+        $request->dataDisks = [['diskSize' => 100]];
+
+        try {
+            ZenlayerCloud::vm()->CreateInstances($request);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_INVALID_REQUEST, $e->errorCode);
+            self::assertInstanceOf(\TypeError::class, $e->getPrevious());
+        }
+
+        Http::assertNothingSent();
     }
 
     public function test_http_errors_are_never_retried_even_with_retry_enabled(): void
     {
         // The 'staging' connection enables retry (retry_max 5). An HTTP 400
         // must NOT be retried — Actions like CreateInstances are not
-        // idempotent, and the upstream contract retries network errors only.
+        // idempotent. Rate-limit responses are the only HTTP errors that the
+        // official SDK contract retries.
         Http::fake([
             'staging.zenlayer.local/*' => Http::response([
                 'requestId' => 'r',
@@ -331,6 +487,209 @@ final class VmClientTest extends TestCase
         }
 
         Http::assertSentCount(1);
+    }
+
+    public function test_rate_limit_response_is_retried_until_success(): void
+    {
+        $attempts = 0;
+        Http::fake(function () use (&$attempts) {
+            $attempts++;
+            if ($attempts < 3) {
+                return Http::response([
+                    'requestId' => 'rate-'.$attempts,
+                    'code' => ZenlayerCloudSdkException::ERR_RATE_LIMIT_EXCEEDED,
+                    'message' => 'Too many requests.',
+                ], 429);
+            }
+
+            return Http::response(['requestId' => 'ok', 'response' => ['requestId' => 'ok']], 200);
+        });
+
+        $response = ZenlayerCloud::vm()->DescribeZones(new Models\DescribeZonesRequest);
+
+        self::assertSame('ok', $response->requestId);
+        self::assertSame(3, $attempts);
+    }
+
+    public function test_rate_limit_retry_rebuilds_hmac_authentication(): void
+    {
+        $credential = new class implements CredentialInterface
+        {
+            public int $secretReads = 0;
+
+            public function getSecretKeyId(): string
+            {
+                return 'AKID-retry-test';
+            }
+
+            public function getSecretKeyPassword(): string
+            {
+                $this->secretReads++;
+
+                return 'SK-retry-test-'.$this->secretReads;
+            }
+
+            public function getToken(): ?string
+            {
+                return null;
+            }
+        };
+
+        Http::fakeSequence()
+            ->push([
+                'requestId' => 'limited',
+                'code' => ZenlayerCloudSdkException::ERR_RATE_LIMIT_EXCEEDED,
+                'message' => 'Slow down.',
+            ], 429)
+            ->push(['requestId' => 'ok', 'response' => ['requestId' => 'ok']], 200);
+
+        $client = new VmClient(
+            $credential,
+            new Config(rateLimitMaxRetries: 1, rateLimitRetryDelayMs: 0),
+            $this->app->make(HttpClientFactory::class),
+            $this->app->make(Signer::class),
+        );
+        $client->DescribeZones(new Models\DescribeZonesRequest);
+
+        self::assertSame(2, $credential->secretReads, 'Every physical retry must be signed independently.');
+    }
+
+    public function test_rate_limit_delay_honours_retry_after_seconds(): void
+    {
+        $client = new VmClient(
+            new Credential('key', 'secret'),
+            new Config(rateLimitRetryDelayMs: 250),
+            $this->app->make(HttpClientFactory::class),
+            $this->app->make(Signer::class),
+        );
+        $method = new \ReflectionMethod(
+            AbstractClient::class,
+            'rateLimitDelayMilliseconds',
+        );
+
+        self::assertSame(250, $method->invoke($client, 0, null));
+        self::assertSame(4000, $method->invoke($client, 4, null));
+        self::assertSame(7000, $method->invoke($client, 1, '7'));
+        self::assertSame(500, $method->invoke($client, 1, 'not-seconds'));
+        self::assertSame(500, $method->invoke($client, 1, '-1'));
+    }
+
+    public function test_request_limit_error_code_is_retried_even_without_http_429(): void
+    {
+        Http::fakeSequence()
+            ->push([
+                'requestId' => 'limited',
+                'code' => ZenlayerCloudSdkException::ERR_RATE_LIMIT_EXCEEDED,
+                'message' => 'Slow down.',
+            ], 503)
+            ->push(['requestId' => 'ok', 'response' => ['requestId' => 'ok']], 200);
+
+        $response = ZenlayerCloud::vm()->DescribeZones(new Models\DescribeZonesRequest);
+
+        self::assertSame('ok', $response->requestId);
+        Http::assertSentCount(2);
+    }
+
+    public function test_rate_limit_retry_exhaustion_preserves_api_error(): void
+    {
+        Http::fake([
+            'console.zenlayer.com/*' => Http::response([
+                'requestId' => 'limited-final',
+                'code' => ZenlayerCloudSdkException::ERR_RATE_LIMIT_EXCEEDED,
+                'message' => 'Still limited.',
+            ], 429),
+        ]);
+
+        try {
+            ZenlayerCloud::vm()->DescribeZones(new Models\DescribeZonesRequest);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_RATE_LIMIT_EXCEEDED, $e->errorCode);
+            self::assertSame('limited-final', $e->requestId);
+        }
+
+        Http::assertSentCount(4); // first request + three official-default retries
+    }
+
+    public function test_rate_limit_retries_can_be_disabled(): void
+    {
+        $this->app['config']->set('zenlayercloud.connections.default.rate_limit_max_retries', 0);
+        Http::fake([
+            'console.zenlayer.com/*' => Http::response([
+                'requestId' => 'limited-once',
+                'code' => ZenlayerCloudSdkException::ERR_RATE_LIMIT_EXCEEDED,
+                'message' => 'No retry.',
+            ], 429),
+        ]);
+
+        try {
+            ZenlayerCloud::vm()->DescribeZones(new Models\DescribeZonesRequest);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_RATE_LIMIT_EXCEEDED, $e->errorCode);
+        }
+
+        Http::assertSentCount(1);
+    }
+
+    public function test_cloudflare_security_challenge_has_dedicated_error(): void
+    {
+        Http::fake([
+            'console.zenlayer.com/*' => Http::response(
+                '<html>challenge</html>',
+                403,
+                ['cf-mitigated' => 'challenge'],
+            ),
+        ]);
+
+        try {
+            ZenlayerCloud::vm()->DescribeZones(new Models\DescribeZonesRequest);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_SECURITY_CHALLENGE, $e->errorCode);
+            self::assertNull($e->requestId);
+        }
+    }
+
+    public function test_http_451_has_dedicated_request_blocked_error(): void
+    {
+        Http::fake([
+            'console.zenlayer.com/*' => Http::response('<html>blocked</html>', 451),
+        ]);
+
+        try {
+            ZenlayerCloud::vm()->DescribeZones(new Models\DescribeZonesRequest);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_REQUEST_BLOCKED, $e->errorCode);
+        }
+    }
+
+    #[DataProvider('invalidSuccessEnvelopeProvider')]
+    public function test_invalid_success_envelope_is_rejected(mixed $body): void
+    {
+        Http::fake([
+            'console.zenlayer.com/*' => Http::response($body, 200),
+        ]);
+
+        try {
+            ZenlayerCloud::vm()->DescribeZones(new Models\DescribeZonesRequest);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_JSON_PARSE, $e->errorCode);
+            self::assertStringContainsString('Response shape mismatch', $e->getMessage());
+        }
+    }
+
+    /** @return array<string,array{mixed}> */
+    public static function invalidSuccessEnvelopeProvider(): array
+    {
+        return [
+            'top-level list' => [[]],
+            'missing response' => [['requestId' => 'r']],
+            'response is list' => [['requestId' => 'r', 'response' => ['unexpected-item']]],
+            'response is null' => [['requestId' => 'r', 'response' => null]],
+        ];
     }
 
     public function test_connection_failures_are_retried_when_retry_enabled(): void
@@ -373,6 +732,27 @@ final class VmClientTest extends TestCase
         } catch (ZenlayerCloudSdkException $e) {
             self::assertSame(ZenlayerCloudSdkException::ERR_JSON_PARSE, $e->errorCode);
             self::assertSame('req-mismatch', $e->requestId);
+        }
+    }
+
+    public function test_scalar_list_item_type_mismatch_surfaces_as_json_parse_error(): void
+    {
+        Http::fake([
+            'console.zenlayer.com/*' => Http::response([
+                'requestId' => 'req-list-mismatch',
+                'response' => [
+                    'requestId' => 'req-list-mismatch',
+                    'instanceIdSet' => ['i-valid', 12345],
+                ],
+            ], 200),
+        ]);
+
+        try {
+            ZenlayerCloud::vm()->CreateInstances(new Models\CreateInstancesRequest);
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_JSON_PARSE, $e->errorCode);
+            self::assertSame('req-list-mismatch', $e->requestId);
         }
     }
 

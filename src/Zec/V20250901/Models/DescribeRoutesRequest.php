@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -11,6 +17,8 @@ class DescribeRoutesRequest extends AbstractModel
     /**
      * RouteIds 根据路由ID过滤。
      * 最多同时传入100个ID。
+     *
+     * @var list<string>|null
      */
     public ?array $routeIds = null;
 
@@ -51,4 +59,9 @@ class DescribeRoutesRequest extends AbstractModel
      * PageNum 返回的分页数。
      */
     public ?int $pageNum = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'routeIds' => 'string',
+    ];
 }

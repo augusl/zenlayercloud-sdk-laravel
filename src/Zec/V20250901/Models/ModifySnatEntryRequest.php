@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -16,6 +22,8 @@ class ModifySnatEntryRequest extends AbstractModel
     /**
      * EipIds SNAT规则添加的弹性公网IP ID集合。
      * 如果需要修改为NAT网关所有上弹性公网IP，请指定`isAllEip`=`true`。
+     *
+     * @var list<string>|null
      */
     public ?array $eipIds = null;
 
@@ -34,6 +42,8 @@ class ModifySnatEntryRequest extends AbstractModel
      * SourceCidrBlocks 源CIDR地址段列表。
      * 与`subnetIds`必须指定其中的一种。
      * 如果使用全地址段，指定为`0.0.0.0/0`。
+     *
+     * @var list<string>|null
      */
     public ?array $sourceCidrBlocks = null;
 
@@ -41,6 +51,15 @@ class ModifySnatEntryRequest extends AbstractModel
      * SubnetIds 要修改子网ID集合。
      * 该参数表示该子网内的实例均可以通过`SNAT`规则访问外部网络。
      * 与`sourceCidrBlocks`必须指定其中的一种。
+     *
+     * @var list<string>|null
      */
     public ?array $subnetIds = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'eipIds' => 'string',
+        'sourceCidrBlocks' => 'string',
+        'subnetIds' => 'string',
+    ];
 }

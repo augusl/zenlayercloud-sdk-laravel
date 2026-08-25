@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -11,6 +17,8 @@ class DescribeNetworkInterfacesRequest extends AbstractModel
     /**
      * NicIds 根据网卡ID过滤。
      * 最多传入100个ID。
+     *
+     * @var list<string>|null
      */
     public ?array $nicIds = null;
 
@@ -73,6 +81,8 @@ class DescribeNetworkInterfacesRequest extends AbstractModel
     /**
      * TagKeys 根据标签键进行搜索。
      * 最长不得超过20个标签键。
+     *
+     * @var list<string>|null
      */
     public ?array $tagKeys = null;
 
@@ -80,7 +90,7 @@ class DescribeNetworkInterfacesRequest extends AbstractModel
      * Tags 根据标签进行搜索。
      * 最长不得超过20个标签。
      *
-     * @var Tag[]|null
+     * @var list<Tag>|null
      */
     public ?array $tags = null;
 
@@ -94,5 +104,11 @@ class DescribeNetworkInterfacesRequest extends AbstractModel
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'tags' => Tag::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'nicIds' => 'string',
+        'tagKeys' => 'string',
     ];
 }

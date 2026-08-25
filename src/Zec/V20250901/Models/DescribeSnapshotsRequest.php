@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -13,6 +19,8 @@ class DescribeSnapshotsRequest extends AbstractModel
 {
     /**
      * SnapshotIds 根据快照ID列表进行过滤。
+     *
+     * @var list<string>|null
      */
     public ?array $snapshotIds = null;
 
@@ -28,6 +36,8 @@ class DescribeSnapshotsRequest extends AbstractModel
 
     /**
      * DiskIds 按照快照所属的Disk ID列表 过滤。
+     *
+     * @var list<string>|null
      */
     public ?array $diskIds = null;
 
@@ -61,4 +71,10 @@ class DescribeSnapshotsRequest extends AbstractModel
      * ResourceGroupId 根据资源组ID过滤。
      */
     public ?string $resourceGroupId = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'snapshotIds' => 'string',
+        'diskIds' => 'string',
+    ];
 }

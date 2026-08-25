@@ -30,12 +30,19 @@ class ZenlayerCloudServiceProvider extends ServiceProvider
 
         $this->app->singleton(
             HttpClientFactory::class,
-            static fn (Container $app): HttpClientFactory => new HttpClientFactory($app->make(HttpFactory::class)),
+            static fn (Container $app): HttpClientFactory => new HttpClientFactory(
+                $app->make(HttpFactory::class),
+                $app->make('log'),
+            ),
         );
 
         $this->app->singleton(
             ZenlayerCloudManager::class,
-            static fn (Container $app): ZenlayerCloudManager => new ZenlayerCloudManager($app, $app->make('config')),
+            static fn (Container $app): ZenlayerCloudManager => new ZenlayerCloudManager(
+                $app->make('config'),
+                $app->make(HttpClientFactory::class),
+                $app->make(Signer::class),
+            ),
         );
 
         // Convenience auto-wiring: type-hint VmClient / ZecClient anywhere and

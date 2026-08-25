@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -21,6 +27,8 @@ class DescribeNatGatewaysRequest extends AbstractModel
     /**
      * NatGatewayIds NAT网关ID集合。
      * 实例ID数量上限为100个。
+     *
+     * @var list<string>|null
      */
     public ?array $natGatewayIds = null;
 
@@ -58,6 +66,8 @@ class DescribeNatGatewaysRequest extends AbstractModel
     /**
      * TagKeys 根据标签键进行搜索。
      * 最长不得超过20个标签键。
+     *
+     * @var list<string>|null
      */
     public ?array $tagKeys = null;
 
@@ -65,12 +75,18 @@ class DescribeNatGatewaysRequest extends AbstractModel
      * Tags 根据标签进行搜索。
      * 最长不得超过20个标签。
      *
-     * @var Tag[]|null
+     * @var list<Tag>|null
      */
     public ?array $tags = null;
 
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'tags' => Tag::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'natGatewayIds' => 'string',
+        'tagKeys' => 'string',
     ];
 }

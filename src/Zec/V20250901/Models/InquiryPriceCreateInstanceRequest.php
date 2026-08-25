@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -14,16 +20,16 @@ class InquiryPriceCreateInstanceRequest extends AbstractModel
     public ?string $zoneId = null;
 
     /**
-     * InstanceType 实例机型。
-     * 具体取值可通过调用接口[DescribeZoneInstanceConfigInfos](describezoneinstanceconfiginfos.md)来获得最新的规格表。
+     * InstanceType 实例机型。普通实例取值可通过[DescribeZoneInstanceConfigInfos](describezoneinstanceconfiginfos.md)获得；GPU 实例取值可通过[DescribeZoneGpuInstanceConfigInfos](describezonegpuinstanceconfiginfos.md)获得。
      */
     public ?string $instanceType = null;
 
     /**
      * Deprecated: EipV4Type 已废弃，请不要使用。
      * EipV4Type 公网IPv4的线路类型。
-     * 目前不支持三线IP(`ThreeLine`)。
      * 已废弃，请使用`networkLineType`。
+     *
+     * @deprecated
      */
     public ?string $eipV4Type = null;
 
@@ -61,7 +67,20 @@ class InquiryPriceCreateInstanceRequest extends AbstractModel
     public ?SystemDisk $systemDisk = null;
 
     /**
-     * DataDisk 数据盘相关信息。
+     * DataDisk 数据盘相关信息。只能配置1块数据盘，配置多块数据盘请使用`dataDisks`；同时指定时以`dataDisks`为准。
      */
     public ?DataDisk $dataDisk = null;
+
+    /**
+     * DataDisks 数据盘相关信息，支持传入多块数据盘。
+     * 若不指定该参数，则回退使用`dataDisk`。
+     *
+     * @var list<DataDisk>|null
+     */
+    public ?array $dataDisks = null;
+
+    /** @var array<string,class-string<AbstractModel>> */
+    protected static array $_typeMap = [
+        'dataDisks' => DataDisk::class,
+    ];
 }

@@ -2,15 +2,17 @@
 
 [![tests](https://github.com/augusl/zenlayercloud-sdk-laravel/actions/workflows/tests.yml/badge.svg)](https://github.com/augusl/zenlayercloud-sdk-laravel/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![PHP](https://img.shields.io/badge/php-%5E8.2-777BB4.svg)]()
-[![Laravel](https://img.shields.io/badge/laravel-11%20%7C%2012%20%7C%2013-FF2D20.svg)]()
+[![PHP](https://img.shields.io/badge/php-%5E8.2-777BB4.svg)](https://www.php.net/supported-versions.php)
+[![Laravel](https://img.shields.io/badge/laravel-11%20%7C%2012%20%7C%2013-FF2D20.svg)](https://laravel.com/docs/releases)
 
 中文 · [English](README.md)
 
 > **非官方、社区维护的 SDK。** 本项目与 Zenlayer 公司**没有任何隶属关系**，也
-> **未获得**其官方授权或背书；由社区贡献者依据 Zenlayer Cloud 的公开 OpenAPI
-> 文档独立实现。Bug 反馈和功能建议提到本仓库；Zenlayer Cloud 产品问题请咨询
-> [官方文档站](https://docs.console.zenlayer.com/api-reference/cn)。
+> **未获得**其官方授权或背书；项目依据 Zenlayer Cloud 的公开 OpenAPI 文档及
+> Apache-2.0 授权的官方 Go/Python SDK 源码维护，审计版本完整记录于
+> [UPSTREAM.md](UPSTREAM.md)。
+> Bug 反馈和功能建议提到本仓库；Zenlayer Cloud 产品问题请咨询
+> [官方文档站](https://docs.console.zenlayer.com/api-reference/compute)。
 
 为 [Zenlayer Cloud](https://www.zenlayer.com/) 提供原生的 Laravel 集成：自动注册
 ServiceProvider 与 Facade、可发布的连接配置、基于 `Illuminate\Http\Client`
@@ -19,7 +21,10 @@ ServiceProvider 与 Facade、可发布的连接配置、基于 `Illuminate\Http\
 `v0.1.x` 覆盖**算力**产品组：
 
 - **虚拟机 (VM)** — API 版本 `2026-04-01`，共 62 个 Action。
-- **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 214 个 Action。
+- **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 225 个 Action。
+
+当前生成代码合计包含 287 个 Action、974 个模型类。上游版本与已知文档差异记录在
+[UPSTREAM.md](UPSTREAM.md)。
 
 每个 Action 都映射为一个带强类型 Request / Response 的 PHP 方法，IDE 全程提示。
 
@@ -30,9 +35,17 @@ ServiceProvider 与 Facade、可发布的连接配置、基于 `Illuminate\Http\
 | 组件       | 版本                     |
 |------------|--------------------------|
 | PHP        | `^8.2`                   |
+| 运行平台   | 64 位                    |
+| Composer   | `2.x`                    |
 | Laravel    | `11.x` · `12.x` · `13.x` |
 | `ext-json` | 内置启用                 |
 | `ext-hash` | 内置启用                 |
+
+64 位要求是有意保留的：官方 VM/ZEC schema 包含多处有符号 `int64` 计数器和限额，
+32 位 PHP 整数无法无损表示。
+
+Laravel 11 仍为已有项目保留兼容性测试，但其官方安全维护期已经结束；新生产项目应使用
+仍在官方支持期内的 Laravel 版本。
 
 ## 安装
 
@@ -91,7 +104,7 @@ use ZenlayerCloud\Laravel\Vm\V20260401\Models\DescribeZonesRequest;
 
 $response = ZenlayerCloud::vm()->DescribeZones(new DescribeZonesRequest());
 
-foreach ($response->response->zoneSet as $zone) {
+foreach (($response->response?->zoneSet ?? []) as $zone) {
     echo $zone->zoneId, ' ', $zone->zoneName, PHP_EOL;
 }
 ```
@@ -118,8 +131,8 @@ $req->systemDisk->diskSize          = 50;
 $resp = ZenlayerCloud::vm()->CreateInstances($req);
 
 logger()->info('订单已下达', [
-    'order'     => $resp->response->orderNumber,
-    'instances' => $resp->response->instanceIdSet ?? [],
+    'order'     => $resp->response?->orderNumber,
+    'instances' => $resp->response?->instanceIdSet ?? [],
 ]);
 ```
 
@@ -131,7 +144,7 @@ use ZenlayerCloud\Laravel\Zec\V20250901\Models\DescribeVpcsRequest;
 
 $resp = ZenlayerCloud::zec()->DescribeVpcs(new DescribeVpcsRequest());
 
-foreach ($resp->response->dataSet as $vpc) {
+foreach (($resp->response?->dataSet ?? []) as $vpc) {
     echo $vpc->vpcId, PHP_EOL;
 }
 ```
@@ -151,18 +164,27 @@ try {
         'Zenlayer 错误 %s (RequestId %s): %s',
         $e->errorCode,
         $e->requestId ?? '-',
-        $e->getMessage(),
+        $e->getErrorMessage(),
     ));
 }
 ```
 
 异常对象提供 `$e->errorCode`（取值如 `INVALID_PARAMETER`、`NETWORK_ERROR`、
-`CREDENTIAL_VALUE_MISSING`、`CONFIG_INVALID`）和 `$e->requestId`（用于日志关联）。
+`REQUEST_LIMIT_EXCEEDED`、`SECURITY_CHALLENGE`、`REQUEST_BLOCKED`、
+`SDK_INVALID_REQUEST`、`CREDENTIAL_VALUE_MISSING`、`CONFIG_INVALID`）和
+`$e->requestId`（用于日志关联）。API/SDK 原始错误文本可通过 `$e->errorMessage`
+或 `$e->getErrorMessage()` 读取；`$e->getMessage()` 是包含错误码和 RequestId 的完整格式。
 传输层失败（DNS、连接拒绝、TLS、超时）统一包装为 `NETWORK_ERROR`——
 无需单独捕获 Laravel 的 `ConnectionException`。
 
-开启 `retry` 后**只重试网络层失败**——HTTP 错误响应绝不重试，因此
-`CreateInstances` 这类非幂等 Action 不会被重复执行。
+重试分为两套互不混淆的策略：
+
+- `retry` 默认关闭，开启后只重试连接层失败。但超时可能发生在服务端已经接收写请求
+  之后，因此开启它仍可能重复执行非幂等 Action；写操作只有在能接受该风险时才应开启。
+  普通 HTTP 错误不会自动重试。
+- `REQUEST_LIMIT_EXCEEDED` / HTTP 429 与官方 SDK 一致，默认额外重试 3 次，
+  退避时间为 1、2、4 秒；若响应提供整数秒 `Retry-After`，实际等待时间不会短于
+  该值。将 `rate_limit_max_retries` 设为 `0` 可关闭。
 
 ---
 
@@ -185,6 +207,8 @@ return [
             'timeout'             => (int) env('ZENLAYER_TIMEOUT', 60),
             'retry'               => (bool) env('ZENLAYER_RETRY', false),
             'retry_max'           => (int) env('ZENLAYER_RETRY_MAX', 3),
+            'rate_limit_max_retries' => (int) env('ZENLAYER_RATE_LIMIT_MAX_RETRIES', 3),
+            'rate_limit_retry_delay_ms' => (int) env('ZENLAYER_RATE_LIMIT_RETRY_DELAY_MS', 1000),
             'debug'               => (bool) env('ZENLAYER_DEBUG', false),
             'proxy'               => env('ZENLAYER_PROXY'),
             'verify'              => env('ZENLAYER_VERIFY', true), // true | false | CA 证书路径
@@ -197,6 +221,11 @@ return [
     ],
 ];
 ```
+
+`endpoint` 仅接受 `host[:port]` 或完整的 `http(s)://host[:port]`；账号信息、路径、
+query、fragment 和不支持的 scheme 会直接报配置错误。`debug` 只向 Laravel 的
+PSR-3 logger 记录 method、URL、service、Action 和状态码，绝不记录 Authorization
+或请求/响应正文。
 
 切换连接：
 
@@ -230,7 +259,7 @@ Http::fake([
 
 $resp = ZenlayerCloud::vm()->DescribeZones(new DescribeZonesRequest());
 
-self::assertSame('SEL-A', $resp->response->zoneSet[0]->zoneId);
+self::assertSame('SEL-A', $resp->response?->zoneSet[0]->zoneId);
 
 Http::assertSent(fn ($r) => $r->header('x-zc-action')[0] === 'DescribeZones');
 ```
@@ -242,8 +271,8 @@ Http::assertSent(fn ($r) => $r->header('x-zc-action')[0] === 'DescribeZones');
 - **方法名沿用 Action 原始 PascalCase**——如 `DescribeInstances`、`CreateInstances`、
   `ModifyInstancesAttribute`。这样从 Zenlayer API 文档复制方法名到 PHP 代码不会有
   大小写歧义。仓库自带的 `pint.json` 不对这些生成的客户端方法强制 PSR-12 camelCase。
-- **模型是纯数据对象**——所有字段都是 public typed nullable property。未赋值的字段
-  不会出现在最终发送的 JSON 里。
+- **模型是 Laravel 友好的数据对象**——所有字段都是 public typed nullable property，
+  并实现 `Arrayable` 与 `JsonSerializable`。未赋值字段不会出现在最终 JSON 里。
 - **响应统一为包装对象**——每个 Action 返回 `XxxResponse`，顶层有 `requestId`，业务字段在
   `response` 嵌套对象里。访问示例：`$resp->response->...`。
 
@@ -265,8 +294,8 @@ composer lint:fix
 # 静态分析
 composer analyse
 
-# 从上游 schema 重新生成 Client + Model 类
-ZENLAYER_SCHEMA_SRC=/path/to/upstream/schema composer codegen
+# 从官方 Go SDK 的 zenlayercloud 目录重新生成 Client + Model
+composer codegen -- /path/to/zenlayercloud-sdk-go/zenlayercloud
 ```
 
 完整贡献者流程参考 [CONTRIBUTING.md](CONTRIBUTING.md)。
@@ -285,7 +314,7 @@ issue。
 
 ## License
 
-Apache-2.0 — 见 [LICENSE](LICENSE)。
+Apache-2.0 — 见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)。
 
 ## 免责声明
 

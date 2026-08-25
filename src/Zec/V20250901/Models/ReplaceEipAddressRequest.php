@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -14,7 +20,7 @@ class ReplaceEipAddressRequest extends AbstractModel
     /**
      * ReplaceIps 需要替换的弹性公网IP信息。
      *
-     * @var ReplaceIp[]|null
+     * @var list<ReplaceIp>|null
      */
     public ?array $replaceIps = null;
 

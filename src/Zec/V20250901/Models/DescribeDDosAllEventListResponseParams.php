@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -21,7 +27,7 @@ class DescribeDDosAllEventListResponseParams extends AbstractModel
     /**
      * DataSet 攻击事件列表的数据。
      *
-     * @var AttackEventInfo[]|null
+     * @var list<AttackEventInfo>|null
      */
     public ?array $dataSet = null;
 

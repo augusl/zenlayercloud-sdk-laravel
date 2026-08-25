@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -27,8 +33,7 @@ class InstanceInfo extends AbstractModel
     public ?string $zoneId = null;
 
     /**
-     * InstanceType CPU 规格。
-     * 如果是GPU实例，该字段取值为null。
+     * InstanceType 规格唯一ID。
      */
     public ?string $instanceType = null;
 
@@ -77,17 +82,21 @@ class InstanceInfo extends AbstractModel
     /**
      * DataDisks 实例上挂载的数据盘信息。
      *
-     * @var DataDisk[]|null
+     * @var list<DataDisk>|null
      */
     public ?array $dataDisks = null;
 
     /**
      * PublicIpAddresses 实例上公网IPv4列表。
+     *
+     * @var list<string>|null
      */
     public ?array $publicIpAddresses = null;
 
     /**
      * PrivateIpAddresses 实例上内网IP列表。
+     *
+     * @var list<string>|null
      */
     public ?array $privateIpAddresses = null;
 
@@ -144,7 +153,7 @@ class InstanceInfo extends AbstractModel
     /**
      * Nics 实例上绑定的网卡信息。
      *
-     * @var NicInfo[]|null
+     * @var list<NicInfo>|null
      */
     public ?array $nics = null;
 
@@ -155,6 +164,8 @@ class InstanceInfo extends AbstractModel
 
     /**
      * LoadBalancerIds 实例上绑定的负载均衡ID列表。
+     *
+     * @var list<string>|null
      */
     public ?array $loadBalancerIds = null;
 
@@ -172,5 +183,12 @@ class InstanceInfo extends AbstractModel
     protected static array $_typeMap = [
         'dataDisks' => DataDisk::class,
         'nics' => NicInfo::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'publicIpAddresses' => 'string',
+        'privateIpAddresses' => 'string',
+        'loadBalancerIds' => 'string',
     ];
 }

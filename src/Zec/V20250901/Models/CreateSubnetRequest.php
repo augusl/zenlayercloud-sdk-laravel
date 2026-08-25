@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -17,10 +23,8 @@ class CreateSubnetRequest extends AbstractModel
     public ?string $vpcId = null;
 
     /**
-     * Name 子网名称。
-     * 范围2到63个字符。
-     * 仅支持输入字母、数字、-和英文句点(.)。
-     * 且必须以数字或字母开头和结尾。
+     * Name 子网名称，用于展示。
+     * 该参数需以数字或字母开头和结尾，长度为2到63个字符，仅支持字母、数字、连字符(-)和英文句点(.)。
      */
     public ?string $name = null;
 

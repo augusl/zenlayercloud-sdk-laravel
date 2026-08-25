@@ -11,10 +11,8 @@ declare(strict_types=1);
  * Response, and nested Params/Info type. The generated tree is committed to
  * version control — package consumers never need to run this script.
  *
- *     ZENLAYER_SCHEMA_SRC=/path/to/upstream/schema composer codegen
- *
- * If `ZENLAYER_SCHEMA_SRC` is unset the default development path is used
- * (override it when regenerating in CI or against a fresh schema drop).
+ *     composer codegen -- /path/to/zenlayercloud-sdk-go/zenlayercloud
+ *     ZENLAYER_SCHEMA_SRC=/path/to/zenlayercloud-sdk-go/zenlayercloud composer codegen
  *
  * The expected schema is a typed-struct DSL where each field declaration has
  * the form `FieldName <Type> \`json:"jsonName,omitempty"\``. Supported types:
@@ -24,20 +22,24 @@ declare(strict_types=1);
  *   *bool                    -> ?bool
  *   *float32, *float64       -> ?float
  *   *Xxx                     -> ?Xxx (nested AbstractModel)
- *   []string, []int, ...     -> ?array of scalars
+ *   []string, []int, ...     -> ?array of runtime-validated scalars
  *   []*Xxx / []Xxx           -> ?array of Xxx (added to $_typeMap)
  *   embeds of base types     -> (ignored)
  *   Response struct {...}    -> auto-promoted to `{Wrapper}Params` class
  */
 const ROOT = __DIR__.'/..';
-const DEFAULT_SCHEMA_SRC = '/tmp/zenlayer-research/zenlayercloud-sdk-go/zenlayercloud';
 
+/**
+ * @phpstan-type FieldInfo array{name:string,jsonName:string,goType:string,doc:?string}
+ * @phpstan-type StructInfo array{name:string,fields:list<FieldInfo>,doc:?string}
+ * @phpstan-type ActionInfo array{action:string,requestType:string,responseType:string,doc:?string}
+ */
 final class SchemaParser
 {
-    /** @var array<string,array{name:string, fields:array<int,array>, doc:?string}> */
+    /** @var array<string,StructInfo> */
     public array $structs = [];
 
-    /** @var array<int,array{action:string, requestType:string, responseType:string, doc:?string}> */
+    /** @var list<ActionInfo> */
     public array $actions = [];
 
     public function __construct(
@@ -47,8 +49,51 @@ final class SchemaParser
 
     public function parse(): void
     {
-        $this->parseModels(file_get_contents($this->modelsSrcPath));
-        $this->parseClient(file_get_contents($this->clientSrcPath));
+        $modelsSource = file_get_contents($this->modelsSrcPath);
+        $clientSource = file_get_contents($this->clientSrcPath);
+
+        if ($modelsSource === false || $clientSource === false) {
+            throw new RuntimeException('Unable to read one or more upstream schema files.');
+        }
+
+        $this->parseModels($modelsSource);
+        $this->parseClient($clientSource);
+        $this->validate();
+    }
+
+    private function validate(): void
+    {
+        if ($this->structs === [] || $this->actions === []) {
+            throw new RuntimeException('Upstream schema contained no model structs or Action methods.');
+        }
+
+        $seenActions = [];
+        foreach ($this->actions as $action) {
+            if (isset($seenActions[$action['action']])) {
+                throw new RuntimeException("Duplicate Action [{$action['action']}] in upstream client.");
+            }
+            $seenActions[$action['action']] = true;
+
+            foreach (['requestType', 'responseType'] as $typeKey) {
+                $type = $action[$typeKey];
+                if (! isset($this->structs[$type])) {
+                    throw new RuntimeException("Action [{$action['action']}] references missing model [{$type}].");
+                }
+            }
+        }
+
+        foreach ($this->structs as $struct) {
+            $seenFields = [];
+            foreach ($struct['fields'] as $field) {
+                if (preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $field['name']) !== 1 || $field['name'] === 'this') {
+                    throw new RuntimeException("Model [{$struct['name']}] has unsupported JSON field name [{$field['name']}].");
+                }
+                if (isset($seenFields[$field['name']])) {
+                    throw new RuntimeException("Model [{$struct['name']}] contains duplicate JSON field [{$field['name']}].");
+                }
+                $seenFields[$field['name']] = true;
+            }
+        }
     }
 
     /**
@@ -79,6 +124,9 @@ final class SchemaParser
                 }
 
                 $fields = $this->parseFieldBlock($bodyLines, $structName);
+                if (isset($this->structs[$structName])) {
+                    throw new RuntimeException("Duplicate model struct [{$structName}] in upstream schema.");
+                }
                 $this->structs[$structName] = [
                     'name' => $structName,
                     'doc' => $doc,
@@ -90,7 +138,8 @@ final class SchemaParser
     }
 
     /**
-     * @return array<int,array{name:string, jsonName:string, goType:string, doc:?string}>
+     * @param  list<string>  $bodyLines
+     * @return list<FieldInfo>
      */
     private function parseFieldBlock(array $bodyLines, string $parentStruct): array
     {
@@ -126,7 +175,7 @@ final class SchemaParser
                 $inlineName = $m[1];
                 $inlineKey = $this->emitInlineStruct($parentStruct, $inlineName, $bodyLines, $idx);
                 // Now scan to closing brace line "}" followed by tag
-                $jsonName = $inlineName;
+                $jsonName = null;
                 while ($idx < $count) {
                     $inline = trim($bodyLines[$idx]);
                     if (preg_match('/^\}\s*`json:"([^",]+)/', $inline, $jm)) {
@@ -135,8 +184,13 @@ final class SchemaParser
                     }
                     $idx++;
                 }
+                if ($jsonName === null) {
+                    throw new RuntimeException(
+                        "Inline struct [{$parentStruct}.{$inlineName}] has no closing JSON field tag.",
+                    );
+                }
                 $fields[] = [
-                    'name' => lcfirst($inlineName),
+                    'name' => $jsonName,
                     'jsonName' => $jsonName,
                     'goType' => '*'.$inlineKey,
                     'doc' => $pending !== [] ? implode("\n", $pending) : null,
@@ -162,8 +216,9 @@ final class SchemaParser
                 continue;
             }
 
-            // Anything else: drop pending
-            $pending = [];
+            throw new RuntimeException(
+                "Unrecognized field declaration in [{$parentStruct}]: {$line}",
+            );
         }
 
         return $fields;
@@ -172,29 +227,38 @@ final class SchemaParser
     /**
      * Synthesize a class name and stash an inline struct as if it were a top-level struct.
      */
+    /** @param list<string> $bodyLines */
     private function emitInlineStruct(string $parentStruct, string $inlineName, array $bodyLines, int $startIdx): string
     {
         // Read inline body until matching "}" (allowing trailing tag)
         $inner = [];
         $idx = $startIdx + 1;
         $count = count($bodyLines);
+        $closed = false;
         while ($idx < $count) {
             $line = $bodyLines[$idx];
             $t = trim($line);
             if (preg_match('/^\}\s*`/', $t) || $t === '}') {
+                $closed = true;
                 break;
             }
             $inner[] = $line;
             $idx++;
         }
+        if (! $closed) {
+            throw new RuntimeException("Inline struct [{$parentStruct}.{$inlineName}] is not closed.");
+        }
 
         // Most common case: `Response struct { ... }` inside a {Action}Response.
         // Promote the inline struct to a top-level `{Action}ResponseParams`
         // class so the response wrapper can reference it via a typed property.
-        $synthName = preg_match('/Response$/', $parentStruct) === 1
+        $synthName = $inlineName === 'Response' && preg_match('/Response$/', $parentStruct) === 1
             ? $parentStruct.'Params'
             : $parentStruct.$inlineName;
 
+        if (isset($this->structs[$synthName])) {
+            throw new RuntimeException("Duplicate synthesized model [{$synthName}] in upstream schema.");
+        }
         $this->structs[$synthName] = [
             'name' => $synthName,
             'doc' => null,
@@ -204,6 +268,7 @@ final class SchemaParser
         return $synthName;
     }
 
+    /** @param list<string> $lines */
     private function collectDocAbove(array $lines, int $structLineIdx): ?string
     {
         $doc = [];
@@ -255,13 +320,78 @@ final class SchemaParser
                     'responseType' => $responseType,
                     'doc' => $doc,
                 ];
+            } elseif (str_starts_with($line, 'func (c *Client) ')) {
+                throw new RuntimeException("Unrecognized Client method signature: {$line}");
             }
         }
     }
 }
 
+/**
+ * Small, explicit corrections for fields published in the API reference but
+ * temporarily absent from both upstream language SDK schemas. Keeping these
+ * here makes regeneration deterministic and the divergence auditable.
+ */
+final class DocumentedSchemaOverrides
+{
+    public static function apply(string $service, SchemaParser $parser): void
+    {
+        if ($service !== 'zec') {
+            return;
+        }
+
+        self::addCreateEipsInstanceId($parser);
+    }
+
+    private static function addCreateEipsInstanceId(SchemaParser $parser): void
+    {
+        if (! isset($parser->structs['CreateEipsRequest'])) {
+            throw new RuntimeException('Documented override target [CreateEipsRequest] is missing.');
+        }
+        $model = &$parser->structs['CreateEipsRequest'];
+
+        foreach ($model['fields'] as $field) {
+            if ($field['name'] === 'instanceId') {
+                return; // Upstream has caught up; do not duplicate the field.
+            }
+        }
+
+        $insertAt = null;
+        foreach ($model['fields'] as $index => $field) {
+            if ($field['name'] === 'instanceIds') {
+                $insertAt = $index;
+                break;
+            }
+        }
+
+        if ($insertAt === null) {
+            throw new RuntimeException('Cannot place documented CreateEipsRequest.instanceId override.');
+        }
+
+        array_splice($model['fields'], $insertAt, 0, [[
+            'name' => 'instanceId',
+            'jsonName' => 'instanceId',
+            'goType' => '*string',
+            'doc' => 'InstanceId is the instance to bind all newly created EIPs to. When both `instanceId` and `instanceIds` are supplied, `instanceId` takes precedence. Documented at https://docs.console.zenlayer.com/api-reference/compute/zec/elastic-ip/createeips',
+        ]]);
+    }
+}
+
+/** @phpstan-import-type StructInfo from SchemaParser */
 final class PhpEmitter
 {
+    private const GENERATED_FILE_HEADER = <<<'PHP'
+<?php
+
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
+declare(strict_types=1);
+PHP;
+
     public function __construct(
         public readonly SchemaParser $parser,
         public readonly string $clientClassName,    // 'VmClient' / 'ZecClient'
@@ -273,10 +403,11 @@ final class PhpEmitter
         public readonly string $serviceDescription, // human-readable service label
     ) {}
 
+    /** @return array{models:int,actions:int} */
     public function emit(): array
     {
-        if (! is_dir($this->outModelsDir)) {
-            mkdir($this->outModelsDir, 0755, true);
+        if (! is_dir($this->outModelsDir) && ! mkdir($this->outModelsDir, 0755, true) && ! is_dir($this->outModelsDir)) {
+            throw new RuntimeException("Unable to create output directory [{$this->outModelsDir}].");
         }
 
         $modelCount = 0;
@@ -289,6 +420,16 @@ final class PhpEmitter
         return ['models' => $modelCount, 'actions' => count($this->parser->actions)];
     }
 
+    public function validateSchema(): void
+    {
+        foreach ($this->parser->structs as $info) {
+            foreach ($info['fields'] as $field) {
+                $this->mapGoTypeToPhp($field['goType']);
+            }
+        }
+    }
+
+    /** @param StructInfo $info */
     private function emitModel(array $info): void
     {
         $className = $info['name'];
@@ -296,6 +437,7 @@ final class PhpEmitter
 
         $properties = [];
         $typeMap = [];
+        $scalarArrayTypeMap = [];
 
         foreach ($info['fields'] as $field) {
             $mapped = $this->mapGoTypeToPhp($field['goType']);
@@ -304,25 +446,29 @@ final class PhpEmitter
                 'name' => $field['name'],
                 'phpType' => $mapped['phpType'],
                 'comment' => $field['doc'],
-                'isModelArray' => $mapped['isModelArray'],
+                'varAnnotation' => $mapped['varAnnotation'],
                 'modelClass' => $mapped['modelClass'],
+                'scalarArrayType' => $mapped['scalarArrayType'],
             ];
 
-            if ($mapped['isModelArray'] && $mapped['modelClass'] !== null) {
+            if ($mapped['modelClass'] !== null && str_starts_with($field['goType'], '[]')) {
                 $typeMap[$field['name']] = $mapped['modelClass'];
+            }
+            if ($mapped['scalarArrayType'] !== null) {
+                $scalarArrayTypeMap[$field['name']] = $mapped['scalarArrayType'];
             }
         }
 
-        $out = "<?php\n\ndeclare(strict_types=1);\n\nnamespace {$modelsNs};\n\nuse ZenlayerCloud\\Laravel\\Common\\AbstractModel;\n\n";
+        $out = self::GENERATED_FILE_HEADER."\n\nnamespace {$modelsNs};\n\nuse ZenlayerCloud\\Laravel\\Common\\AbstractModel;\n\n";
 
         if ($info['doc'] !== null) {
             $out .= $this->renderDocBlock($info['doc'])."\n";
         }
 
         // Pint-friendly single-line form for empty model bodies.
-        if ($properties === [] && $typeMap === []) {
+        if ($properties === [] && $typeMap === [] && $scalarArrayTypeMap === []) {
             $out .= "class {$className} extends AbstractModel {}\n";
-            file_put_contents($this->outModelsDir.'/'.$className.'.php', $out);
+            $this->writeFile($this->outModelsDir.'/'.$className.'.php', $out);
 
             return;
         }
@@ -331,9 +477,9 @@ final class PhpEmitter
 
         foreach ($properties as $idx => $p) {
             if ($p['comment'] !== null && $p['comment'] !== '') {
-                $out .= $this->indent($this->renderDocBlock($p['comment'], $p['isModelArray'] ? $p['modelClass'].'[]|null' : null), 1)."\n";
-            } elseif ($p['isModelArray'] && $p['modelClass'] !== null) {
-                $out .= "    /** @var {$p['modelClass']}[]|null */\n";
+                $out .= $this->indent($this->renderDocBlock($p['comment'], $p['varAnnotation']), 1)."\n";
+            } elseif ($p['varAnnotation'] !== null) {
+                $out .= "    /** @var {$p['varAnnotation']} */\n";
             }
             $out .= "    public {$p['phpType']} \${$p['name']} = null;\n";
             if ($idx !== count($properties) - 1) {
@@ -350,9 +496,18 @@ final class PhpEmitter
             $out .= "    ];\n";
         }
 
+        if ($scalarArrayTypeMap !== []) {
+            $out .= "\n    /** @var array<string,'string'|'int'|'float'|'bool'> */\n";
+            $out .= "    protected static array \$_scalarArrayTypeMap = [\n";
+            foreach ($scalarArrayTypeMap as $field => $type) {
+                $out .= "        '{$field}' => '{$type}',\n";
+            }
+            $out .= "    ];\n";
+        }
+
         $out .= "}\n";
 
-        file_put_contents($this->outModelsDir.'/'.$className.'.php', $out);
+        $this->writeFile($this->outModelsDir.'/'.$className.'.php', $out);
     }
 
     private function emitClient(): void
@@ -365,8 +520,8 @@ final class PhpEmitter
         // Note: we deliberately do not `use {$modelsNs};` — PHP's namespace
         // resolution already handles `Models\Foo` references inside this
         // namespace, and Pint's no_unused_imports would strip the import.
-        $out = "<?php\n\ndeclare(strict_types=1);\n\nnamespace {$ns};\n\nuse ZenlayerCloud\\Laravel\\Common\\AbstractClient;\n\n";
-        $out .= "/**\n * {$this->serviceDescription} client (API version {$apiVersion}).\n *\n * Each public method maps 1:1 to an Action name documented at\n * https://docs.console.zenlayer.com/api-reference/cn. Method names are\n * intentionally PascalCase to keep that mapping unambiguous when copy-\n * pasting examples between the API reference and PHP code.\n *\n * @generated by bin/codegen.php — do not edit by hand.\n */\n";
+        $out = self::GENERATED_FILE_HEADER."\n\nnamespace {$ns};\n\nuse ZenlayerCloud\\Laravel\\Common\\AbstractClient;\n\n";
+        $out .= "/**\n * {$this->serviceDescription} client (API version {$apiVersion}).\n *\n * Each public method maps 1:1 to an official Action name. The public API\n * reference is at https://docs.console.zenlayer.com/api-reference/compute/{$service};\n * UPSTREAM.md records any Action currently present only in the official SDKs.\n * Method names remain PascalCase so the protocol mapping is unambiguous.\n *\n * @generated by bin/codegen.php — do not edit by hand.\n */\n";
         $out .= "class {$className} extends AbstractClient\n{\n";
         $out .= "    protected function service(): string\n    {\n        return '{$service}';\n    }\n\n";
         $out .= "    protected function apiVersion(): string\n    {\n        return '{$apiVersion}';\n    }\n";
@@ -383,7 +538,7 @@ final class PhpEmitter
                 : ('Calls action '.$a.'.');
             $out .= $this->indent($this->renderDocBlock($doc), 1)."\n";
 
-            $out .= "    public function {$a}(Models\\{$rq} \$request): Models\\{$rp}\n";
+            $out .= "    public function {$a}(#[\\SensitiveParameter] Models\\{$rq} \$request): Models\\{$rp}\n";
             $out .= "    {\n";
             $out .= "        return \$this->call('{$a}', \$request, Models\\{$rp}::class);\n";
             $out .= "    }\n";
@@ -391,14 +546,14 @@ final class PhpEmitter
 
         $out .= "}\n";
 
-        if (! is_dir(dirname($this->outClientPath))) {
-            mkdir(dirname($this->outClientPath), 0755, true);
+        if (! is_dir(dirname($this->outClientPath)) && ! mkdir(dirname($this->outClientPath), 0755, true) && ! is_dir(dirname($this->outClientPath))) {
+            throw new RuntimeException('Unable to create client output directory.');
         }
-        file_put_contents($this->outClientPath, $out);
+        $this->writeFile($this->outClientPath, $out);
     }
 
     /**
-     * @return array{phpType:string, isModelArray:bool, modelClass:?string}
+     * @return array{phpType:string,varAnnotation:?string,modelClass:?string,scalarArrayType:?string}
      */
     private function mapGoTypeToPhp(string $goType): array
     {
@@ -406,33 +561,44 @@ final class PhpEmitter
         if (preg_match('/^\*(string|bool|int|int32|int64|float32|float64)$/', $goType, $m)) {
             $map = ['string' => 'string', 'bool' => 'bool', 'int' => 'int', 'int32' => 'int', 'int64' => 'int', 'float32' => 'float', 'float64' => 'float'];
 
-            return ['phpType' => '?'.$map[$m[1]], 'isModelArray' => false, 'modelClass' => null];
+            return ['phpType' => '?'.$map[$m[1]], 'varAnnotation' => null, 'modelClass' => null, 'scalarArrayType' => null];
         }
 
         // []string, []int, []int64, []float64, []bool
-        if (preg_match('/^\[\](string|int|int32|int64|float32|float64|bool)$/', $goType)) {
-            return ['phpType' => '?array', 'isModelArray' => false, 'modelClass' => null];
+        if (preg_match('/^\[\](string|int|int32|int64|float32|float64|bool)$/', $goType, $m)) {
+            $map = ['string' => 'string', 'bool' => 'bool', 'int' => 'int', 'int32' => 'int', 'int64' => 'int', 'float32' => 'float', 'float64' => 'float'];
+            $valueType = $map[$m[1]];
+
+            return ['phpType' => '?array', 'varAnnotation' => "list<{$valueType}>|null", 'modelClass' => null, 'scalarArrayType' => $valueType];
         }
 
         // []*XxxStruct or []XxxStruct
         if (preg_match('/^\[\]\*?([A-Z][A-Za-z0-9_]*)$/', $goType, $m)) {
-            return ['phpType' => '?array', 'isModelArray' => true, 'modelClass' => $m[1]];
+            $this->assertModelExists($m[1], $goType);
+
+            return ['phpType' => '?array', 'varAnnotation' => "list<{$m[1]}>|null", 'modelClass' => $m[1], 'scalarArrayType' => null];
         }
 
         // *XxxStruct
         if (preg_match('/^\*([A-Z][A-Za-z0-9_]*)$/', $goType, $m)) {
-            return ['phpType' => '?'.$m[1], 'isModelArray' => false, 'modelClass' => null];
+            $this->assertModelExists($m[1], $goType);
+
+            return ['phpType' => '?'.$m[1], 'varAnnotation' => null, 'modelClass' => $m[1], 'scalarArrayType' => null];
         }
 
         // Non-pointer plain `string` (rare; happens in inline structs)
         if ($goType === 'string') {
-            return ['phpType' => '?string', 'isModelArray' => false, 'modelClass' => null];
+            return ['phpType' => '?string', 'varAnnotation' => null, 'modelClass' => null, 'scalarArrayType' => null];
         }
 
-        // Fallback — leave as mixed nullable
-        fwrite(STDERR, "[codegen] WARN: unmapped Go type [{$goType}] — defaulting to mixed.\n");
+        throw new RuntimeException("Unmapped Go type [{$goType}]; refusing to emit a lossy mixed property.");
+    }
 
-        return ['phpType' => 'mixed', 'isModelArray' => false, 'modelClass' => null];
+    private function assertModelExists(string $modelClass, string $goType): void
+    {
+        if (! isset($this->parser->structs[$modelClass])) {
+            throw new RuntimeException("Go type [{$goType}] references missing model [{$modelClass}].");
+        }
     }
 
     private function renderDocBlock(string $text, ?string $varAnnotation = null): string
@@ -440,7 +606,13 @@ final class PhpEmitter
         $lines = explode("\n", trim($text));
         $out = "/**\n";
         foreach ($lines as $line) {
-            $out .= ' * '.rtrim($line)."\n";
+            // A Go line comment may legally contain the PHPDoc terminator.
+            // Break it so upstream prose can never escape the generated block.
+            $out .= ' * '.str_replace('*/', '* /', rtrim($line))."\n";
+        }
+        if (preg_match('/(^|\n)Deprecated:/', $text) === 1) {
+            $out .= ' *'."\n";
+            $out .= ' * @deprecated'."\n";
         }
         if ($varAnnotation !== null) {
             $out .= ' *'."\n";
@@ -457,11 +629,25 @@ final class PhpEmitter
 
         return $pad.str_replace("\n", "\n".$pad, $text);
     }
+
+    private function writeFile(string $path, string $contents): void
+    {
+        if (file_put_contents($path, $contents) === false) {
+            throw new RuntimeException("Unable to write generated file [{$path}].");
+        }
+    }
 }
 
 // --- Driver ------------------------------------------------------------------
 
-$schemaSrc = getenv('ZENLAYER_SCHEMA_SRC') ?: DEFAULT_SCHEMA_SRC;
+$schemaSrc = $argv[1] ?? getenv('ZENLAYER_SCHEMA_SRC') ?: null;
+if (! is_string($schemaSrc) || trim($schemaSrc) === '') {
+    fwrite(STDERR, "[codegen] FATAL: upstream schema path is required.\n");
+    fwrite(STDERR, "  Pass /path/to/zenlayercloud-sdk-go/zenlayercloud as the first argument\n");
+    fwrite(STDERR, "  or set ZENLAYER_SCHEMA_SRC.\n");
+    exit(1);
+}
+$schemaSrc = rtrim($schemaSrc, '/');
 
 $jobs = [
     [
@@ -488,42 +674,61 @@ $jobs = [
     ],
 ];
 
-foreach ($jobs as $job) {
-    if (! is_file($job['modelsSrc']) || ! is_file($job['clientSrc'])) {
-        fwrite(STDERR, "[codegen] FATAL: upstream schema not found at {$job['modelsSrc']}.\n");
-        fwrite(STDERR, "  Set ZENLAYER_SCHEMA_SRC to the directory containing\n");
-        fwrite(STDERR, "  vm20260401/{models.go,client.go} and zec20250901/{models.go,client.go}.\n");
-        exit(1);
-    }
+/** @var list<array{job:array<string,string>,emitter:PhpEmitter}> $prepared */
+$prepared = [];
 
-    // Wipe stale models so removed Actions don't linger
-    if (is_dir($job['outModels'])) {
-        foreach (glob($job['outModels'].'/*.php') as $f) {
-            unlink($f);
+try {
+    // Parse and validate every service before touching committed output. A
+    // missing or newly unsupported upstream type can therefore never leave
+    // one service refreshed and the other half-deleted.
+    foreach ($jobs as $job) {
+        if (! is_file($job['modelsSrc']) || ! is_file($job['clientSrc'])) {
+            throw new RuntimeException("Upstream schema not found at {$job['modelsSrc']}.");
         }
+
+        $parser = new SchemaParser($job['modelsSrc'], $job['clientSrc']);
+        $parser->parse();
+        DocumentedSchemaOverrides::apply($job['service'], $parser);
+
+        $emitter = new PhpEmitter(
+            parser: $parser,
+            clientClassName: $job['clientClass'],
+            serviceName: $job['service'],
+            apiVersion: $job['apiVersion'],
+            namespacePrefix: $job['nsPrefix'],
+            outClientPath: $job['outClient'],
+            outModelsDir: $job['outModels'],
+            serviceDescription: $job['description'],
+        );
+        $emitter->validateSchema();
+        $prepared[] = ['job' => $job, 'emitter' => $emitter];
     }
 
-    $parser = new SchemaParser($job['modelsSrc'], $job['clientSrc']);
-    $parser->parse();
-    $emitter = new PhpEmitter(
-        parser: $parser,
-        clientClassName: $job['clientClass'],
-        serviceName: $job['service'],
-        apiVersion: $job['apiVersion'],
-        namespacePrefix: $job['nsPrefix'],
-        outClientPath: $job['outClient'],
-        outModelsDir: $job['outModels'],
-        serviceDescription: $job['description'],
-    );
-    $stats = $emitter->emit();
+    foreach ($prepared as $item) {
+        $job = $item['job'];
 
-    printf(
-        "[codegen] %-3s api %s  ->  %d model classes, %d action methods\n",
-        $job['service'],
-        $job['apiVersion'],
-        $stats['models'],
-        $stats['actions'],
-    );
+        // Wipe stale models so removed upstream types do not linger.
+        if (is_dir($job['outModels'])) {
+            foreach (glob($job['outModels'].'/*.php') ?: [] as $file) {
+                if (! unlink($file)) {
+                    throw new RuntimeException("Unable to remove stale generated model [{$file}].");
+                }
+            }
+        }
+
+        $stats = $item['emitter']->emit();
+
+        printf(
+            "[codegen] %-3s api %s  ->  %d model classes, %d action methods\n",
+            $job['service'],
+            $job['apiVersion'],
+            $stats['models'],
+            $stats['actions'],
+        );
+    }
+} catch (Throwable $e) {
+    fwrite(STDERR, "[codegen] FATAL: {$e->getMessage()}\n");
+    exit(1);
 }
 
 echo "[codegen] done.\n";

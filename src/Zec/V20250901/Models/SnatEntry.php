@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -19,11 +25,15 @@ class SnatEntry extends AbstractModel
     /**
      * Cidrs CIDR网段，不传默认是0.0.0.0/0。
      * `cidrs` 和 `snatSubnets` 不会同时存在。
+     *
+     * @var list<string>|null
      */
     public ?array $cidrs = null;
 
     /**
      * EipIds SNAT规则添加的弹性公网IP ID集合。
+     *
+     * @var list<string>|null
      */
     public ?array $eipIds = null;
 
@@ -35,12 +45,18 @@ class SnatEntry extends AbstractModel
     /**
      * SnatSubnets SNAT规则添加的subnet ID集合。
      *
-     * @var SnatSubnet[]|null
+     * @var list<SnatSubnet>|null
      */
     public ?array $snatSubnets = null;
 
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'snatSubnets' => SnatSubnet::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'cidrs' => 'string',
+        'eipIds' => 'string',
     ];
 }

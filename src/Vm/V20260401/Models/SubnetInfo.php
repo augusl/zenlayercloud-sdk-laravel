@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Vm\V20260401\Models;
@@ -33,6 +39,8 @@ class SubnetInfo extends AbstractModel
 
     /**
      * CidrBlockList Subnet的CIDR列表。
+     *
+     * @var list<string>|null
      */
     public ?array $cidrBlockList = null;
 
@@ -53,6 +61,8 @@ class SubnetInfo extends AbstractModel
 
     /**
      * InstanceIdList Subnet下绑定的实例列表。
+     *
+     * @var list<string>|null
      */
     public ?array $instanceIdList = null;
 
@@ -70,4 +80,10 @@ class SubnetInfo extends AbstractModel
      * IsDefault Subnet是否为默认。
      */
     public ?bool $isDefault = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'cidrBlockList' => 'string',
+        'instanceIdList' => 'string',
+    ];
 }

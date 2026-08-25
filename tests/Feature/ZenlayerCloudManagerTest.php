@@ -66,4 +66,47 @@ final class ZenlayerCloudManagerTest extends TestCase
             self::assertSame(ZenlayerCloudSdkException::ERR_CREDENTIAL_MISSING, $e->errorCode);
         }
     }
+
+    public function test_connection_names_containing_dots_are_resolved_exactly(): void
+    {
+        $connections = $this->app['config']->get('zenlayercloud.connections');
+        $connections['customer.eu'] = [
+            'token' => 'dot-name-token',
+            'endpoint' => 'console.zenlayer.com',
+        ];
+        $this->app['config']->set('zenlayercloud.connections', $connections);
+
+        self::assertInstanceOf(VmClient::class, ZenlayerCloud::vm('customer.eu'));
+    }
+
+    public function test_invalid_default_connection_type_fails_cleanly(): void
+    {
+        $this->app['config']->set('zenlayercloud.default', ['default']);
+
+        try {
+            ZenlayerCloud::vm();
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_CONFIG_INVALID, $e->errorCode);
+            self::assertStringContainsString('zenlayercloud.default', $e->getMessage());
+        }
+    }
+
+    public function test_invalid_connection_option_type_fails_cleanly(): void
+    {
+        $connections = $this->app['config']->get('zenlayercloud.connections');
+        $connections['invalid'] = [
+            'token' => 'valid-token',
+            'timeout' => ['sixty'],
+        ];
+        $this->app['config']->set('zenlayercloud.connections', $connections);
+
+        try {
+            ZenlayerCloud::vm('invalid');
+            self::fail('Expected exception was not thrown.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_CONFIG_INVALID, $e->errorCode);
+            self::assertStringContainsString('[timeout]', $e->getMessage());
+        }
+    }
 }

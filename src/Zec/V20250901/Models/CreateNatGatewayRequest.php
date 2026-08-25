@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -27,6 +33,8 @@ class CreateNatGatewayRequest extends AbstractModel
     /**
      * SubnetIds NAT网关所属的Subnet子网ID集合。
      * 如果未指定，则指定区域的所有子网将自动关联NAT网关。
+     *
+     * @var list<string>|null
      */
     public ?array $subnetIds = null;
 
@@ -47,4 +55,9 @@ class CreateNatGatewayRequest extends AbstractModel
      * 注意：·关联`标签键`不能重复。
      */
     public ?TagAssociation $tags = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'subnetIds' => 'string',
+    ];
 }

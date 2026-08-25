@@ -1,0 +1,17 @@
+Zenlayer Cloud Laravel SDK
+Copyright 2026 Zenlayer Cloud Laravel SDK Contributors
+
+The generated VM and ZEC API client/model definitions are derived from the
+public Zenlayer Cloud Go SDK and cross-checked against the Zenlayer Cloud
+Python SDK and API documentation.
+
+Zenlayer.com Inc. official SDK sources are licensed under the Apache License,
+Version 2.0. The upstream repositories and exact audited revisions are listed
+in UPSTREAM.md.
+
+Zenlayer.com Inc.
+Copyright (c) 2014-2024 All Rights Reserved.
+
+This community package is not affiliated with, sponsored by, or endorsed by
+Zenlayer Inc. “Zenlayer” and “Zenlayer Cloud” are trademarks of their
+respective owners.

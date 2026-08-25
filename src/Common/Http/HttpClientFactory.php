@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Common\Http;
 
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Request;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use ZenlayerCloud\Laravel\Common\Config;
 
 /**
@@ -16,10 +18,17 @@ use ZenlayerCloud\Laravel\Common\Config;
  */
 final class HttpClientFactory
 {
-    public function __construct(private readonly Factory $factory) {}
+    private readonly LoggerInterface $logger;
+
+    public function __construct(
+        private readonly Factory $factory,
+        ?LoggerInterface $logger = null,
+    ) {
+        $this->logger = $logger ?? new NullLogger;
+    }
 
     /**
-     * Apply the SDK-level Config (timeout, retry, proxy, debug) to a fresh
+     * Apply the SDK-level Config (timeout, proxy, TLS, debug) to a fresh
      * {@see PendingRequest}. Each call returns a new request — chain
      * {@see PendingRequest::withHeaders()} and {@see PendingRequest::post()}
      * to send.
@@ -27,19 +36,6 @@ final class HttpClientFactory
     public function build(Config $config): PendingRequest
     {
         $request = $this->factory->timeout($config->timeout);
-
-        if ($config->retry) {
-            // Retry network-level failures ONLY (connection refused, DNS,
-            // timeout) — never HTTP error responses, which may belong to
-            // non-idempotent Actions like CreateInstances. `retryMax` counts
-            // extra retries, so total attempts = retryMax + 1.
-            $request = $request->retry(
-                times: $config->retryMax + 1,
-                sleepMilliseconds: 200,
-                when: static fn ($exception): bool => $exception instanceof ConnectionException,
-                throw: false,
-            );
-        }
 
         $options = [];
         if ($config->proxy !== null && $config->proxy !== '') {
@@ -50,13 +46,38 @@ final class HttpClientFactory
             // self-signed staging endpoints. Defaults to full verification.
             $options['verify'] = $config->verify;
         }
-        if ($config->debug) {
-            $options['debug'] = true;
-        }
         if ($options !== []) {
             $request = $request->withOptions($options);
         }
 
+        if ($config->debug) {
+            // Guzzle's wire-level `debug` option prints Authorization and the
+            // complete JSON body. Log only non-sensitive request metadata and
+            // response status instead.
+            $request = $request
+                ->beforeSending(function (Request $request): void {
+                    $this->logger->debug('Zenlayer Cloud API request', [
+                        'method' => $request->method(),
+                        'url' => $request->url(),
+                        'service' => $request->header('x-zc-service')[0] ?? null,
+                        'action' => $request->header('x-zc-action')[0] ?? null,
+                    ]);
+                });
+        }
+
         return $request;
+    }
+
+    public function logResponse(Config $config, int $status, string $service, string $action): void
+    {
+        if (! $config->debug) {
+            return;
+        }
+
+        $this->logger->debug('Zenlayer Cloud API response', [
+            'status' => $status,
+            'service' => $service,
+            'action' => $action,
+        ]);
     }
 }

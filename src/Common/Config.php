@@ -24,6 +24,10 @@ final class Config
 
     public readonly ?string $requestClient;
 
+    public readonly int $rateLimitMaxRetries;
+
+    public readonly int $rateLimitRetryDelayMs;
+
     public function __construct(
         string $endpoint = 'console.zenlayer.com',
         string $scheme = 'https',
@@ -37,17 +41,32 @@ final class Config
         public readonly ?string $proxy = null,
         public readonly bool|string $verify = true,
         ?string $requestClient = null,
+        int $rateLimitMaxRetries = 3,
+        int $rateLimitRetryDelayMs = 1000,
     ) {
-        // Tolerate the common copy-paste shape `https://host/` so the URL
-        // builder never produces `https://https://host` or a trailing `//`.
-        if (preg_match('#^(https?)://(.+)$#i', $endpoint, $m) === 1) {
-            $scheme = $m[1];
-            $endpoint = $m[2];
+        if ($timeout <= 0) {
+            throw self::invalid('timeout must be greater than zero.');
         }
-        $this->endpoint = rtrim($endpoint, '/');
 
-        // Anything other than plain "http" falls back to HTTPS.
-        $this->scheme = strtolower($scheme) === 'http' ? 'http' : 'https';
+        if ($retryMax < 0) {
+            throw self::invalid('retry_max must be zero or greater.');
+        }
+
+        if ($rateLimitMaxRetries < 0) {
+            throw self::invalid('rate_limit_max_retries must be zero or greater.');
+        }
+
+        if ($rateLimitRetryDelayMs < 0) {
+            throw self::invalid('rate_limit_retry_delay_ms must be zero or greater.');
+        }
+
+        if (is_string($verify) && trim($verify) === '') {
+            throw self::invalid('verify must be a boolean or a non-empty CA bundle path.');
+        }
+
+        [$this->scheme, $this->endpoint] = self::normalizeEndpoint($endpoint, $scheme);
+        $this->rateLimitMaxRetries = $rateLimitMaxRetries;
+        $this->rateLimitRetryDelayMs = $rateLimitRetryDelayMs;
 
         $this->requestClient = $requestClient !== null && $requestClient !== ''
             ? self::sanitizeRequestClient($requestClient)
@@ -80,5 +99,74 @@ final class Config
         }
 
         return $value;
+    }
+
+    /**
+     * Normalize a bare `host[:port]` or a complete HTTP(S) endpoint. API
+     * requests always target `/api/v2/{service}`, so accepting credentials,
+     * paths, queries, or fragments here would make the signed Host header and
+     * the actual destination disagree.
+     *
+     * @return array{0:'http'|'https',1:string}
+     */
+    private static function normalizeEndpoint(string $endpoint, string $scheme): array
+    {
+        $endpoint = trim($endpoint);
+        $scheme = strtolower(trim($scheme));
+
+        if ($endpoint === '') {
+            throw self::invalid('endpoint must not be empty.');
+        }
+
+        if (preg_match('/[\x00-\x1F\x7F]/', $endpoint) === 1) {
+            throw self::invalid('endpoint must not contain control characters.');
+        }
+
+        if (str_contains($endpoint, '://')) {
+            $parts = parse_url($endpoint);
+        } else {
+            if (! in_array($scheme, ['http', 'https'], true)) {
+                throw self::invalid('scheme must be either http or https.');
+            }
+
+            $parts = parse_url($scheme.'://'.$endpoint);
+        }
+
+        if ($parts === false || ! isset($parts['scheme'], $parts['host'])) {
+            throw self::invalid('endpoint must be a valid host[:port] or HTTP(S) URL.');
+        }
+
+        $normalizedScheme = strtolower($parts['scheme']);
+        if (! in_array($normalizedScheme, ['http', 'https'], true)) {
+            throw self::invalid('endpoint scheme must be either http or https.');
+        }
+
+        $path = $parts['path'] ?? '';
+        if ($path !== '' && $path !== '/') {
+            throw self::invalid('endpoint must not contain a path.');
+        }
+
+        foreach (['user', 'pass', 'query', 'fragment'] as $component) {
+            if (array_key_exists($component, $parts)) {
+                throw self::invalid("endpoint must not contain {$component} information.");
+            }
+        }
+
+        $host = strtolower($parts['host']);
+        if ($host === '' || preg_match('/[\\s\\x00-\\x1F\\x7F]/', $host) === 1) {
+            throw self::invalid('endpoint host is invalid.');
+        }
+
+        $port = isset($parts['port']) ? ':'.$parts['port'] : '';
+
+        return [$normalizedScheme, $host.$port];
+    }
+
+    private static function invalid(string $message): ZenlayerCloudSdkException
+    {
+        return new ZenlayerCloudSdkException(
+            ZenlayerCloudSdkException::ERR_CONFIG_INVALID,
+            $message,
+        );
     }
 }

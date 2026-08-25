@@ -39,7 +39,7 @@ $client = new ZecClient(
 try {
     $resp = $client->DescribeVpcs(new DescribeVpcsRequest);
 } catch (ZenlayerCloudSdkException $e) {
-    fwrite(STDERR, "API error {$e->errorCode}: {$e->getMessage()}\n");
+    fwrite(STDERR, "API error {$e->errorCode}: {$e->getErrorMessage()}\n");
     exit(2);
 }
 

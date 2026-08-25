@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -22,7 +28,7 @@ class EipMetricValue extends AbstractModel
     public ?float $inValue = null;
 
     /**
-     * OutValue 出方向值。
+     * OutValue 入方向值。
      */
     public ?float $outValue = null;
 

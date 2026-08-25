@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -25,6 +31,8 @@ class DescribePolicyDetailResponseParams extends AbstractModel
 
     /**
      * AttachmentIps 防护对象关联IP列表。
+     *
+     * @var list<string>|null
      */
     public ?array $attachmentIps = null;
 
@@ -35,11 +43,15 @@ class DescribePolicyDetailResponseParams extends AbstractModel
 
     /**
      * BlackIps 黑名单IP列表。
+     *
+     * @var list<string>|null
      */
     public ?array $blackIps = null;
 
     /**
      * WhiteIps 白名单IP列表。
+     *
+     * @var list<string>|null
      */
     public ?array $whiteIps = null;
 
@@ -51,25 +63,29 @@ class DescribePolicyDetailResponseParams extends AbstractModel
     /**
      * BlockProtocols 开启的封禁协议。
      * 不能同时开启UDP和TCP。
+     *
+     * @var list<string>|null
      */
     public ?array $blockProtocols = null;
 
     /**
      * Ports 端口封禁。
      *
-     * @var DdosPolicyPort[]|null
+     * @var list<DdosPolicyPort>|null
      */
     public ?array $ports = null;
 
     /**
      * BlockRegions 封禁的区域。
+     *
+     * @var list<string>|null
      */
     public ?array $blockRegions = null;
 
     /**
      * ReflectUdpPort 反射攻击防护过滤的端口列表。
      *
-     * @var DdosReflectUdpPort[]|null
+     * @var list<DdosReflectUdpPort>|null
      */
     public ?array $reflectUdpPort = null;
 
@@ -81,7 +97,7 @@ class DescribePolicyDetailResponseParams extends AbstractModel
     /**
      * FingerPrintRules 指纹过滤相关配置。
      *
-     * @var DdosFingerprintRule[]|null
+     * @var list<DdosFingerprintRule>|null
      */
     public ?array $fingerPrintRules = null;
 
@@ -90,5 +106,14 @@ class DescribePolicyDetailResponseParams extends AbstractModel
         'ports' => DdosPolicyPort::class,
         'reflectUdpPort' => DdosReflectUdpPort::class,
         'fingerPrintRules' => DdosFingerprintRule::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'attachmentIps' => 'string',
+        'blackIps' => 'string',
+        'whiteIps' => 'string',
+        'blockProtocols' => 'string',
+        'blockRegions' => 'string',
     ];
 }

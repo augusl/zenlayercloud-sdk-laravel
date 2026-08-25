@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -30,6 +36,8 @@ class DescribeEipPriceRequest extends AbstractModel
      * Deprecated: EipV4Type 已废弃，请不要使用。
      * EipV4Type 公网弹性IP的线路类型。
      * 已废弃，请使用`networkLineType`。
+     *
+     * @deprecated
      */
     public ?string $eipV4Type = null;
 
@@ -45,10 +53,10 @@ class DescribeEipPriceRequest extends AbstractModel
     public ?int $bandwidth = null;
 
     /**
-     * FlowPackage 公网IPv6的流量包大小。
+     * FlowPackage 弹性公网IP的流量包大小。
      * 单位为TB。
      * 值要求为0或0.1的倍数。
-     * 当子网的堆栈类型包括V6且为公网时，且网络计费方式是流量计费(`ByTrafficPackage`)需要指定。
+     * 当网络计费方式为流量计费(`ByTrafficPackage`)时需要指定。
      */
     public ?float $flowPackage = null;
 
@@ -59,8 +67,8 @@ class DescribeEipPriceRequest extends AbstractModel
     public ?string $cidrId = null;
 
     /**
-     * ClusterId 公网IPv6所指定的共享带宽包ID。
-     * 当子网的堆栈类型包括V6且为公网时，且网络计费方式是共享带宽包计费(`BandwidthCluster`)需要指定。
+     * ClusterId 共享带宽包ID。
+     * 当指定`peerRegionId`且网络计费方式为共享带宽包计费(`BandwidthCluster`)时需要指定。
      */
     public ?string $clusterId = null;
 

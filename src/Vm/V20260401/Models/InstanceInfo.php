@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Vm\V20260401\Models;
@@ -78,16 +84,22 @@ class InstanceInfo extends AbstractModel
     /**
      * PublicIpAddresses 实例公网IPv4列表。
      * 如果机器的主IP未加入到公网组网接口，那么主IP将无法使用，且该字段也不会返回该IP。
+     *
+     * @var list<string>|null
      */
     public ?array $publicIpAddresses = null;
 
     /**
      * PublicIpv6Addresses 实例公网IPv6列表。
+     *
+     * @var list<string>|null
      */
     public ?array $publicIpv6Addresses = null;
 
     /**
      * PrivateIpAddresses 实例内网IP列表。
+     *
+     * @var list<string>|null
      */
     public ?array $privateIpAddresses = null;
 
@@ -130,6 +142,8 @@ class InstanceInfo extends AbstractModel
 
     /**
      * SecurityGroupIds 实例加入的安全组列表。
+     *
+     * @var list<string>|null
      */
     public ?array $securityGroupIds = null;
 
@@ -141,7 +155,7 @@ class InstanceInfo extends AbstractModel
     /**
      * DataDisks 实例数据盘信息。
      *
-     * @var DataDisk[]|null
+     * @var list<DataDisk>|null
      */
     public ?array $dataDisks = null;
 
@@ -170,5 +184,13 @@ class InstanceInfo extends AbstractModel
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'dataDisks' => DataDisk::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'publicIpAddresses' => 'string',
+        'publicIpv6Addresses' => 'string',
+        'privateIpAddresses' => 'string',
+        'securityGroupIds' => 'string',
     ];
 }

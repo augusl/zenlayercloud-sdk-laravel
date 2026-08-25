@@ -77,6 +77,23 @@ final class AbstractModelTest extends TestCase
         self::assertSame('inner', $req->nested->field);
     }
 
+    public function test_from_array_hydrates_stdclass_nested_values_from_single_json_decode(): void
+    {
+        $req = (new TestRootModel)->fromArray([
+            'nested' => (object) ['field' => 'inner'],
+            'items' => [
+                (object) ['itemId' => 'a'],
+                (object) ['itemId' => 'b'],
+            ],
+        ]);
+
+        self::assertInstanceOf(TestNestedModel::class, $req->nested);
+        self::assertSame('inner', $req->nested->field);
+        self::assertInstanceOf(TestItemModel::class, $req->items[0]);
+        self::assertSame('a', $req->items[0]->itemId);
+        self::assertSame('b', $req->items[1]->itemId);
+    }
+
     public function test_from_array_hydrates_array_of_models_via_type_map(): void
     {
         $req = (new TestRootModel)->fromArray([
@@ -142,6 +159,73 @@ final class AbstractModelTest extends TestCase
 
         self::assertSame('{"stringVal":"测试"}', $req->toJson());
     }
+
+    public function test_models_are_laravel_arrayable_and_json_serializable(): void
+    {
+        $model = new TestRootModel;
+        $model->stringVal = 'visible';
+
+        self::assertSame(['stringVal' => 'visible'], $model->toArray());
+        self::assertSame('{"stringVal":"visible"}', json_encode($model, JSON_THROW_ON_ERROR));
+        self::assertSame('{}', json_encode(new TestRootModel, JSON_THROW_ON_ERROR));
+    }
+
+    public function test_malformed_array_of_models_is_rejected(): void
+    {
+        $this->expectException(\TypeError::class);
+
+        (new TestRootModel)->fromArray(['items' => ['not-an-object']]);
+    }
+
+    public function test_non_empty_list_is_rejected_where_nested_object_is_expected(): void
+    {
+        $this->expectException(\TypeError::class);
+
+        (new TestRootModel)->fromArray(['nested' => ['not-an-object']]);
+    }
+
+    public function test_non_empty_list_item_is_rejected_in_model_array(): void
+    {
+        $this->expectException(\TypeError::class);
+
+        (new TestRootModel)->fromArray(['items' => [['not-an-object']]]);
+    }
+
+    public function test_empty_decoded_objects_remain_supported(): void
+    {
+        $model = (new TestRootModel)->fromArray([
+            'nested' => [],
+            'items' => [[]],
+        ]);
+
+        self::assertInstanceOf(TestNestedModel::class, $model->nested);
+        self::assertInstanceOf(TestItemModel::class, $model->items[0]);
+    }
+
+    public function test_malformed_scalar_list_is_rejected_during_hydration(): void
+    {
+        $this->expectException(\TypeError::class);
+
+        (new TestRootModel)->fromArray(['listVal' => ['valid', 123]]);
+    }
+
+    public function test_malformed_scalar_list_is_rejected_during_serialization(): void
+    {
+        $model = new TestRootModel;
+        $model->listVal = ['valid', false];
+
+        $this->expectException(\TypeError::class);
+        $model->toArray();
+    }
+
+    public function test_model_lists_require_model_instances_during_serialization(): void
+    {
+        $model = new TestRootModel;
+        $model->items = [['itemId' => 'raw-array']];
+
+        $this->expectException(\TypeError::class);
+        $model->toArray();
+    }
 }
 
 class TestNestedModel extends AbstractModel
@@ -172,5 +256,9 @@ class TestRootModel extends AbstractModel
 
     protected static array $_typeMap = [
         'items' => TestItemModel::class,
+    ];
+
+    protected static array $_scalarArrayTypeMap = [
+        'listVal' => 'string',
     ];
 }

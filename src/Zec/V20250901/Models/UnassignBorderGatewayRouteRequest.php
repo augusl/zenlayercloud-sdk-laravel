@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -18,6 +24,13 @@ class UnassignBorderGatewayRouteRequest extends AbstractModel
 
     /**
      * AdvertisedRouteIds 要移除的自定义路由ID集合。
+     *
+     * @var list<string>|null
      */
     public ?array $advertisedRouteIds = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'advertisedRouteIds' => 'string',
+    ];
 }

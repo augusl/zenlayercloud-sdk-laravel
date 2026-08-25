@@ -4,5 +4,5 @@ contact_links:
     url: https://github.com/augusl/zenlayercloud-sdk-laravel/security/advisories/new
     about: Please report security issues privately via GitHub's security advisories — not in a public issue.
   - name: Zenlayer Cloud OpenAPI questions
-    url: https://docs.console.zenlayer.com/api-reference/cn
+    url: https://docs.console.zenlayer.com/api-reference/compute
     about: Questions about the upstream API (endpoints, semantics, quota) go to the official Zenlayer docs, not this repo.

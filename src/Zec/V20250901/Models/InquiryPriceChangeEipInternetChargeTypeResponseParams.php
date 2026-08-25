@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -29,7 +35,7 @@ class InquiryPriceChangeEipInternetChargeTypeResponseParams extends AbstractMode
      * BandwidthPrices 各流量方向的带宽价格明细。
      * PathBasedBandwidthIP线路返回多项；其他线路返回单项（trafficType=ALL）。
      *
-     * @var BandwidthPriceResponseItem[]|null
+     * @var list<BandwidthPriceResponseItem>|null
      */
     public ?array $bandwidthPrices = null;
 

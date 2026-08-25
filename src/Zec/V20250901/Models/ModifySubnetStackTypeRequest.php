@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -18,14 +24,14 @@ class ModifySubnetStackTypeRequest extends AbstractModel
 
     /**
      * StackType 子网堆栈类型。
-     * `IPv4_IPv6`：开启 IPv6，公网或内网由`ipv6Type`指定。
-     * `IPv4`：关闭 IPv6，公网和内网 IPv6 类型的子网均支持；关闭前须确保子网内所有网卡已通过 `UnassignNetworkInterfaceIpv6` 删除其 IPv6 地址。
+     * `IPv4_IPv6`: 开启公网IPv6; 公网或内网由`ipv6Type`指定。
+     * `IPv4`: 将关闭IPv6，关闭前须确保子网内所有网卡已通过 `UnassignNetworkInterfaceIpv6` 删除其 IPv6 地址。
      */
     public ?string $stackType = null;
 
     /**
-     * Ipv6Type IPv6 的类型，当`stackType`为`IPv4_IPv6`时必填。
-     * `Public`：公网 IPv6；`Private`：内网 IPv6。
+     * Ipv6Type IPv6 的类型。
+     * 当`stackType`为`IPv4_IPv6`时必填。
      */
     public ?string $ipv6Type = null;
 

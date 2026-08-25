@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -48,6 +54,8 @@ class HaVipInfo extends AbstractModel
 
     /**
      * AssociatedInstances 关联的实例ID列表。
+     *
+     * @var list<string>|null
      */
     public ?array $associatedInstances = null;
 
@@ -59,7 +67,7 @@ class HaVipInfo extends AbstractModel
     /**
      * AssociatedEips 绑定的弹性公网IP列表。未绑定时返回空列表。
      *
-     * @var HaVipEipAttachment[]|null
+     * @var list<HaVipEipAttachment>|null
      */
     public ?array $associatedEips = null;
 
@@ -76,5 +84,10 @@ class HaVipInfo extends AbstractModel
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'associatedEips' => HaVipEipAttachment::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'associatedInstances' => 'string',
     ];
 }

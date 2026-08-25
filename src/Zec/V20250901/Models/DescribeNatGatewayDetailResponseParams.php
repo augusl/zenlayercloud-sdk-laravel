@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -23,14 +29,14 @@ class DescribeNatGatewayDetailResponseParams extends AbstractModel
     /**
      * Snats SNAT网关规则集合。
      *
-     * @var SnatEntry[]|null
+     * @var list<SnatEntry>|null
      */
     public ?array $snats = null;
 
     /**
      * Dnats DNAT网关规则集合。
      *
-     * @var DnatEntry[]|null
+     * @var list<DnatEntry>|null
      */
     public ?array $dnats = null;
 

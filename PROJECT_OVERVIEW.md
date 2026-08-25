@@ -1,594 +1,176 @@
-# Project Overview — `augusl/zenlayercloud-laravel-sdk`
+# Project overview
 
-> A reviewer-facing brief. Open this once, read top to bottom, and you will
-> have enough context to spot-check any layer of the codebase or sign off
-> on the v0.1.0 release.
+`augusl/zenlayercloud-laravel-sdk` is an unofficial, community-maintained
+Laravel package for Zenlayer Cloud OpenAPI. It provides Laravel-native client
+resolution and transport while keeping the public Action and model contract
+aligned with Zenlayer's official Go and Python SDKs.
 
----
+## Supported surface
 
-## 1. What this is
+| Service | API version | Actions | Models |
+|---------|-------------|--------:|-------:|
+| Virtual Machine (VM) | `2026-04-01` | 62 | 213 |
+| Elastic Compute (ZEC) | `2025-09-01` | 225 | 761 |
+| **Total** | | **287** | **974** |
 
-A community-maintained, **unofficial** Laravel PHP SDK for the
-[Zenlayer Cloud](https://www.zenlayer.com/) OpenAPI. It exists because
-Zenlayer publishes first-party SDKs in other languages but **no Laravel /
-PHP SDK**, and the broader PHP / Laravel community needed one.
+Only the latest VM and ZEC versions are shipped. Other Zenlayer services and
+older API versions are deliberately out of scope. Exact upstream revisions and
+known documentation differences are maintained in [UPSTREAM.md](UPSTREAM.md).
 
-- **Package name (Composer)**: `augusl/zenlayercloud-laravel-sdk`
-- **PSR-4 namespace**: `ZenlayerCloud\Laravel\`
-- **License**: Apache-2.0
-- **Repository**: <https://github.com/augusl/zenlayercloud-sdk-laravel>
-- **Status**: pre-release (`v0.1.x`); awaiting reviewer sign-off before
-  the first Packagist tag.
+## Architecture
 
-The package is **not** affiliated with or endorsed by Zenlayer Inc. — it is
-purely a community implementation against Zenlayer's public OpenAPI
-documentation at <https://docs.console.zenlayer.com/api-reference/cn>.
+The package has three layers:
 
----
+1. **Laravel integration** — `ZenlayerCloudServiceProvider`, facade, manager,
+   published configuration, named connections, and container bindings.
+2. **Generated service contract** — one VM client, one ZEC client, and typed
+   Request/Response/nested model classes. PascalCase method names intentionally
+   match Zenlayer Action names exactly.
+3. **Common runtime** — credentials, HMAC signer, configuration validation,
+   Laravel HTTP transport, serialization/hydration, retry policy, and typed
+   exceptions.
 
-## 2. Scope of `v0.1.x`
+A request follows one path:
 
-Two services under the **算力 / Compute** product group:
-
-| Service | API version | Actions | Generated model classes |
-|---------|-------------|--------:|------------------------:|
-| Virtual Machine (VM) | `2026-04-01` | **62** | 213 |
-| Elastic Compute (ZEC) | `2025-09-01` | **214** | 717 |
-| **Total** | | **276** | **930** |
-
-Out of scope for v0.1.x (deferred to later minors): BMC, CCS, IPT, SDN,
-Traffic, User, ZBC, ZDNS, ZGA, ZLB, ZLS, ZOS, ZRM, Alarm, Maintenance,
-PvtDns. Older API versions (`vm20230313`, `zec20240401`) are also out of
-scope — only the latest API version per service is shipped.
-
----
-
-## 3. Compatibility matrix
-
-| Component | Supported |
-|-----------|-----------|
-| PHP | `^8.2` (real-installed on 8.2.x / 8.3.x / 8.4.x locally; CI matrix below) |
-| Laravel | `11.x` · `12.x` · `13.x` (verified by switching `illuminate/*` constraints and re-running PHPUnit) |
-| `ext-json` | required (default) |
-| `ext-hash` | required (default) |
-
-CI matrix in `.github/workflows/tests.yml` runs PHPUnit + Pint + PHPStan
-on every combination of PHP `{8.2, 8.3, 8.4}` × Laravel `{11.*, 12.*,
-13.*}` minus `(PHP 8.2, Laravel 13)` which Laravel itself does not
-support.
-
----
-
-## 4. Architecture
-
-Three-layer design, top-down:
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│  Laravel application                                         │
-│   ├ Facade:   ZenlayerCloud::vm()->DescribeInstances($req)   │
-│   ├ DI:       app(VmClient::class)->DescribeInstances($req)  │
-│   └ Inject:   __construct(private VmClient $vm) {…}          │
-└──────────────────────┬───────────────────────────────────────┘
-                       │
-        ┌──────────────▼──────────────┐
-        │  Integration layer          │
-        │   - ZenlayerCloudServiceProvider (auto-discovered)
-        │   - ZenlayerCloudManager (multi-connection cache)
-        │   - Facades\ZenlayerCloud
-        │   - config/zenlayercloud.php  ← published
-        └──────────────┬──────────────┘
-                       │
-        ┌──────────────▼──────────────┐
-        │  Service layer (generated)  │
-        │   - Vm\V20260401\VmClient (62 Action methods)
-        │   - Zec\V20250901\ZecClient (214 Action methods)
-        │   - Vm\V20260401\Models\* (213 typed Request/Response/nested)
-        │   - Zec\V20250901\Models\* (717 typed Request/Response/nested)
-        └──────────────┬──────────────┘
-                       │
-        ┌──────────────▼──────────────┐
-        │  Common layer (hand-written)│
-        │   - Signer  (ZC2-HMAC-SHA256)
-        │   - AbstractClient (HTTP + sign + error → exception)
-        │   - AbstractModel (toJson / fromArray via Reflection)
-        │   - Config / Credential
-        │   - HttpClientFactory (Config → PendingRequest)
-        │   - Exception\ZenlayerCloudSdkException
-        └─────────────────────────────┘
+```text
+Facade / dependency injection
+  -> named connection manager
+  -> generated Action method
+  -> AbstractClient::call()
+  -> model JSON serialization
+  -> Bearer token or ZC2-HMAC-SHA256 authentication
+  -> Illuminate HTTP client
+  -> retry/error-envelope handling
+  -> typed response hydration
 ```
 
-Hand-written code is **~1 550 LOC** across **13 files**. Generated code is
-**~26 000 LOC** across **932 files** (213 + 717 models + 2 clients).
+Generated files are committed so package consumers do not need Go, Python, or
+a build step.
 
-### Authentication modes
+## Authentication and signing
 
-Mirroring the official SDKs, two credential types implement a shared
-`CredentialInterface` (`getSecretKeyId` / `getSecretKeyPassword` /
-`getToken`):
+Each connection uses one of two official authentication modes:
 
-- `Credential` — AccessKey id + password, authenticated by `ZC2-HMAC-SHA256`
-  request signing.
-- `TokenCredential` — a personal access token sent as
-  `Authorization: Bearer <token>`, which skips signing entirely.
+- `TokenCredential`: `Authorization: Bearer <token>`; no HMAC headers.
+- `Credential`: AccessKey id/password with `ZC2-HMAC-SHA256`.
 
-The Manager picks the type per connection: a non-empty `token` config key
-wins; otherwise the AccessKey pair is used. Both credential types hold
-their secret inside a closure (never a declared property) so it cannot
-leak through `var_export` / `serialize`.
+When both are configured, the token takes precedence. HMAC signing uses POST,
+canonical URI `/`, an empty canonical query, signed headers
+`content-type;host`, SHA-256 payload hashing, and HMAC-SHA-256. Golden-vector
+tests protect byte-level compatibility with the official algorithm.
 
-### Key Laravel idioms used
+The endpoint is normalized before both URL creation and signing. It accepts
+only `host[:port]` or `http(s)://host[:port]`; user info, paths, query strings,
+fragments, control characters, and unsupported schemes are rejected.
 
-1. **Auto-discovery** via `extra.laravel.providers` + `aliases` in
-   `composer.json` — no manual registration needed.
-2. **Eagerly-registered service provider** (intentionally NOT deferred) —
-   a deferred provider's `boot()` never runs during `vendor:publish`, which
-   would silently break publishing the config. The boot cost is negligible
-   (config merge + lazy singleton bindings), so the provider is registered
-   normally.
-3. **Connection / multi-account convention** matching the database,
-   cache, and mail components: `config/zenlayercloud.php` defines named
-   connections; `ZenlayerCloud::vm('staging')` picks one by name.
-4. **HTTP transport via `Illuminate\Http\Client`** — `Http::fake()`
-   intercepts requests in tests with zero extra mocking. No Guzzle-direct
-   calls; everything flows through Laravel's HTTP factory.
-5. **Facade is thin** — it just forwards to the Manager. Type-hinting
-   `VmClient` or `ZecClient` in a constructor resolves the same client.
-6. **PHPDoc `@template TResp`** on `AbstractClient::call()` so static
-   analysis tracks the response model type per Action.
+## Models
 
----
+Generated models extend `AbstractModel` and expose nullable typed public
+properties. They implement Laravel `Arrayable` and `JsonSerializable`.
 
-## 5. Signing protocol (ZC2-HMAC-SHA256)
+- Null fields are omitted from outbound JSON.
+- Empty request/nested objects serialize as `{}`, not `[]`.
+- Nested objects and lists of objects hydrate into their declared classes.
+- Scalar and model lists validate list shape and every element type on both
+  serialization and hydration.
+- Unknown response fields are ignored for forward compatibility.
+- Known-field type mismatches surface as `JSON_PARSE_FAILED` rather than raw
+  PHP `TypeError` exceptions.
+- A successful envelope is decoded once, preserving the distinction between
+  JSON objects and lists while recursively hydrating typed nested models.
 
-Implemented in [`src/Common/Signer.php`](src/Common/Signer.php) — 70 LOC,
-**byte-for-byte** identical output to Zenlayer's published reference
-algorithm. Regression-protected by hard-coded golden vectors in
-[`tests/Unit/SignerTest.php`](tests/Unit/SignerTest.php).
+## Transport, retries, and errors
 
-Algorithm (per the official Authorization v2 spec):
+All traffic uses `Illuminate\Http\Client`, which allows applications to use
+Laravel middleware and `Http::fake()`.
 
-```
-canonicalRequest = "POST\n"               # http method
-                 + "/\n"                  # canonical URI
-                 + "\n"                   # canonical querystring (empty)
-                 + "content-type:application/json\n"
-                 + "host:<endpoint>\n"
-                 + "\n"
-                 + "content-type;host\n"  # signed headers
-                 + sha256hex(body)
+Retry policies remain separate:
 
-stringToSign     = "ZC2-HMAC-SHA256\n"
-                 + "<unix-timestamp>\n"
-                 + sha256hex(canonicalRequest)
+- `retry=false` by default. When enabled, only connection exceptions are
+  retried, with `retry_max` extra attempts. Because a connection can fail
+  after a server receives the bytes, this opt-in policy can replay a
+  non-idempotent write and should be enabled only when that risk is acceptable.
+- HTTP 429 or error code `REQUEST_LIMIT_EXCEEDED` is retried three times by
+  default with exponential delays (1s, 2s, 4s), matching the current official
+  SDKs. An integer `Retry-After` value is honored as the minimum delay. The
+  policy can be disabled independently.
+- Other HTTP errors are never retried automatically.
+- HMAC headers are regenerated for every physical network/rate-limit retry, so
+  a long backoff never reuses an expired signing timestamp.
 
-signature        = hex(HMAC-SHA-256(stringToSign, secretKeyPassword))
+Every request-execution failure is a `ZenlayerCloudSdkException`. SDK-defined
+codes include:
 
-Authorization    = "ZC2-HMAC-SHA256 Credential=<id>, "
-                 + "SignedHeaders=content-type;host, "
-                 + "Signature=<signature>"
-```
-
-Headers sent on every request:
-
-| Header | Value |
-|--------|-------|
-| `Content-Type` | `application/json` |
-| `Host` | endpoint (must match URL host) |
-| `Authorization` | see above |
-| `x-zc-version` | API version per service |
-| `x-zc-action` | Action name (PascalCase) |
-| `x-zc-service` | `vm` / `zec` |
-| `x-zc-signature-method` | `ZC2-HMAC-SHA256` |
-| `x-zc-timestamp` | Unix seconds as string |
-| `x-zc-sdk-version` | `SDK_PHP_0.1.0` |
-| `x-zc-sdk-lang` | `PHP` |
-| `x-zc-request-client` | optional, validated regex `^[0-9a-zA-Z\-_ ,;.]+$`, max 128 chars |
-
----
-
-## 6. Error handling
-
-`AbstractClient` treats the HTTP status code as the single source of truth
-for success vs failure:
-
-- **`status === 200`** → success. Body shape `{requestId, response: {…}}`.
-  Hydrated into the typed `XxxResponse` model.
-- **Any other status** (4xx, 5xx, 204, 201, etc.) → failure. Body parsed
-  as `{requestId, code, message}` and surfaced as a typed
-  `ZenlayerCloudSdkException`.
-- **Malformed JSON** in either branch → `ZenlayerCloudSdkException` with
-  `errorCode = JSON_PARSE_FAILED`.
-
-- **Transport failures** (DNS, connection refused, TLS handshake,
-  timeout) are caught and re-thrown as `ZenlayerCloudSdkException` with
-  `errorCode = NETWORK_ERROR` — callers never need to catch Laravel's
-  `ConnectionException` directly.
-- **Response shape mismatches** (the API returns a type that contradicts
-  the documented schema) surface as `JSON_PARSE_FAILED`, not a raw
-  `TypeError`.
-- **Retry semantics** (when `retry` is enabled): only network-level
-  failures are retried, with `retry_max` extra attempts after the first.
-  HTTP error responses are never retried, so non-idempotent Actions such
-  as `CreateInstances` cannot execute twice.
-
-Error codes exposed on the exception:
-
-- `JSON_PARSE_FAILED`
 - `NETWORK_ERROR`
+- `JSON_PARSE_FAILED`
 - `CREDENTIAL_VALUE_MISSING`
 - `CONFIG_INVALID`
+- `SDK_INVALID_REQUEST`
+- `REQUEST_LIMIT_EXCEEDED`
+- `SECURITY_CHALLENGE` for Cloudflare's HTTP 403 challenge response
+- `REQUEST_BLOCKED` for HTTP 451 security-policy responses
 
-The exception carries:
+API error codes, raw error messages, and request ids are preserved. HTTP
+responses without a valid API error envelope remain distinguishable from
+network failures.
 
-- `$e->errorCode` (string)
-- `$e->requestId` (?string — useful for log correlation with Zenlayer ops)
-- `$e->getMessage()` (string — includes code + message + requestId)
+## Configuration and multi-account behavior
 
----
+`config/zenlayercloud.php` follows Laravel's named-connection convention. Each
+connection contains credentials plus endpoint, timeout, retry, TLS, proxy,
+debug, and request-client options. Clients are cached per exact connection key;
+dots in connection names are treated literally.
 
-## 7. Configuration shape
+Connection option types are validated at the Laravel configuration boundary;
+malformed arrays or scalars fail as `CONFIG_INVALID` instead of producing PHP
+conversion warnings or silently changing values.
 
-`config/zenlayercloud.php` (published by `vendor:publish --tag=zenlayercloud-config`):
+Debug mode is intentionally redacted. It sends method, URL, service, Action,
+status to Laravel's PSR-3 logger and never logs Authorization, request bodies,
+or response bodies. TLS verification remains enabled unless explicitly
+overridden for a controlled environment.
 
-```php
-return [
-    'default' => env('ZENLAYER_CONNECTION', 'default'),
+## Generation and upstream parity
 
-    'connections' => [
-        'default' => [
-            'secret_key_id'       => env('ZENLAYER_SECRET_KEY_ID'),
-            'secret_key_password' => env('ZENLAYER_SECRET_KEY_PASSWORD'),
-            'endpoint'            => env('ZENLAYER_ENDPOINT', 'console.zenlayer.com'),
-            'scheme'              => env('ZENLAYER_SCHEME', 'https'),
-            'timeout'             => (int) env('ZENLAYER_TIMEOUT', 60),
-            'retry'               => (bool) env('ZENLAYER_RETRY', false),
-            'retry_max'           => (int) env('ZENLAYER_RETRY_MAX', 3),
-            'debug'               => (bool) env('ZENLAYER_DEBUG', false),
-            'proxy'               => env('ZENLAYER_PROXY'),
-            'verify'              => env('ZENLAYER_VERIFY', true), // true | false | CA bundle path
-            'request_client'      => env('ZENLAYER_REQUEST_CLIENT'),
-        ],
+`bin/codegen.php` reads `models.go` and `client.go` for VM `20260401` and ZEC
+`20250901` from the official Go SDK. Before writing it:
 
-        // additional named connections may be added here
-    ],
-];
-```
+- parses and validates both services;
+- rejects duplicate Actions/fields and missing request/response models;
+- refuses unsupported Go types instead of silently degrading to `mixed`;
+- emits scalar/model list PHPDoc used by PHPStan;
+- carries upstream deprecations into PHP `@deprecated` tags;
+- applies one documented compatibility override for
+  `CreateEipsRequest.instanceId` while the official SDK schemas omit it.
 
-The endpoint setter tolerates copy-paste shapes like
-`https://console.zenlayer.com/` — the scheme prefix and trailing slash are
-stripped so the URL builder cannot produce `https://https://…/api/v2/…`
-or a double-slash.
+The generated Action and field sets were also compared with the official
+Python SDK and every linked public VM/ZEC Action page. See `UPSTREAM.md` for the
+precise audit snapshot and the five official-SDK Actions not yet linked in the
+ZEC documentation index.
 
----
+## Quality and security controls
 
-## 8. Security posture
+- PHPUnit exercises signing, both authentication modes, serialization,
+  generated-surface integrity, retries, all special error paths, endpoint
+  validation, redacted debug logging, Laravel publishing, and manager behavior.
+- PHPStan level 8 analyzes the runtime, the complete generated tree, the code
+  generator, and all shipped examples.
+- Pint enforces the Laravel style preset and strict types.
+- CI tests supported PHP/Laravel combinations plus one lowest-dependency
+  resolution, and runs validation, static analysis, formatting, and dependency
+  auditing.
+- Credential secrets are closure-held, redacted from debugging, blocked from
+  serialization, and marked with `SensitiveParameter` where passed. Transport
+  failures are scrubbed using the exact credential used for that physical
+  attempt, including rotating custom credentials and proxy user information.
+- GitHub Actions uses read-only repository permissions.
 
-The SDK handles long-lived API credentials, so the threat model takes
-this seriously:
+## Intentional limitations
 
-1. **`#[SensitiveParameter]`** on the constructor argument — PHP's stack
-   trace redaction replaces the value with `Object(SensitiveParameterValue)`
-   in any exception backtrace.
-2. **Password lives inside a closure**, not as a declared property — so
-   `var_export()`, `serialize()`, and `__sleep` cannot surface the
-   plaintext value. Only `getSecretKeyPassword()` retrieves it explicitly.
-3. **`__debugInfo`** redacts the password to `*** redacted ***` in
-   `var_dump()` and `print_r()`.
-4. **`__serialize`** throws — `serialize($credential)` raises a
-   `ZenlayerCloudSdkException` rather than emitting any state.
-5. **`x-zc-request-client` regex-validated** to prevent CRLF injection
-   into HTTP headers (alphanumerics, space, dash, underscore, comma,
-   semicolon, period only; 128-char cap).
-6. **GitHub Actions** workflow declares `permissions: contents: read` to
-   minimize blast radius of any compromise.
-
-All four redaction paths are guarded by PHPUnit tests in
-[`tests/Unit/CredentialTest.php`](tests/Unit/CredentialTest.php).
-
----
-
-## 9. Code generation
-
-The 871 generated files come from `bin/codegen.php`, a maintainer-only
-tool. It parses the upstream Zenlayer schema source (a typed-struct DSL)
-and emits typed PHP Request / Response / nested model classes.
-
-- **Input**: a directory containing `vm20260401/{models.go,client.go}`
-  and `zec20250901/{models.go,client.go}`. The path is configured via
-  `ZENLAYER_SCHEMA_SRC` env var.
-- **Output**: `src/Vm/V20260401/Models/*.php` + `src/Vm/V20260401/VmClient.php`
-  (and ZEC equivalents). Committed to git.
-- **Idempotency**: re-running the generator with unchanged input produces
-  byte-identical output — any diff is a regression.
-- **Type mapping** (Go-style → PHP):
-
-  | Schema | PHP |
-  |--------|-----|
-  | `*string` | `?string` |
-  | `*int`, `*int32`, `*int64` | `?int` |
-  | `*bool` | `?bool` |
-  | `*float32`, `*float64` | `?float` |
-  | `*Xxx` | `?Xxx` (nested AbstractModel) |
-  | `[]string`, `[]int`, … | `?array` of scalars |
-  | `[]*Xxx`, `[]Xxx` | `?array` of `Xxx` (entry in `$_typeMap`) |
-  | `embed of base types` | (ignored — does not become a property) |
-  | inline `Response struct {…}` | auto-promoted to `{Wrapper}Params` class |
-
-End consumers never run the generator. The committed PHP files are the
-canonical source for Packagist.
-
----
-
-## 10. Test suite
-
-| Suite | Count |
-|-------|------:|
-| Tests | **52** |
-| Assertions | **119** |
-
-Unit tests (`tests/Unit/`):
-
-- `SignerTest` — 10 tests including 4 hard-coded golden vectors for
-  `ZC2-HMAC-SHA256` (one copied from the official signature-v2
-  documentation). Any drift in the signing algorithm fails immediately.
-- `AbstractModelTest` — 8 tests covering scalar / nested-model /
-  typed-array hydration round-trip, JSON serialization including unicode,
-  and the `null → omit` semantics.
-- `CredentialTest` — 8 tests including 4 live security checks: var_export,
-  var_dump, print_r, and serialize all confirmed not to leak the password.
-- `ConfigTest` — 7 tests covering defaults, named args, endpoint scheme
-  normalization, and the `request_client` regex / length validation.
-
-Feature tests (`tests/Feature/`):
-
-- `VmClientTest` — 13 tests using `Http::fake()`: signed POST,
-  `request_client` header passthrough, nested request body serialization,
-  retry-enabled API error preservation, connection failure → `NETWORK_ERROR`,
-  4xx + 5xx + 204 + non-JSON body error paths, forward-compat unknown fields,
-  full `CreateInstances` round-trip with nested `ChargePrepaid` /
-  `SystemDisk` / `DataDisk[]`.
-- `ZecClientTest` — 2 tests for the second service.
-- `ZenlayerCloudManagerTest` — 5 tests for the multi-connection manager
-  (default, named, unknown, flush, missing credential).
-
-Run locally:
-
-```bash
-composer install
-composer test       # PHPUnit
-composer lint       # Pint check
-composer lint:fix   # Pint fix
-composer analyse    # PHPStan level 8
-composer codegen    # regenerate src/Vm + src/Zec from schema
-```
-
----
-
-## 11. Quality bar (all currently green)
-
-| Tool | Setting | Status |
-|------|---------|--------|
-| PHPUnit | 52 tests, strict flags (`failOnWarning`, `failOnRisky`, `failOnEmptyTestSuite`, `beStrictAboutOutputDuringTests`) | OK |
-| Laravel Pint | `preset: laravel` + custom (strict_types required, ordered_imports, no_unused_imports) | passed |
-| PHPStan | `level: 8` over `src/Common` + `src/Facades` + integration layer (generated tree excluded) | 0 errors |
-| `composer validate --strict` | — | valid |
-| PHP `-l` lint | every file (979 tracked) | 0 errors |
-| Codegen idempotency | `git diff src/` after rerun | empty (byte-identical) |
-
----
-
-## 12. Open-source baseline
-
-All standard files in place at repo root or under `.github/`:
-
-- `LICENSE` — Apache-2.0
-- `README.md` + `README-CN.md` — bilingual, identical content
-- `CHANGELOG.md` — Keep-a-Changelog format, `[Unreleased]` only
-- `CONTRIBUTING.md` — dev setup + PR workflow
-- `SECURITY.md` — private disclosure via GitHub Security Advisory
-- `CODE_OF_CONDUCT.md` — Contributor Covenant 2.1
-- `.editorconfig` — universal editor config
-- `.gitignore` — only `vendor/`, lock, caches, IDE
-- `.gitattributes` — `export-ignore` for `tests/`, `bin/`, `examples/`,
-  `.github/`, and dev-only root files so the Packagist tarball ships
-  950 files instead of all 979
-- `.github/workflows/tests.yml` — CI matrix, declares
-  `permissions: contents: read` (least privilege)
-- `.github/dependabot.yml` — Composer + GitHub-Actions update PRs
-- `.github/PULL_REQUEST_TEMPLATE.md` — review checklist
-- `.github/ISSUE_TEMPLATE/{bug_report,feature_request,config}.yml` —
-  structured issue forms
-
----
-
-## 13. Known trade-offs and intentional choices
-
-- **PascalCase method names on `VmClient` / `ZecClient`** intentionally
-  deviate from PSR-12's camelCase recommendation so that Action names
-  copy-pasted from the API reference work verbatim. Pint is configured
-  to leave them alone.
-- **No PSR-3 logging hook** in v0.1.x. Debug logging happens only via
-  Guzzle's `debug` option when `'debug' => true` is set in the
-  connection config. A dedicated `LoggerInterface` injection point is a
-  candidate for v0.2.
-- **`SDK_VERSION` constant** in `AbstractClient` is hardcoded `'0.1.0'`.
-  Maintainers must bump it in lock-step with git tags. Reading from
-  `Composer\InstalledVersions` is a candidate for later if the duplication
-  becomes painful.
-- **Generated tree is committed**. The 871 generated files inflate the
-  repo by ~3 MB but allow the SDK to ship without any build step on the
-  consumer side. The codegen tool is excluded from Packagist via
-  `.gitattributes`.
-
----
-
-## 14. What I, the implementer, could not verify
-
-- **Real Zenlayer Cloud API calls**. No AKID / SK pair was used to hit
-  production. The byte-for-byte signature alignment + hard-coded golden
-  vectors + Http::fake() captured-byte assertions give very high
-  confidence, but the first real-world call against the live service is
-  still the v0.1.0 production test.
-- **PHP 8.4 in real CI**. The local toolchain runs PHP 8.3.31 only. The
-  GitHub Actions matrix includes 8.4 and will run on first push.
-
----
-
-## 15. Audit history (for the curious reviewer)
-
-The codebase was audited ten times across iterative review rounds. Each
-round added a different angle, found real issues, and fixed them
-before claiming green. A non-exhaustive log:
-
-1. Implementation + first green: signature byte-for-byte vs upstream,
-   action counts (61/197), basic test suite.
-2. Open-source standards + removal of incidental references to other-
-   language SDKs from user-facing artifacts.
-3. Source-code re-read: catches dead `ERR_*` constants, dead
-   `provides()` method (turned into a real deferred provider).
-4. Real-execution audit: PHP `-l` over every file, fresh `composer
-   require` in a temp project, `Http::recorded()` byte capture of an
-   actual signed request.
-5. Senior-reviewer angle: `.gitattributes` export-ignore (saved ~140 KB
-   per install), PHPStan level 5 → level 8.
-6. Multi-axis: code coverage tooling check, reserved-word collision
-   scan, autoloader integrity (881/881 classes resolve), README internal
-   link validity, large-response hydration benchmark.
-7. File-by-file 47-file pass: caught 7 paper-cut issues (composer plugin
-   line, `.gitignore` stale line, CHANGELOG stale Python reference,
-   SECURITY.md placeholder, mis-named ZEC example, weak assertion in
-   `test_non_200_success_status_is_still_treated_as_error`, CI silent
-   `|| true` after PHPStan).
-8. Full 914-file manifest with bulk invariants (`class` line matches
-   filename, every file has `declare(strict_types=1)`).
-9. Package rename to `augusl/zenlayercloud-laravel-sdk`.
-10. Multi-angle pre-release audit (8 angles), discovered:
-    - `var_export($credential)` leaked the password despite earlier
-      redaction. Fixed by moving the secret into a closure.
-    - GitHub Actions had no `permissions:` declaration → added
-      `contents: read`.
-    - The new round-trip functional test used a wrong field name
-      (`diskId` vs `diskIdSet`) on `DiskWithInstance`. Fixed.
-    - Added 6 new tests (var_export leak guard, var_dump leak guard,
-      print_r leak guard, serialize blocked, full CreateInstances
-      round-trip with nested models, forward-compat unknown fields).
-11. Runtime-behavior re-diff against the upstream reference SDKs (retry
-    semantics, transport-error wrapping, TLS options) with live
-    reproductions, discovered:
-    - Connection-level failures (DNS / refused / timeout) escaped as raw
-      `Illuminate\Http\Client\ConnectionException` instead of the typed
-      `NETWORK_ERROR` exception the README promises. Fixed by catching
-      and wrapping in `AbstractClient::call()`.
-    - Retry attempt count was off by one versus the upstream contract
-      (`retry_max` should mean *extra retries*, so total attempts =
-      `retry_max + 1`). Fixed.
-    - Response-shape mismatches (API returning a type that contradicts
-      the schema) leaked a raw `TypeError`; now wrapped as
-      `JSON_PARSE_FAILED` with the requestId attached.
-    - Scheme values other than `http` now fall back to `https`, matching
-      the upstream normalization rule.
-    - Added the `verify` connection option (true / false / CA bundle
-      path) for TLS verification control, mirroring the upstream
-      Python SDK's `certification` setting.
-    - Added 6 regression tests covering all of the above (58 tests /
-      134 assertions total).
-12. Line-by-line re-diff of the common layer against both official SDKs,
-    discovered the biggest functional gap so far:
-    - **Bearer-token authentication was entirely missing.** Both official
-      SDKs expose a `TokenCredential` (personal access token →
-      `Authorization: Bearer <token>`, signing skipped) behind a shared
-      credential interface; ours only supported HMAC, so token-auth users
-      could not authenticate at all. Added `CredentialInterface`,
-      `TokenCredential`, the Bearer branch in `AbstractClient`, and the
-      Manager wiring (a `token` config key wins over the AccessKey pair).
-    - Credential inputs are now trimmed (matching the Python SDK) so a
-      trailing newline in a `.env` value no longer produces a cryptic 401.
-    - Added 8 regression tests (TokenCredential unit suite + a live Bearer
-      header assertion). Total: 66 tests / 152 assertions.
-    - **Regenerated the entire model/client tree from the current upstream
-      schema.** The committed tree had drifted from `composer codegen`
-      output (the idempotency contract was silently broken). Regeneration
-      (a) fixed a real correctness bug — `InstanceStatus` had been
-      generated with 13 nullable-string properties named after status
-      *values* (`$PENDING`, `$RUNNING`, …) instead of the actual
-      `{instanceId, instanceStatus}` shape, so `DescribeInstancesStatus`
-      responses never deserialized; and (b) picked up Actions/fields the
-      upstream added within the same API versions (HaVip family,
-      `DescribeVmInventoryCapacity`, IPv6 unassign, more `InquiryPrice*`,
-      `initScript`, …). New totals: VM 62 Actions / 213 models, ZEC 214
-      Actions / 717 models. Idempotency re-verified (two consecutive runs
-      are byte-identical).
-13. A 35-agent automated workflow re-audited every layer line-by-line
-    against the official Go/Python SDKs, plus an independent diff of all
-    276 Action names against the live API docs
-    (docs.console.zenlayer.com/api-reference/compute/{vm,zec}) — VM 62/62
-    and ZEC 214/214 match the docs exactly, with zero missing and zero
-    stray actions. The audit found **no request-breaking bugs**; the fixes
-    applied were:
-    - **Reverted the round-3 deferred provider.** A `DeferrableProvider`'s
-      `boot()` never fires during `vendor:publish` (nothing resolves an SDK
-      class to trigger it), so deferring silently broke the documented
-      config-publish install step. The Testbench publish test passed only
-      because Testbench force-boots the provider, masking the production
-      bug. The provider is now eagerly registered (negligible cost) and a
-      publish-group regression test was added.
-    - **Empty nested model now serializes as `{}` not `[]`** (an all-null
-      nested model went through `toArray()` → `[]` → JSON `[]`); fixed in
-      `AbstractModel::normalizeValue` to match Go's empty-struct marshal.
-    - **Non-200 responses without a `code` field** no longer borrow the
-      `NETWORK_ERROR` transport code; they fall back to `HTTP_<status>` so
-      transport vs. API failures stay distinguishable.
-    - Removed dead plumbing (the unused `wrapperPrefix` codegen parameter)
-      and corrected two docblocks (a phantom `__sleep` reference, a
-      duplicated comment); documented the intentional `request_client`
-      fail-fast deviation and the 60s-timeout rationale.
-    - The audit explicitly confirmed the credential closure-hiding,
-      `__serialize` guard, and `TokenCredential` stubs are intentional and
-      should be KEPT — not over-engineering. Total: 71 tests / 164
-      assertions.
-
-Across the thirteen rounds, **50+ distinct issues** were caught and fixed.
-This list is preserved here so the reviewer can spot-check the kinds of
-problems that have already been ruled out — and look for ones that
-haven't.
-
----
-
-## 16. Suggested reviewer checklist
-
-When reviewing, the highest-signal places to look:
-
-1. **`src/Common/Signer.php`** — 70 LOC. Cross-check against the
-   `ZC2-HMAC-SHA256` spec on Zenlayer's docs. The fixture in
-   `tests/Unit/SignerTest.php` includes hand-verifiable inputs.
-2. **`src/Common/AbstractClient.php`** — the only place that sends real
-   HTTP. Look for: header set is complete, signature derivation order,
-   error vs success branching, JSON parse exception handling.
-3. **`src/Common/AbstractModel.php`** — reflection-based hydration.
-   Look for: `$_typeMap` works for array-of-model fields, nested
-   single-model deserialization respects PHP type system, `toArray`
-   correctly omits nulls.
-4. **`src/Common/Credential.php`** — 80 LOC. Verify the closure-based
-   secret hiding actually defeats `var_export`. Check `__serialize`
-   throws.
-5. **`src/Common/Config.php`** — endpoint normalization (`https://` and
-   trailing slash stripping), `request_client` regex.
-6. **`src/ZenlayerCloudManager.php`** — multi-connection caching,
-   `flushClients()`, unknown-connection error path.
-7. **`src/ZenlayerCloudServiceProvider.php`** — provider + binding
-   list matches `provides()`.
-8. **`bin/codegen.php`** — single PHP file, no external deps. Verify the
-   Go-style → PHP type mapping table is exhaustive (no warnings emitted
-   on the current schema).
-9. **`tests/Feature/VmClientTest.php`** — end-to-end with Laravel's
-   `Http::fake()`. The signed-POST test asserts every header the SDK
-   sends.
-10. **Generated code** — sample any model under `src/Vm/V20260401/Models/`
-    or `src/Zec/V20250901/Models/` and compare its property list to the
-    upstream Action's input shape on Zenlayer's API docs.
-
-If any of those layers look wrong, please file a finding back to me with
-the specific class / line so I can attack it directly.
-
-— `augusl/zenlayercloud-laravel-sdk` maintainer
+- This is not an official Zenlayer product and does not provide support for
+  upstream service availability or account configuration.
+- Automated tests do not call a live Zenlayer account because provisioning can
+  mutate billable resources. Production authentication and account-specific
+  permissions therefore require a consumer-owned smoke test.
+- Request models do not perform Action-specific business validation; the API
+  remains the authority for allowed values and cross-field rules.

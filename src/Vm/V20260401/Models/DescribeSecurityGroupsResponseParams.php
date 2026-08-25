@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Vm\V20260401\Models;
@@ -21,7 +27,7 @@ class DescribeSecurityGroupsResponseParams extends AbstractModel
     /**
      * DataSet 安全组结果集。
      *
-     * @var SecurityGroupInfo[]|null
+     * @var list<SecurityGroupInfo>|null
      */
     public ?array $dataSet = null;
 

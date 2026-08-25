@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -20,6 +26,8 @@ class CreateCidrRequest extends AbstractModel
      * Deprecated: EipV4Type 已废弃，请不要使用。
      * EipV4Type 公网IPv4的网络类型。
      * 已废弃，请使用`networkLineType`。
+     *
+     * @deprecated
      */
     public ?string $eipV4Type = null;
 

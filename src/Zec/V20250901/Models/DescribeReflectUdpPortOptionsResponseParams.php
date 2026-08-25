@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -16,7 +22,7 @@ class DescribeReflectUdpPortOptionsResponseParams extends AbstractModel
     /**
      * ReflectUdpPorts 默认UDP反射源端口列表。
      *
-     * @var ReflectUdpPortPolicy[]|null
+     * @var list<ReflectUdpPortPolicy>|null
      */
     public ?array $reflectUdpPorts = null;
 

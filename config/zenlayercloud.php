@@ -42,6 +42,13 @@ return [
             'retry' => (bool) env('ZENLAYER_RETRY', false),
             'retry_max' => (int) env('ZENLAYER_RETRY_MAX', 3),
 
+            // Official SDK behavior: retry HTTP 429 / REQUEST_LIMIT_EXCEEDED
+            // three times with exponential backoff (1s, 2s, 4s). A numeric
+            // Retry-After header is honored as the minimum delay. Set the
+            // retry count to 0 to disable it.
+            'rate_limit_max_retries' => (int) env('ZENLAYER_RATE_LIMIT_MAX_RETRIES', 3),
+            'rate_limit_retry_delay_ms' => (int) env('ZENLAYER_RATE_LIMIT_RETRY_DELAY_MS', 1000),
+
             'debug' => (bool) env('ZENLAYER_DEBUG', false),
             'proxy' => env('ZENLAYER_PROXY'),
 

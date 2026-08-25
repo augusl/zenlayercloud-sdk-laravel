@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -43,11 +49,15 @@ class NicInfo extends AbstractModel
 
     /**
      * PublicIpList 关联的公网IP。
+     *
+     * @var list<string>|null
      */
     public ?array $publicIpList = null;
 
     /**
      * PrivateIpList 关联的内网IP。
+     *
+     * @var list<string>|null
      */
     public ?array $privateIpList = null;
 
@@ -70,6 +80,8 @@ class NicInfo extends AbstractModel
 
     /**
      * SecondaryIpv4s 网卡上的辅助 IPv4 地址。
+     *
+     * @var list<string>|null
      */
     public ?array $secondaryIpv4s = null;
 
@@ -117,4 +129,11 @@ class NicInfo extends AbstractModel
      * Tags 该网卡关联的标签。
      */
     public ?Tags $tags = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'publicIpList' => 'string',
+        'privateIpList' => 'string',
+        'secondaryIpv4s' => 'string',
+    ];
 }

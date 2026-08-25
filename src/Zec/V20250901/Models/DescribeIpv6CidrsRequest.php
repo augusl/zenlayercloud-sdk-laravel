@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -13,6 +19,8 @@ class DescribeIpv6CidrsRequest extends AbstractModel
 {
     /**
      * CidrIds 一个或多个待操作的Cidr ID，根据cidrId进行过滤。
+     *
+     * @var list<string>|null
      */
     public ?array $cidrIds = null;
 
@@ -54,6 +62,8 @@ class DescribeIpv6CidrsRequest extends AbstractModel
     /**
      * TagKeys 根据标签键进行搜索。
      * 最长不得超过20个标签键。
+     *
+     * @var list<string>|null
      */
     public ?array $tagKeys = null;
 
@@ -61,12 +71,18 @@ class DescribeIpv6CidrsRequest extends AbstractModel
      * Tags 根据标签进行搜索。
      * 最长不得超过20个标签。
      *
-     * @var Tag[]|null
+     * @var list<Tag>|null
      */
     public ?array $tags = null;
 
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'tags' => Tag::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'cidrIds' => 'string',
+        'tagKeys' => 'string',
     ];
 }

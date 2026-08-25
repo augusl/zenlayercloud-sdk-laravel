@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Vm\V20260401\Models;
@@ -17,6 +23,8 @@ class DescribeSubnetsRequest extends AbstractModel
      * SubnetIds 子网 ID。
      * 取值可以由多个Subnet ID组成一个。
      * 最多支持100个ID查询。
+     *
+     * @var list<string>|null
      */
     public ?array $subnetIds = null;
 
@@ -48,4 +56,9 @@ class DescribeSubnetsRequest extends AbstractModel
      * 默认为1。
      */
     public ?int $pageNum = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'subnetIds' => 'string',
+    ];
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ZenlayerCloud\Laravel;
 
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
-use Illuminate\Contracts\Container\Container;
 use ZenlayerCloud\Laravel\Common\Config;
 use ZenlayerCloud\Laravel\Common\Credential;
 use ZenlayerCloud\Laravel\Common\CredentialInterface;
@@ -36,8 +35,9 @@ class ZenlayerCloudManager
     private array $zecClients = [];
 
     public function __construct(
-        protected readonly Container $container,
         protected readonly ConfigRepository $config,
+        protected readonly HttpClientFactory $http,
+        protected readonly Signer $signer,
     ) {}
 
     /**
@@ -50,11 +50,17 @@ class ZenlayerCloudManager
     {
         $name = $connection ?? $this->defaultConnection();
 
-        return $this->vmClients[$name] ??= new VmClient(
-            $this->credential($name),
-            $this->configFor($name),
-            $this->container->make(HttpClientFactory::class),
-            $this->container->make(Signer::class),
+        if (isset($this->vmClients[$name])) {
+            return $this->vmClients[$name];
+        }
+
+        $connectionConfig = $this->connectionConfig($name);
+
+        return $this->vmClients[$name] = new VmClient(
+            $this->credential($connectionConfig),
+            $this->configFor($connectionConfig),
+            $this->http,
+            $this->signer,
         );
     }
 
@@ -67,11 +73,17 @@ class ZenlayerCloudManager
     {
         $name = $connection ?? $this->defaultConnection();
 
-        return $this->zecClients[$name] ??= new ZecClient(
-            $this->credential($name),
-            $this->configFor($name),
-            $this->container->make(HttpClientFactory::class),
-            $this->container->make(Signer::class),
+        if (isset($this->zecClients[$name])) {
+            return $this->zecClients[$name];
+        }
+
+        $connectionConfig = $this->connectionConfig($name);
+
+        return $this->zecClients[$name] = new ZecClient(
+            $this->credential($connectionConfig),
+            $this->configFor($connectionConfig),
+            $this->http,
+            $this->signer,
         );
     }
 
@@ -87,7 +99,15 @@ class ZenlayerCloudManager
 
     private function defaultConnection(): string
     {
-        return (string) $this->config->get('zenlayercloud.default', 'default');
+        $name = $this->config->get('zenlayercloud.default', 'default');
+        if (! is_string($name) || trim($name) === '') {
+            throw new ZenlayerCloudSdkException(
+                ZenlayerCloudSdkException::ERR_CONFIG_INVALID,
+                'zenlayercloud.default must be a non-empty connection name.',
+            );
+        }
+
+        return $name;
     }
 
     /**
@@ -95,7 +115,8 @@ class ZenlayerCloudManager
      */
     private function connectionConfig(string $name): array
     {
-        $conn = $this->config->get("zenlayercloud.connections.{$name}");
+        $connections = $this->config->get('zenlayercloud.connections', []);
+        $conn = is_array($connections) ? ($connections[$name] ?? null) : null;
         if (! is_array($conn)) {
             throw new ZenlayerCloudSdkException(
                 ZenlayerCloudSdkException::ERR_CONFIG_INVALID,
@@ -104,43 +125,88 @@ class ZenlayerCloudManager
             );
         }
 
+        $types = [
+            'secret_key_id' => 'nullable-string',
+            'secret_key_password' => 'nullable-string',
+            'token' => 'nullable-string',
+            'endpoint' => 'string',
+            'scheme' => 'string',
+            'timeout' => 'int',
+            'retry' => 'bool',
+            'retry_max' => 'int',
+            'debug' => 'bool',
+            'proxy' => 'nullable-string',
+            'verify' => 'bool-or-string',
+            'request_client' => 'nullable-string',
+            'rate_limit_max_retries' => 'int',
+            'rate_limit_retry_delay_ms' => 'int',
+        ];
+
+        foreach ($types as $key => $expected) {
+            if (! array_key_exists($key, $conn)) {
+                continue;
+            }
+
+            $value = $conn[$key];
+            $valid = match ($expected) {
+                'string' => is_string($value),
+                'nullable-string' => $value === null || is_string($value),
+                'int' => is_int($value),
+                'bool' => is_bool($value),
+                'bool-or-string' => is_bool($value) || is_string($value),
+            };
+
+            if (! $valid) {
+                $expectedLabel = match ($expected) {
+                    'nullable-string' => 'a string or null',
+                    'bool-or-string' => 'a boolean or string',
+                    default => "a {$expected}",
+                };
+
+                throw new ZenlayerCloudSdkException(
+                    ZenlayerCloudSdkException::ERR_CONFIG_INVALID,
+                    "Zenlayer Cloud connection [{$name}] option [{$key}] must be {$expectedLabel}.",
+                );
+            }
+        }
+
         return $conn;
     }
 
-    private function credential(string $name): CredentialInterface
+    /** @param array<string,mixed> $connection */
+    private function credential(array $connection): CredentialInterface
     {
-        $c = $this->connectionConfig($name);
-
         // A configured Bearer token takes precedence over the AccessKey pair,
         // matching the upstream SDKs (a connection is either token- or
         // key-authenticated, never both).
-        $token = $c['token'] ?? null;
+        $token = $connection['token'] ?? null;
         if (is_string($token) && trim($token) !== '') {
             return new TokenCredential($token);
         }
 
         return new Credential(
-            (string) ($c['secret_key_id'] ?? ''),
-            (string) ($c['secret_key_password'] ?? ''),
+            $connection['secret_key_id'] ?? '',
+            $connection['secret_key_password'] ?? '',
         );
     }
 
-    private function configFor(string $name): Config
+    /** @param array<string,mixed> $connection */
+    private function configFor(array $connection): Config
     {
-        $c = $this->connectionConfig($name);
-
-        $verify = $c['verify'] ?? true;
+        $verify = $connection['verify'] ?? true;
 
         return new Config(
-            endpoint: (string) ($c['endpoint'] ?? 'console.zenlayer.com'),
-            scheme: (string) ($c['scheme'] ?? 'https'),
-            timeout: (int) ($c['timeout'] ?? 60),
-            retry: (bool) ($c['retry'] ?? false),
-            retryMax: (int) ($c['retry_max'] ?? 3),
-            debug: (bool) ($c['debug'] ?? false),
-            proxy: isset($c['proxy']) ? (string) $c['proxy'] : null,
-            verify: is_string($verify) ? $verify : (bool) $verify,
-            requestClient: isset($c['request_client']) ? (string) $c['request_client'] : null,
+            endpoint: $connection['endpoint'] ?? 'console.zenlayer.com',
+            scheme: $connection['scheme'] ?? 'https',
+            timeout: $connection['timeout'] ?? 60,
+            retry: $connection['retry'] ?? false,
+            retryMax: $connection['retry_max'] ?? 3,
+            debug: $connection['debug'] ?? false,
+            proxy: $connection['proxy'] ?? null,
+            verify: $verify,
+            requestClient: $connection['request_client'] ?? null,
+            rateLimitMaxRetries: $connection['rate_limit_max_retries'] ?? 3,
+            rateLimitRetryDelayMs: $connection['rate_limit_retry_delay_ms'] ?? 1000,
         );
     }
 }

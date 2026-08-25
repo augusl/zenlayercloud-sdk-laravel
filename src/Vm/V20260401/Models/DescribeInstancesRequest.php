@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Vm\V20260401\Models;
@@ -11,6 +17,8 @@ class DescribeInstancesRequest extends AbstractModel
     /**
      * InstanceIds 虚拟机实例ID。
      * 最多支持100个ID查询。
+     *
+     * @var list<string>|null
      */
     public ?array $instanceIds = null;
 
@@ -42,11 +50,15 @@ class DescribeInstancesRequest extends AbstractModel
 
     /**
      * PublicIpAddresses 公网IPv4地址。
+     *
+     * @var list<string>|null
      */
     public ?array $publicIpAddresses = null;
 
     /**
      * PrivateIpAddresses 子网内网的IPv4地址。
+     *
+     * @var list<string>|null
      */
     public ?array $privateIpAddresses = null;
 
@@ -92,6 +104,8 @@ class DescribeInstancesRequest extends AbstractModel
     /**
      * TagKeys 根据标签键进行搜索。
      * 最长不得超过20个标签键。
+     *
+     * @var list<string>|null
      */
     public ?array $tagKeys = null;
 
@@ -99,12 +113,20 @@ class DescribeInstancesRequest extends AbstractModel
      * Tags 根据标签进行搜索。
      * 最长不得超过20个标签。
      *
-     * @var Tag[]|null
+     * @var list<Tag>|null
      */
     public ?array $tags = null;
 
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'tags' => Tag::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'instanceIds' => 'string',
+        'publicIpAddresses' => 'string',
+        'privateIpAddresses' => 'string',
+        'tagKeys' => 'string',
     ];
 }

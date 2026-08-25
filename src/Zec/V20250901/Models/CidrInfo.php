@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -37,7 +43,11 @@ class CidrInfo extends AbstractModel
     public ?int $totalCount = null;
 
     /**
+     * Deprecated: UsedCount 已废弃，请不要使用。
      * UsedCount CIDR中已被使用的IP地址数量。
+     * 已废弃，请参考`availableCount`。
+     *
+     * @deprecated
      */
     public ?int $usedCount = null;
 
@@ -52,6 +62,8 @@ class CidrInfo extends AbstractModel
      * EipV4Type EIP网络类型。
      * 表示该CIDR支持的公网IP线路类型。
      * 已废弃，请参考`networkLineType`。
+     *
+     * @deprecated
      */
     public ?string $eipV4Type = null;
 
@@ -108,4 +120,28 @@ class CidrInfo extends AbstractModel
      * Tags 该CIDR地址段关联的标签。
      */
     public ?Tags $tags = null;
+
+    /**
+     * AsnObservation ASN 观测结果。仅当CIDR来源为BYOIP时存在。
+     */
+    public ?AsnObservationDetail $asnObservation = null;
+
+    /**
+     * AvailableCidr 该 CIDR 当前可创建的网段清单，按掩码长度分组统计数量。
+     * 用于创建网段 EIP 前确认某个掩码长度是否还有可用网段。
+     * 无可用网段时为空列表。
+     *
+     * @var list<AvailableCidrInfo>|null
+     */
+    public ?array $availableCidr = null;
+
+    /**
+     * AvailableCount CIDR中当前可用的IP地址数量（= totalCount − 实际已占用地址数，网段(Block)型EIP按其掩码长度占用的全部地址计算）。
+     */
+    public ?int $availableCount = null;
+
+    /** @var array<string,class-string<AbstractModel>> */
+    protected static array $_typeMap = [
+        'availableCidr' => AvailableCidrInfo::class,
+    ];
 }

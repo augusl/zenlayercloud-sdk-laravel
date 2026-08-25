@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -23,9 +29,11 @@ class ModifyEipBandwidthRequest extends AbstractModel
     public ?int $bandwidth = null;
 
     /**
-     * CommitBandwidth 保底带宽。
-     * 单位Mbps。
-     * 有且仅当为Remote IP，且为选择带宽包计费, 需要指定专线部分的保底带宽。
+     * Deprecated: CommitBandwidth 已废弃，请不要使用。
+     * CommitBandwidth 已废弃，该参数不再生效，传值将被忽略。
+     * 已配置突发带宽的 EIP 保持原值不变；若本次 `bandwidth` 超过原突发带宽，突发带宽将自动上调至与 `bandwidth` 一致。
+     *
+     * @deprecated
      */
     public ?int $commitBandwidth = null;
 }

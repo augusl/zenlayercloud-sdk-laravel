@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -73,11 +79,16 @@ class CreateNetworkInterfaceRequest extends AbstractModel
     /**
      * EipBindType 公网IP的绑定模式。
      * 当分配公网IP时需要指定。
+     * 绑定网段(Block)型EIP时只能使用`Passthrough`，必须显式指定（不能省略，省略等价于`FullNat`会被拒绝）。
      */
     public ?string $eipBindType = null;
 
     /**
-     * EipIds 配置在网卡的公网IP ID集合。
+     * EipIds 分配已有的EIP到网卡上。
+     * IP数量必须和创建的网卡数量一致。
+     * 请确保创建的网卡`ipStackType` 包含`IPv4`。
+     *
+     * @var list<string>|null
      */
     public ?array $eipIds = null;
 
@@ -91,4 +102,9 @@ class CreateNetworkInterfaceRequest extends AbstractModel
      * 注意：·关联`标签键`不能重复。
      */
     public ?TagAssociation $tags = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'eipIds' => 'string',
+    ];
 }

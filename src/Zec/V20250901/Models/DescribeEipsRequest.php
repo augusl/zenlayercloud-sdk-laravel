@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -10,6 +16,8 @@ class DescribeEipsRequest extends AbstractModel
 {
     /**
      * EipIds 按照 EIP 的唯一 ID 过滤。
+     *
+     * @var list<string>|null
      */
     public ?array $eipIds = null;
 
@@ -50,12 +58,14 @@ class DescribeEipsRequest extends AbstractModel
     public ?string $privateIpAddress = null;
 
     /**
-     * IpAddress 按照 IP地址过滤。
+     * IpAddress 按照 EIP 的 IP 过滤。
      */
     public ?string $ipAddress = null;
 
     /**
      * IpAddresses 按照 EIP 的 IP列表过滤。
+     *
+     * @var list<string>|null
      */
     public ?array $ipAddresses = null;
 
@@ -72,6 +82,8 @@ class DescribeEipsRequest extends AbstractModel
 
     /**
      * CidrIds 按照 EIP 所属的CIDR ID列表 过滤。
+     *
+     * @var list<string>|null
      */
     public ?array $cidrIds = null;
 
@@ -83,6 +95,8 @@ class DescribeEipsRequest extends AbstractModel
     /**
      * TagKeys 根据标签键进行搜索。
      * 最长不得超过20个标签键。
+     *
+     * @var list<string>|null
      */
     public ?array $tagKeys = null;
 
@@ -90,7 +104,7 @@ class DescribeEipsRequest extends AbstractModel
      * Tags 根据标签进行搜索。
      * 最长不得超过20个标签。
      *
-     * @var Tag[]|null
+     * @var list<Tag>|null
      */
     public ?array $tags = null;
 
@@ -99,8 +113,22 @@ class DescribeEipsRequest extends AbstractModel
      */
     public ?string $internetChargeType = null;
 
+    /**
+     * PrefixLength 按照 EIP 的掩码长度过滤。
+     * 32 表示单个 IP 地址，24–31 表示 CIDR 网段。
+     */
+    public ?int $prefixLength = null;
+
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'tags' => Tag::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'eipIds' => 'string',
+        'ipAddresses' => 'string',
+        'cidrIds' => 'string',
+        'tagKeys' => 'string',
     ];
 }

@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -35,9 +41,17 @@ class CreateEipsRequest extends AbstractModel
     public ?int $amount = null;
 
     /**
+     * PrefixLength 掩码长度，取值范围24–32，默认32。
+     * 指定小于32时，将创建EIP Block资源，此时必须同时指定`cidrId`，且取值不能小于所选CIDR自身的掩码长度。
+     */
+    public ?int $prefixLength = null;
+
+    /**
      * Deprecated: EipV4Type 已废弃，请不要使用。
      * EipV4Type 公网弹性IP的线路类型。
      * 已废弃，请使用`networkLineType`。
+     *
+     * @deprecated
      */
     public ?string $eipV4Type = null;
 
@@ -49,7 +63,8 @@ class CreateEipsRequest extends AbstractModel
     /**
      * Deprecated: PrimaryIsp 已废弃，请不要使用。
      * PrimaryIsp 主公网IP的运营商。
-     * 该字段仅作用于三线IP(`ThreeLine`)。
+     *
+     * @deprecated
      */
     public ?string $primaryIsp = null;
 
@@ -66,8 +81,9 @@ class CreateEipsRequest extends AbstractModel
     public ?string $cidrId = null;
 
     /**
-     * PublicIp 从CIDR里指定公网起始IP地址开始创建弹性IP。
-     * 该字段仅在指定`cidrId`时生效。
+     * PublicIp 指定公网起始地址开始创建弹性IP。
+     * 不指定`cidrId`时，从公网IP池按此地址开始顺序分配（仅支持`prefixLength`为32）；指定`cidrId`时，从该CIDR内按此地址开始分配。
+     * `prefixLength`为32时填纯IPv4地址；`prefixLength`小于32时必须同时指定`cidrId`，填带掩码的起始网段（掩码须与`prefixLength`一致，如`88.0.5.64/26`）。
      */
     public ?string $publicIp = null;
 
@@ -77,16 +93,16 @@ class CreateEipsRequest extends AbstractModel
     public ?string $resourceGroupId = null;
 
     /**
-     * FlowPackage 公网IPv6的流量包大小。
+     * FlowPackage 弹性公网IP的流量包大小。
      * 单位为TB。
      * 值要求为0或0.1的倍数。
-     * 当子网的堆栈类型包括V6且为公网时，且网络计费方式是流量计费(`ByTrafficPackage`)需要指定。
+     * 当网络计费方式为流量计费(`ByTrafficPackage`)时需要指定。
      */
     public ?float $flowPackage = null;
 
     /**
-     * ClusterId 公网IPv6所指定的共享带宽包ID。
-     * 当子网的堆栈类型包括V6且为公网时，且网络计费方式是共享带宽包计费(`BandwidthCluster`)需要指定。
+     * ClusterId 共享带宽包ID。
+     * 当网络计费方式为共享带宽包计费(`BandwidthCluster`)时需要指定。
      */
     public ?string $clusterId = null;
 
@@ -107,20 +123,33 @@ class CreateEipsRequest extends AbstractModel
     public ?TagAssociation $tags = null;
 
     /**
+     * InstanceId is the instance to bind all newly created EIPs to. When both `instanceId` and `instanceIds` are supplied, `instanceId` takes precedence. Documented at https://docs.console.zenlayer.com/api-reference/compute/zec/elastic-ip/createeips
+     */
+    public ?string $instanceId = null;
+
+    /**
      * InstanceIds 要绑定的实例ID集合。
      * 数量需要与`amount`字段一致。
+     *
+     * @var list<string>|null
      */
     public ?array $instanceIds = null;
 
     /**
      * BindType 绑定类型。
-     * 当指定定`instanceIds`时生效。
+     * 当指定`instanceIds`时生效。
      * 默认为普通NAT模式。
      */
     public ?string $bindType = null;
 
     /**
      * RateLimitMode 限速模式。
+     * `STRICT`严格模式必须同时指定`bandwidth`。
      */
     public ?string $rateLimitMode = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'instanceIds' => 'string',
+    ];
 }

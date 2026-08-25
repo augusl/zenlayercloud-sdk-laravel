@@ -16,17 +16,18 @@
     ],
     "require": {
         "php": "^8.2",
+        "php-64bit": "*",
+        "composer-runtime-api": "^2.0",
         "ext-json": "*",
         "ext-hash": "*",
         "illuminate/support": "^11.0 || ^12.0 || ^13.0",
         "illuminate/http": "^11.0 || ^12.0 || ^13.0",
         "illuminate/contracts": "^11.0 || ^12.0 || ^13.0",
-        "guzzlehttp/guzzle": "^7.5"
+        "psr/log": "^1.1 || ^2.0 || ^3.0"
     },
     "require-dev": {
         "orchestra/testbench": "^9.0 || ^10.0 || ^11.0",
         "phpunit/phpunit": "^10.5 || ^11.0 || ^12.0",
-        "mockery/mockery": "^1.6",
         "laravel/pint": "^1.13",
         "phpstan/phpstan": "^1.10 || ^2.0"
     },
@@ -44,7 +45,7 @@
         "test": "vendor/bin/phpunit",
         "lint": "vendor/bin/pint --test",
         "lint:fix": "vendor/bin/pint",
-        "analyse": "vendor/bin/phpstan analyse",
+        "analyse": "vendor/bin/phpstan analyse --no-progress --memory-limit=512M",
         "codegen": "php bin/codegen.php"
     },
     "extra": {
@@ -57,8 +58,6 @@
             }
         }
     },
-    "minimum-stability": "stable",
-    "prefer-stable": true,
     "config": {
         "sort-packages": true
     }

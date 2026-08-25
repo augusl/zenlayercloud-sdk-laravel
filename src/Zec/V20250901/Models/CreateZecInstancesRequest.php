@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -24,12 +30,12 @@ class CreateZecInstancesRequest extends AbstractModel
 
     /**
      * TimeZone 设置操作系统的时区。
+     * 如果未指定，将使用区域所在的时区。
      */
     public ?string $timeZone = null;
 
     /**
-     * InstanceType 实例机型。
-     * 具体取值可通过调用接口[DescribeZoneInstanceConfigInfos](describezoneinstanceconfiginfos.md)来获得最新的规格表。
+     * InstanceType 实例机型。普通实例取值可通过[DescribeZoneInstanceConfigInfos](describezoneinstanceconfiginfos.md)获得；GPU 实例取值可通过[DescribeZoneGpuInstanceConfigInfos](describezonegpuinstanceconfiginfos.md)获得。
      */
     public ?string $instanceType = null;
 
@@ -82,11 +88,9 @@ class CreateZecInstancesRequest extends AbstractModel
     public ?SystemDisk $systemDisk = null;
 
     /**
-     * DataDisks 实例数据盘配置信息。
-     * 若不指定该参数，则默认不额外购买数据盘。
-     * 目前只能附带1个数据盘。
+     * DataDisks 实例数据盘配置信息。若不指定该参数，则默认不额外购买数据盘。列表中每一项对应一块独立的数据盘，数据盘总数量受团队配额限制。
      *
-     * @var DataDisk[]|null
+     * @var list<DataDisk>|null
      */
     public ?array $dataDisks = null;
 
@@ -142,11 +146,17 @@ class CreateZecInstancesRequest extends AbstractModel
     /**
      * EipBindType 公网IP的绑定模式。
      * 当分配公网IP时需要指定。
+     * 绑定网段(Block)型EIP时只能使用`Passthrough`，必须显式指定（不能省略，省略等价于`FullNat`会被拒绝）。
      */
     public ?string $eipBindType = null;
 
     /**
-     * EipIds 配置在实例主网卡的公网IP ID集合。
+     * EipIds 分配已有的EIP到实例上。
+     * IP数量必须和创建的实例数量一致。
+     * 如果指定该字段，则不会新建EIP, 相关字段将无效（`networkLineType`)。
+     * 请确保创建的网卡`ipStackType` 包含`IPv4`。
+     *
+     * @var list<string>|null
      */
     public ?array $eipIds = null;
 
@@ -155,8 +165,9 @@ class CreateZecInstancesRequest extends AbstractModel
      * EipV4Type 公网IPv4的线路类型。
      * 当分配公网IP时需要指定。
      * 请确保所选子网的堆栈类型支持`IPv4`。
-     * 目前不支持三线IP随实例一起创建。
      * 已废弃，请使用`networkLineType`。
+     *
+     * @deprecated
      */
     public ?string $eipV4Type = null;
 
@@ -170,12 +181,11 @@ class CreateZecInstancesRequest extends AbstractModel
      * NetworkLineType 公网IPv4的线路类型。
      * 当分配公网IP时需要指定。
      * 请确保所选子网的堆栈类型支持`IPv4`。
-     * 目前不支持三线IP随实例一起创建。
      */
     public ?string $networkLineType = null;
 
     /**
-     * ClusterId 共享带宽包ID。
+     * ClusterId 公网IPv4/IPv6加入的共享带宽包ID。
      * 当网络计费方式是共享带宽包计费(`BandwidthCluster`)时需要指定。
      */
     public ?string $clusterId = null;
@@ -217,5 +227,10 @@ class CreateZecInstancesRequest extends AbstractModel
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'dataDisks' => DataDisk::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'eipIds' => 'string',
     ];
 }

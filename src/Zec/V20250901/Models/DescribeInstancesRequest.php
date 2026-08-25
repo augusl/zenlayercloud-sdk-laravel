@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -14,6 +20,8 @@ class DescribeInstancesRequest extends AbstractModel
     /**
      * InstanceIds 根据实例ID列表进行筛选。
      * 最大不能超过100个。
+     *
+     * @var list<string>|null
      */
     public ?array $instanceIds = null;
 
@@ -29,6 +37,7 @@ class DescribeInstancesRequest extends AbstractModel
 
     /**
      * Ipv4Address 根据实例关联的IPv4过滤。
+     * 若指定为网段(CIDR)形式，掩码长度必须在20–31之间。
      */
     public ?string $ipv4Address = null;
 
@@ -66,6 +75,8 @@ class DescribeInstancesRequest extends AbstractModel
     /**
      * TagKeys 根据标签键进行搜索。
      * 最长不得超过20个标签键。
+     *
+     * @var list<string>|null
      */
     public ?array $tagKeys = null;
 
@@ -73,12 +84,18 @@ class DescribeInstancesRequest extends AbstractModel
      * Tags 根据标签进行搜索。
      * 最长不得超过20个标签。
      *
-     * @var Tag[]|null
+     * @var list<Tag>|null
      */
     public ?array $tags = null;
 
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'tags' => Tag::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'instanceIds' => 'string',
+        'tagKeys' => 'string',
     ];
 }

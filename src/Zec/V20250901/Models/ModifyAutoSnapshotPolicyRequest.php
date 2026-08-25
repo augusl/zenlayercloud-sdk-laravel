@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -24,6 +30,8 @@ class ModifyAutoSnapshotPolicyRequest extends AbstractModel
     /**
      * RepeatWeekDays 自动快照的重复日期。
      * 单位为天，周期为星期，例如 1 表示周一。
+     *
+     * @var list<int>|null
      */
     public ?array $repeatWeekDays = null;
 
@@ -31,6 +39,8 @@ class ModifyAutoSnapshotPolicyRequest extends AbstractModel
      * Hours 指定定期快照策略的触发时间。
      * 使用 UTC 时间，单位为小时。
      * 00:00 ~ 23:00 共 24 个时间点可选，1表示 01:00，依此类推。
+     *
+     * @var list<int>|null
      */
     public ?array $hours = null;
 
@@ -40,4 +50,10 @@ class ModifyAutoSnapshotPolicyRequest extends AbstractModel
      * 取值范围：-1或[1,65535]。
      */
     public ?int $retentionDays = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'repeatWeekDays' => 'int',
+        'hours' => 'int',
+    ];
 }

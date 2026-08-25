@@ -8,7 +8,7 @@ namespace ZenlayerCloud\Laravel\Common;
  * Computes the `Authorization` header for Zenlayer Cloud OpenAPI requests.
  *
  * Implements Zenlayer's `ZC2-HMAC-SHA256` signature scheme as specified at
- * https://docs.console.zenlayer.com/api-reference/cn (Authorization v2).
+ * https://docs.console.zenlayer.com/api-reference/api-introduction/instruction/authorization/sign.
  *
  *  1. Build a canonical request string from the HTTP method, the canonical
  *     URI (always `/`), an empty canonical query string, the signed headers
@@ -34,9 +34,10 @@ final class Signer
         string $method,
         string $host,
         string $contentType,
-        string $payload,
+        #[\SensitiveParameter] string $payload,
         int $timestamp,
         string $secretKeyId,
+        #[\SensitiveParameter]
         string $secretKeyPassword,
     ): string {
         $hashedPayload = hash('sha256', $payload);

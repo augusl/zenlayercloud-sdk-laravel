@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -35,6 +41,8 @@ class AssociateEipAddressRequest extends AbstractModel
     /**
      * EipIds 要绑定的EIP的ID。
      * EIP 必须是未绑定状态。
+     *
+     * @var list<string>|null
      */
     public ?array $eipIds = null;
 
@@ -49,4 +57,9 @@ class AssociateEipAddressRequest extends AbstractModel
      * 默认为普通NAT模式。
      */
     public ?string $bindType = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'eipIds' => 'string',
+    ];
 }

@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -26,11 +32,15 @@ class CreatePolicyRequest extends AbstractModel
 
     /**
      * BlackIpList 黑名单列表。
+     *
+     * @var list<string>|null
      */
     public ?array $blackIpList = null;
 
     /**
      * WhiteIpList 白名单列表。
+     *
+     * @var list<string>|null
      */
     public ?array $whiteIpList = null;
 
@@ -42,32 +52,36 @@ class CreatePolicyRequest extends AbstractModel
     /**
      * Ports 端口封禁, 支持TCP和UDP。
      *
-     * @var DdosPolicyPort[]|null
+     * @var list<DdosPolicyPort>|null
      */
     public ?array $ports = null;
 
     /**
      * BlockProtocol 开启的封禁协议。
      * 不能同时开启UDP和TCP。
+     *
+     * @var list<string>|null
      */
     public ?array $blockProtocol = null;
 
     /**
      * BlockRegions 封禁的区域。
+     *
+     * @var list<string>|null
      */
     public ?array $blockRegions = null;
 
     /**
      * Finger 指纹过滤相关配置。
      *
-     * @var DdosFingerprintRule[]|null
+     * @var list<DdosFingerprintRule>|null
      */
     public ?array $finger = null;
 
     /**
      * ReflectUdpPort 反射攻击防护过滤的端口列表。
      *
-     * @var DdosReflectUdpPort[]|null
+     * @var list<DdosReflectUdpPort>|null
      */
     public ?array $reflectUdpPort = null;
 
@@ -87,5 +101,13 @@ class CreatePolicyRequest extends AbstractModel
         'ports' => DdosPolicyPort::class,
         'finger' => DdosFingerprintRule::class,
         'reflectUdpPort' => DdosReflectUdpPort::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'blackIpList' => 'string',
+        'whiteIpList' => 'string',
+        'blockProtocol' => 'string',
+        'blockRegions' => 'string',
     ];
 }

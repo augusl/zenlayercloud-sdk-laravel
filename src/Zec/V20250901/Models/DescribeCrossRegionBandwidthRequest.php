@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -13,6 +19,8 @@ class DescribeCrossRegionBandwidthRequest extends AbstractModel
 {
     /**
      * CrossRegionBandwidthIds 按照唯一ID过滤。
+     *
+     * @var list<string>|null
      */
     public ?array $crossRegionBandwidthIds = null;
 
@@ -56,4 +64,9 @@ class DescribeCrossRegionBandwidthRequest extends AbstractModel
      * ResourceGroupId 根据资源组ID过滤。
      */
     public ?string $resourceGroupId = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'crossRegionBandwidthIds' => 'string',
+    ];
 }

@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -10,6 +16,8 @@ class ModifyImagesAttributesRequest extends AbstractModel
 {
     /**
      * ImageIds 待修改属性的镜像ID列表。
+     *
+     * @var list<string>|null
      */
     public ?array $imageIds = null;
 
@@ -20,4 +28,9 @@ class ModifyImagesAttributesRequest extends AbstractModel
      * 且必须以数字或字母开头和结尾。
      */
     public ?string $imageName = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'imageIds' => 'string',
+    ];
 }

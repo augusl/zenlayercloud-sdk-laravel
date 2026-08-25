@@ -48,7 +48,7 @@ $request->pageSize = 20;
 try {
     $response = $client->DescribeInstances($request);
 } catch (ZenlayerCloudSdkException $e) {
-    fwrite(STDERR, sprintf("API error %s: %s (request %s)\n", $e->errorCode, $e->getMessage(), $e->requestId ?? '-'));
+    fwrite(STDERR, sprintf("API error %s: %s (request %s)\n", $e->errorCode, $e->getErrorMessage(), $e->requestId ?? '-'));
     exit(2);
 }
 

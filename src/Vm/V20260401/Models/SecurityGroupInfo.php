@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Vm\V20260401\Models;
@@ -39,13 +45,15 @@ class SecurityGroupInfo extends AbstractModel
 
     /**
      * InstanceIds 已绑定实例ID集合。
+     *
+     * @var list<string>|null
      */
     public ?array $instanceIds = null;
 
     /**
      * RuleInfos 安全组规则。
      *
-     * @var RuleInfo[]|null
+     * @var list<RuleInfo>|null
      */
     public ?array $ruleInfos = null;
 
@@ -57,5 +65,10 @@ class SecurityGroupInfo extends AbstractModel
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'ruleInfos' => RuleInfo::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'instanceIds' => 'string',
     ];
 }

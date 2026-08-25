@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -25,7 +31,7 @@ class VmRegionCapacityItem extends AbstractModel
     /**
      * InstanceTypes 各实例类型的库存容量明细，不含库存为 0 的条目。
      *
-     * @var InstanceTypeCapacityItem[]|null
+     * @var list<InstanceTypeCapacityItem>|null
      */
     public ?array $instanceTypes = null;
 

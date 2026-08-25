@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -44,6 +50,8 @@ class EipInfo extends AbstractModel
 
     /**
      * PublicIpAddresses 公网IP地址。
+     *
+     * @var list<string>|null
      */
     public ?array $publicIpAddresses = null;
 
@@ -57,6 +65,8 @@ class EipInfo extends AbstractModel
      * EipV4Type EIP网络类型。
      * 表示该CIDR支持的公网IP线路类型。
      * 已废弃，请参考`networkLineType`。
+     *
+     * @deprecated
      */
     public ?string $eipV4Type = null;
 
@@ -80,6 +90,8 @@ class EipInfo extends AbstractModel
      * Deprecated: NicId 已废弃，请不要使用。
      * NicId EIP 关联的网卡ID。
      * 该字段已废弃，请使用 `associatedId` 字段。
+     *
+     * @deprecated
      */
     public ?string $nicId = null;
 
@@ -118,7 +130,7 @@ class EipInfo extends AbstractModel
      * 仅当网络计费方式为流量计费时可取到值。
      * 该字段可能为null。
      *
-     * @var FlowPackageResponseItem[]|null
+     * @var list<FlowPackageResponseItem>|null
      */
     public ?array $flowPackages = null;
 
@@ -136,14 +148,14 @@ class EipInfo extends AbstractModel
     /**
      * EipGeoRefs EIP 的地理位置信息。
      *
-     * @var EipGeoInfo[]|null
+     * @var list<EipGeoInfo>|null
      */
     public ?array $eipGeoRefs = null;
 
     /**
      * BlockInfoList EIP的封堵阈值。
      *
-     * @var BlockInfo[]|null
+     * @var list<BlockInfo>|null
      */
     public ?array $blockInfoList = null;
 
@@ -178,10 +190,26 @@ class EipInfo extends AbstractModel
      */
     public ?Tags $tags = null;
 
+    /**
+     * OperationInfo EIP的带宽、流量包操作状态。
+     */
+    public ?OperationInfo $operationInfo = null;
+
+    /**
+     * PrefixLength 掩码长度。
+     * 32 表示单 IP，25–31 表示 IP 块。
+     */
+    public ?int $prefixLength = null;
+
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'flowPackages' => FlowPackageResponseItem::class,
         'eipGeoRefs' => EipGeoInfo::class,
         'blockInfoList' => BlockInfo::class,
+    ];
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'publicIpAddresses' => 'string',
     ];
 }

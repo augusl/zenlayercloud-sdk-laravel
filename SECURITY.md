@@ -36,7 +36,10 @@ In the context of this package, the most likely security concerns include:
 - Insecure default transport settings (e.g. accepting invalid TLS certs).
 
 This SDK does **not** persist credentials anywhere; it consumes them at
-runtime from your Laravel configuration.
+runtime from your Laravel configuration. SDK debug mode intentionally logs
+only request metadata and response status; it does not log Authorization
+headers or request/response bodies. Treat application-level HTTP middleware
+and custom log processors as separate parts of your security boundary.
 
 ## Not in scope
 

@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -52,4 +58,9 @@ class PublicIpv6CidrAddress extends AbstractModel
      * BandwidthCluster 关联的带宽组信息。
      */
     public ?BandwidthClusterInfo $bandwidthCluster = null;
+
+    /**
+     * OperationInfo IPv6的带宽、流量包操作状态。
+     */
+    public ?OperationInfo $operationInfo = null;
 }

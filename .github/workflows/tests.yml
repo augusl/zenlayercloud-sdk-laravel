@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3', '8.4']
+        php: ['8.2', '8.3', '8.4', '8.5']
         laravel: ['11.*', '12.*', '13.*']
         exclude:
           # Drop combinations that are not officially supported by Laravel.
@@ -73,11 +73,46 @@ jobs:
           extensions: json, hash, mbstring
           coverage: none
 
+      - name: Validate Composer metadata
+        run: composer validate --strict
+
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Audit runtime dependencies
+        run: composer audit --no-dev
 
       - name: Pint (style check)
         run: vendor/bin/pint --test
 
       - name: PHPStan
-        run: vendor/bin/phpstan analyse --no-progress --memory-limit=512M
+        run: composer analyse
+
+  lowest:
+    runs-on: ubuntu-latest
+    name: Lowest supported dependencies
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: json, hash, mbstring
+          coverage: none
+
+      # prefer-lowest resolves Laravel 11.0, whose advisories are intentionally
+      # no longer fixed upstream. This job verifies compatibility only; it is
+      # not a recommendation to deploy those dependency versions.
+      - name: Allow advisory-affected minimum framework
+        run: composer config policy.advisories.block false
+
+      - name: Install lowest supported dependencies
+        run: composer update --prefer-lowest --prefer-dist --no-interaction --no-progress
+
+      - name: Run test suite
+        run: vendor/bin/phpunit
+
+      - name: PHPStan with minimum supported version
+        run: composer analyse

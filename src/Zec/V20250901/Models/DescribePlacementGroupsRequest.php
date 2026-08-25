@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -14,6 +20,8 @@ class DescribePlacementGroupsRequest extends AbstractModel
     /**
      * PlacementGroupIds 根据置放组ID列表筛选。
      * 最多支持100个ID查询。
+     *
+     * @var list<string>|null
      */
     public ?array $placementGroupIds = null;
 
@@ -43,4 +51,9 @@ class DescribePlacementGroupsRequest extends AbstractModel
      * ResourceGroupId 根据资源组ID筛选。
      */
     public ?string $resourceGroupId = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'placementGroupIds' => 'string',
+    ];
 }

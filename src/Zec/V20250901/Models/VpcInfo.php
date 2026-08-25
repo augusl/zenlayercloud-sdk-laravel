@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -64,6 +70,8 @@ class VpcInfo extends AbstractModel
 
     /**
      * DnsZoneIds VPC关联的DNS内网权威域名ID。
+     *
+     * @var list<string>|null
      */
     public ?array $dnsZoneIds = null;
 
@@ -76,4 +84,9 @@ class VpcInfo extends AbstractModel
      * Tags 该VPC关联的标签。
      */
     public ?Tags $tags = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'dnsZoneIds' => 'string',
+    ];
 }

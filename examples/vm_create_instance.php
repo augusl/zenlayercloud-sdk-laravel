@@ -54,7 +54,7 @@ $req->password = bin2hex(random_bytes(8)).'_Aa1!';
 try {
     $resp = $client->CreateInstances($req);
 } catch (ZenlayerCloudSdkException $e) {
-    fwrite(STDERR, "API error {$e->errorCode}: {$e->getMessage()}\n");
+    fwrite(STDERR, "API error {$e->errorCode}: {$e->getErrorMessage()}\n");
     exit(2);
 }
 

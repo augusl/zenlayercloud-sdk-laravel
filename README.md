@@ -2,16 +2,17 @@
 
 [![tests](https://github.com/augusl/zenlayercloud-sdk-laravel/actions/workflows/tests.yml/badge.svg)](https://github.com/augusl/zenlayercloud-sdk-laravel/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![PHP](https://img.shields.io/badge/php-%5E8.2-777BB4.svg)]()
-[![Laravel](https://img.shields.io/badge/laravel-11%20%7C%2012%20%7C%2013-FF2D20.svg)]()
+[![PHP](https://img.shields.io/badge/php-%5E8.2-777BB4.svg)](https://www.php.net/supported-versions.php)
+[![Laravel](https://img.shields.io/badge/laravel-11%20%7C%2012%20%7C%2013-FF2D20.svg)](https://laravel.com/docs/releases)
 
 [中文文档](README-CN.md) · English
 
 > **Unofficial, community-maintained SDK.** This package is **not** affiliated
-> with or endorsed by Zenlayer Inc. It is built and maintained by community
-> contributors against the public Zenlayer Cloud OpenAPI documentation.
+> with or endorsed by Zenlayer Inc. It is maintained against the public
+> Zenlayer Cloud OpenAPI documentation and Apache-licensed official Go/Python
+> SDK sources; exact audited revisions are disclosed in [UPSTREAM.md](UPSTREAM.md).
 > Bug reports and feature requests belong here; Zenlayer Cloud product
-> questions belong on the [official documentation site](https://docs.console.zenlayer.com/api-reference/cn).
+> questions belong on the [official documentation site](https://docs.console.zenlayer.com/api-reference/compute).
 
 A first-class Laravel package for talking to [Zenlayer Cloud](https://www.zenlayer.com/)
 OpenAPI services. Designed to feel native — service providers, facades,
@@ -21,7 +22,11 @@ and `Http::fake()` support out of the box.
 The `v0.1.x` line covers the **Compute** product group:
 
 - **Virtual Machine (VM)** — API version `2026-04-01`, 62 actions.
-- **Elastic Compute (ZEC)** — API version `2025-09-01`, 214 actions.
+- **Elastic Compute (ZEC)** — API version `2025-09-01`, 225 actions.
+
+The generated surface contains 287 Actions and 974 model classes in total.
+Its upstream source and known documentation differences are recorded in
+[UPSTREAM.md](UPSTREAM.md).
 
 Every Zenlayer Cloud Action is exposed as a typed PHP method backed by typed
 Request and Response model classes, so IDEs autocomplete the entire surface
@@ -34,9 +39,18 @@ area.
 | Component  | Version                  |
 |------------|--------------------------|
 | PHP        | `^8.2`                   |
+| Platform   | 64-bit                   |
+| Composer   | `2.x`                    |
 | Laravel    | `11.x` · `12.x` · `13.x` |
 | `ext-json` | enabled (default)        |
 | `ext-hash` | enabled (default)        |
+
+The 64-bit requirement is intentional: the official VM/ZEC schemas contain
+signed `int64` counters and limits that a 32-bit PHP integer cannot represent.
+
+Laravel 11 remains compatibility-tested for existing applications, but its
+upstream security-fix window has ended. New production deployments should use
+a currently supported Laravel release.
 
 ## Installation
 
@@ -98,7 +112,7 @@ use ZenlayerCloud\Laravel\Vm\V20260401\Models\DescribeZonesRequest;
 
 $response = ZenlayerCloud::vm()->DescribeZones(new DescribeZonesRequest());
 
-foreach ($response->response->zoneSet as $zone) {
+foreach (($response->response?->zoneSet ?? []) as $zone) {
     echo $zone->zoneId, ' ', $zone->zoneName, PHP_EOL;
 }
 ```
@@ -125,8 +139,8 @@ $req->systemDisk->diskSize          = 50;
 $resp = ZenlayerCloud::vm()->CreateInstances($req);
 
 logger()->info('Order placed', [
-    'order'     => $resp->response->orderNumber,
-    'instances' => $resp->response->instanceIdSet ?? [],
+    'order'     => $resp->response?->orderNumber,
+    'instances' => $resp->response?->instanceIdSet ?? [],
 ]);
 ```
 
@@ -138,7 +152,7 @@ use ZenlayerCloud\Laravel\Zec\V20250901\Models\DescribeVpcsRequest;
 
 $resp = ZenlayerCloud::zec()->DescribeVpcs(new DescribeVpcsRequest());
 
-foreach ($resp->response->dataSet as $vpc) {
+foreach (($resp->response?->dataSet ?? []) as $vpc) {
     echo $vpc->vpcId, PHP_EOL;
 }
 ```
@@ -158,20 +172,30 @@ try {
         'Zenlayer error %s (request %s): %s',
         $e->errorCode,
         $e->requestId ?? '-',
-        $e->getMessage(),
+        $e->getErrorMessage(),
     ));
 }
 ```
 
 The exception exposes `$e->errorCode` (e.g. `INVALID_PARAMETER`,
-`NETWORK_ERROR`, `CREDENTIAL_VALUE_MISSING`, `CONFIG_INVALID`) and
-`$e->requestId` for log correlation. Transport-level failures (DNS,
+`NETWORK_ERROR`, `REQUEST_LIMIT_EXCEEDED`, `SECURITY_CHALLENGE`,
+`REQUEST_BLOCKED`, `SDK_INVALID_REQUEST`, `CREDENTIAL_VALUE_MISSING`,
+`CONFIG_INVALID`) and `$e->requestId` for log correlation. The raw API/SDK
+message is available as `$e->errorMessage` or `$e->getErrorMessage()`;
+`$e->getMessage()` includes the formatted code and request id. Transport-level failures (DNS,
 connection refused, TLS, timeout) are wrapped with code `NETWORK_ERROR`;
 you never need to catch Laravel's `ConnectionException` separately.
 
-When `retry` is enabled, **only network-level failures are retried** —
-HTTP error responses are never retried, so non-idempotent Actions such as
-`CreateInstances` cannot run twice.
+There are two deliberately separate retry policies:
+
+- `retry` is opt-in and retries only connection-level failures. A timeout can
+  happen after the server has accepted a mutating request, so enabling it may
+  replay a non-idempotent Action. Keep it disabled for writes unless that risk
+  is acceptable. Ordinary HTTP errors are never retried.
+- `REQUEST_LIMIT_EXCEEDED` / HTTP 429 follows the official SDK behavior and
+  is retried three times by default with 1s, 2s, and 4s backoff. If the API
+  returns an integer `Retry-After` header, the SDK waits at least that many
+  seconds. Set `rate_limit_max_retries` to `0` to disable it.
 
 ---
 
@@ -194,6 +218,8 @@ return [
             'timeout'             => (int) env('ZENLAYER_TIMEOUT', 60),
             'retry'               => (bool) env('ZENLAYER_RETRY', false),
             'retry_max'           => (int) env('ZENLAYER_RETRY_MAX', 3),
+            'rate_limit_max_retries' => (int) env('ZENLAYER_RATE_LIMIT_MAX_RETRIES', 3),
+            'rate_limit_retry_delay_ms' => (int) env('ZENLAYER_RATE_LIMIT_RETRY_DELAY_MS', 1000),
             'debug'               => (bool) env('ZENLAYER_DEBUG', false),
             'proxy'               => env('ZENLAYER_PROXY'),
             'verify'              => env('ZENLAYER_VERIFY', true), // true | false | CA bundle path
@@ -206,6 +232,11 @@ return [
     ],
 ];
 ```
+
+`endpoint` accepts only `host[:port]` or a complete `http(s)://host[:port]`
+URL; credentials, paths, queries, fragments, and unsupported schemes fail
+fast. `debug` writes only method, URL, service, Action, and status to Laravel's
+PSR-3 logger—Authorization headers and request/response bodies are never logged.
 
 Switch between connections with the optional argument to the manager:
 
@@ -239,7 +270,7 @@ Http::fake([
 
 $resp = ZenlayerCloud::vm()->DescribeZones(new DescribeZonesRequest());
 
-self::assertSame('SEL-A', $resp->response->zoneSet[0]->zoneId);
+self::assertSame('SEL-A', $resp->response?->zoneSet[0]->zoneId);
 
 Http::assertSent(fn ($r) => $r->header('x-zc-action')[0] === 'DescribeZones');
 ```
@@ -253,9 +284,9 @@ Http::assertSent(fn ($r) => $r->header('x-zc-action')[0] === 'DescribeZones');
   keeps copy-paste from the Zenlayer Cloud API reference unambiguous. The
   shipped `pint.json` does not enforce PSR-12 camelCase on those generated
   client methods.
-- **Models are plain data objects** — public typed nullable properties for
-  every field on the Action's schema. Null fields are omitted from the JSON
-  body sent over the wire.
+- **Models are Laravel-friendly data objects** — public typed nullable
+  properties for every field, implementing `Arrayable` and `JsonSerializable`.
+  Null fields are omitted from the JSON body sent over the wire.
 - **Responses come in wrappers** — every Action returns a
   `XxxResponse` whose `requestId` lives at the top level and whose payload
   lives under `response`. Access fields via `$resp->response->...`.
@@ -278,8 +309,8 @@ composer lint:fix
 # Run static analysis
 composer analyse
 
-# Regenerate the client + model classes from the upstream schema
-ZENLAYER_SCHEMA_SRC=/path/to/upstream/schema composer codegen
+# Regenerate from the official Go SDK's `zenlayercloud` directory
+composer codegen -- /path/to/zenlayercloud-sdk-go/zenlayercloud
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contributor workflow.
@@ -299,7 +330,7 @@ described in [SECURITY.md](SECURITY.md) — do not file a public issue.
 
 ## License
 
-Apache-2.0 — see [LICENSE](LICENSE).
+Apache-2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
 
 ## Disclaimer
 

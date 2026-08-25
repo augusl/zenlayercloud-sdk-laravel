@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -30,6 +36,8 @@ class ZoneInfo extends AbstractModel
      * Deprecated: SupportSecurityGroup 已废弃，请不要使用。
      * SupportSecurityGroup 可用区是否支持安全组。
      * 该字段已废弃，当前所有节点均支持安全组。
+     *
+     * @deprecated
      */
     public ?bool $supportSecurityGroup = null;
 

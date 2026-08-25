@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
 declare(strict_types=1);
 
 namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
@@ -32,9 +38,15 @@ class Image extends AbstractModel
     public ?string $imageSource = null;
 
     /**
-     * ImageSize 镜像的大小。
+     * ImageSize 镜像的大小，单位GiB。
+     * 当镜像为自定义镜像时此字段可能为null，当镜像状态处于`AVAILABLE`后有值。
      */
     public ?string $imageSize = null;
+
+    /**
+     * MinDiskSize 创建实例系统盘所需最小容量，单位GiB。
+     */
+    public ?int $minDiskSize = null;
 
     /**
      * ImageDescription 镜像描述信息。
@@ -53,6 +65,8 @@ class Image extends AbstractModel
 
     /**
      * NicNetworkType 镜像支持的网卡类型。
+     *
+     * @var list<string>|null
      */
     public ?array $nicNetworkType = null;
 
@@ -70,4 +84,9 @@ class Image extends AbstractModel
      * Tags 实例关联的标签。
      */
     public ?Tags $tags = null;
+
+    /** @var array<string,'string'|'int'|'float'|'bool'> */
+    protected static array $_scalarArrayTypeMap = [
+        'nicNetworkType' => 'string',
+    ];
 }
