@@ -12,21 +12,23 @@
 > Apache-2.0 授权的官方 Go/Python SDK 源码维护，审计版本完整记录于
 > [UPSTREAM.md](UPSTREAM.md)。
 > Bug 反馈和功能建议提到本仓库；Zenlayer Cloud 产品问题请咨询
-> [官方文档站](https://docs.console.zenlayer.com/api-reference/compute)。
+> [官方文档站](https://docs.console.zenlayer.com/api-reference)。
 
 为 [Zenlayer Cloud](https://www.zenlayer.com/) 提供原生的 Laravel 集成：自动注册
 ServiceProvider 与 Facade、可发布的连接配置、基于 `Illuminate\Http\Client`
 的传输层（开箱支持 `Http::fake()` 单测拦截）。
 
-`v0.1.x` 覆盖**算力**产品组：
+当前覆盖以下算力与网络服务：
 
 - **虚拟机 (VM)** — API 版本 `2026-04-01`，共 62 个 Action。
+- **IP Transit (IPT)** — API 版本 `2024-09-01`，共 12 个 Action。
 - **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 225 个 Action。
 
-当前生成代码合计包含 287 个 Action、974 个模型类。上游版本与已知文档差异记录在
+当前生成代码合计包含 299 个 Action、1,033 个模型类。上游版本与已知文档差异记录在
 [UPSTREAM.md](UPSTREAM.md)。
 
-每个 Action 都映射为一个带强类型 Request / Response 的 PHP 方法，IDE 全程提示。
+支持范围内的每个 Action 都映射为一个带强类型 Request / Response 的 PHP 方法，
+IDE 全程提示。
 
 ---
 
@@ -41,7 +43,7 @@ ServiceProvider 与 Facade、可发布的连接配置、基于 `Illuminate\Http\
 | `ext-json` | 内置启用                 |
 | `ext-hash` | 内置启用                 |
 
-64 位要求是有意保留的：官方 VM/ZEC schema 包含多处有符号 `int64` 计数器和限额，
+64 位要求是有意保留的：官方 VM/IPT/ZEC schema 包含多处有符号 `int64` 计数器和限额，
 32 位 PHP 整数无法无损表示。
 
 Laravel 11 仍为已有项目保留兼容性测试，但其官方安全维护期已经结束；新生产项目应使用
@@ -83,6 +85,7 @@ Laravel package discovery 会自动注册 ServiceProvider 和 `ZenlayerCloud` Fa
 
 ```php
 use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
+use ZenlayerCloud\Laravel\Ipt\V20240901\IptClient;
 use ZenlayerCloud\Laravel\Vm\V20260401\VmClient;
 use ZenlayerCloud\Laravel\Zec\V20250901\ZecClient;
 
@@ -94,6 +97,10 @@ $vm = app(VmClient::class);
 
 // 3. 构造器注入
 public function __construct(private VmClient $vm) {}
+
+// IPT 和 ZEC 同样支持以上三种方式：
+$ipt = ZenlayerCloud::ipt();
+$ipt = app(IptClient::class);
 ```
 
 ### 查询可用区
@@ -140,6 +147,21 @@ logger()->info('订单已下达', [
     'order'     => $resp->response?->orderNumber,
     'instances' => $resp->response?->instanceIdSet ?? [],
 ]);
+```
+
+### IP Transit (IPT)
+
+```php
+use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
+use ZenlayerCloud\Laravel\Ipt\V20240901\Models\DescribeIPTransitDatacentersRequest;
+
+$resp = ZenlayerCloud::ipt()->DescribeIPTransitDatacenters(
+    new DescribeIPTransitDatacentersRequest(),
+);
+
+foreach (($resp->response?->supportSet ?? []) as $support) {
+    echo $support->dataCenter?->dcId, ' ', $support->dataCenter?->dcName, PHP_EOL;
+}
 ```
 
 ### 弹性算力 (ZEC)
@@ -238,6 +260,7 @@ PSR-3 logger 记录 method、URL、service、Action 和状态码，绝不记录 
 ```php
 ZenlayerCloud::vm();              // default
 ZenlayerCloud::vm('staging');     // 命名连接
+ZenlayerCloud::ipt('production'); // connections 配置中的任意 key
 ZenlayerCloud::zec('production'); // connections 配置中的任意 key
 ```
 
@@ -310,7 +333,7 @@ composer codegen -- /path/to/zenlayercloud-sdk-go/zenlayercloud
 
 ## Roadmap
 
-首个发布周期 `v0.1.x` 覆盖 VM + ZEC。其他产品组（BMC、CCS、Traffic、ZDNS、ZGA、
+当前发布周期覆盖 VM + IPT + ZEC。其他产品组（BMC、CCS、Traffic、ZDNS、ZGA、
 ZLB、ZLS、ZOS、ZRM 等）排入后续 minor 版本，欢迎 PR。
 
 ## 安全

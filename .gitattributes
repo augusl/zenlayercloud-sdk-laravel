@@ -25,8 +25,10 @@ vendor/**              export-ignore
 # Linguist hints — keep generated code out of GitHub stats so the language
 # breakdown reflects what humans actually maintain.
 src/Vm/V20260401/Models/**   linguist-generated=true
+src/Ipt/V20240901/Models/**  linguist-generated=true
 src/Zec/V20250901/Models/**  linguist-generated=true
 src/Vm/V20260401/VmClient.php   linguist-generated=true
+src/Ipt/V20240901/IptClient.php linguist-generated=true
 src/Zec/V20250901/ZecClient.php linguist-generated=true
 
 # Normalize line endings — keep LF on all checkouts.

@@ -1,9 +1,9 @@
 {
     "name": "augusl/zenlayercloud-laravel-sdk",
-    "description": "Laravel SDK for Zenlayer Cloud — Virtual Machine (VM) and Elastic Compute (ZEC) services.",
+    "description": "Laravel SDK for Zenlayer Cloud — Virtual Machine (VM), IP Transit (IPT), and Elastic Compute (ZEC) services.",
     "type": "library",
     "license": "Apache-2.0",
-    "keywords": ["laravel", "zenlayer", "zenlayercloud", "sdk", "cloud", "vm", "zec"],
+    "keywords": ["laravel", "zenlayer", "zenlayercloud", "sdk", "cloud", "vm", "ipt", "ip-transit", "zec"],
     "homepage": "https://github.com/augusl/zenlayercloud-sdk-laravel",
     "support": {
         "issues": "https://github.com/augusl/zenlayercloud-sdk-laravel/issues",

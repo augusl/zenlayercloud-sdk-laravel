@@ -70,9 +70,10 @@ composer config --unset policy                  # restore the default
 
 ## Regenerating the typed client + model classes
 
-The `src/Vm/V20260401/` and `src/Zec/V20250901/` trees are regenerated from
-an upstream Zenlayer Cloud schema source by `bin/codegen.php`. The generated
-output is committed to git — consumers never need to run the generator.
+The `src/Vm/V20260401/`, `src/Ipt/V20240901/`, and `src/Zec/V20250901/` trees
+are regenerated from an upstream Zenlayer Cloud schema source by
+`bin/codegen.php`. The generated output is committed to git — consumers never
+need to run the generator.
 
 ```bash
 ZENLAYER_GO_TAG=v0.2.52
@@ -88,7 +89,7 @@ byte-identical output. If you see a diff with no upstream change, that is a
 bug — please file an issue.
 
 For an upstream version bump, compare the same Action/model contract against
-the official Python SDK and public VM/ZEC documentation, then update
+the official Python SDK and public VM/IPT/ZEC documentation, then update
 [`UPSTREAM.md`](UPSTREAM.md) with the exact tags and commits. Review the
 documented compatibility override there before adding any new override.
 
@@ -97,9 +98,9 @@ documented compatibility override there before adding any new override.
 - Strict types (`declare(strict_types=1);`) on every PHP file.
 - Pint with the default Laravel preset (`pint.json` lives in repo root if
   customised). Run `composer lint:fix` before pushing.
-- Public Action method names (on `VmClient` / `ZecClient`) intentionally use
-  PascalCase to match the upstream Action names. Pint does not enforce
-  camelCase on those.
+- Public Action method names (on `VmClient`, `IptClient`, and `ZecClient`)
+  intentionally use PascalCase to match the upstream Action names. Pint does
+  not enforce camelCase on those.
 - No comments that simply restate what the next line of code does. Reserve
   comments for non-obvious *why*.
 

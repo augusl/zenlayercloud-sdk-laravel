@@ -9,6 +9,7 @@ use Illuminate\Http\Client\Factory as HttpFactory;
 use Illuminate\Support\ServiceProvider;
 use ZenlayerCloud\Laravel\Common\Http\HttpClientFactory;
 use ZenlayerCloud\Laravel\Common\Signer;
+use ZenlayerCloud\Laravel\Ipt\V20240901\IptClient;
 use ZenlayerCloud\Laravel\Vm\V20260401\VmClient;
 use ZenlayerCloud\Laravel\Zec\V20250901\ZecClient;
 
@@ -45,12 +46,16 @@ class ZenlayerCloudServiceProvider extends ServiceProvider
             ),
         );
 
-        // Convenience auto-wiring: type-hint VmClient / ZecClient anywhere and
+        // Convenience auto-wiring: type-hint a service client anywhere and
         // get a client for the 'default' connection without going through the
         // manager.
         $this->app->bind(
             VmClient::class,
             static fn (Container $app): VmClient => $app->make(ZenlayerCloudManager::class)->vm(),
+        );
+        $this->app->bind(
+            IptClient::class,
+            static fn (Container $app): IptClient => $app->make(ZenlayerCloudManager::class)->ipt(),
         );
         $this->app->bind(
             ZecClient::class,

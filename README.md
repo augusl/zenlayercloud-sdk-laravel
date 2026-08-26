@@ -12,25 +12,26 @@
 > Zenlayer Cloud OpenAPI documentation and Apache-licensed official Go/Python
 > SDK sources; exact audited revisions are disclosed in [UPSTREAM.md](UPSTREAM.md).
 > Bug reports and feature requests belong here; Zenlayer Cloud product
-> questions belong on the [official documentation site](https://docs.console.zenlayer.com/api-reference/compute).
+> questions belong on the [official documentation site](https://docs.console.zenlayer.com/api-reference).
 
 A first-class Laravel package for talking to [Zenlayer Cloud](https://www.zenlayer.com/)
 OpenAPI services. Designed to feel native — service providers, facades,
 configurable connections, the standard `Illuminate\Http\Client` for transport,
 and `Http::fake()` support out of the box.
 
-The `v0.1.x` line covers the **Compute** product group:
+The package currently covers these Compute and Networking services:
 
 - **Virtual Machine (VM)** — API version `2026-04-01`, 62 actions.
+- **IP Transit (IPT)** — API version `2024-09-01`, 12 actions.
 - **Elastic Compute (ZEC)** — API version `2025-09-01`, 225 actions.
 
-The generated surface contains 287 Actions and 974 model classes in total.
+The generated surface contains 299 Actions and 1,033 model classes in total.
 Its upstream source and known documentation differences are recorded in
 [UPSTREAM.md](UPSTREAM.md).
 
-Every Zenlayer Cloud Action is exposed as a typed PHP method backed by typed
-Request and Response model classes, so IDEs autocomplete the entire surface
-area.
+Every Action in the supported services is exposed as a typed PHP method backed
+by typed Request and Response model classes, so IDEs autocomplete the entire
+surface area.
 
 ---
 
@@ -45,7 +46,7 @@ area.
 | `ext-json` | enabled (default)        |
 | `ext-hash` | enabled (default)        |
 
-The 64-bit requirement is intentional: the official VM/ZEC schemas contain
+The 64-bit requirement is intentional: the official VM/IPT/ZEC schemas contain
 signed `int64` counters and limits that a 32-bit PHP integer cannot represent.
 
 Laravel 11 remains compatibility-tested for existing applications, but its
@@ -91,6 +92,7 @@ There are three equivalent ways to obtain a client:
 
 ```php
 use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
+use ZenlayerCloud\Laravel\Ipt\V20240901\IptClient;
 use ZenlayerCloud\Laravel\Vm\V20260401\VmClient;
 use ZenlayerCloud\Laravel\Zec\V20250901\ZecClient;
 
@@ -102,6 +104,10 @@ $vm = app(VmClient::class);
 
 // 3. Constructor injection
 public function __construct(private VmClient $vm) {}
+
+// The same three access patterns apply to IPT and ZEC:
+$ipt = ZenlayerCloud::ipt();
+$ipt = app(IptClient::class);
 ```
 
 ### List availability zones
@@ -149,6 +155,21 @@ logger()->info('Order placed', [
     'order'     => $resp->response?->orderNumber,
     'instances' => $resp->response?->instanceIdSet ?? [],
 ]);
+```
+
+### IP Transit (IPT)
+
+```php
+use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
+use ZenlayerCloud\Laravel\Ipt\V20240901\Models\DescribeIPTransitDatacentersRequest;
+
+$resp = ZenlayerCloud::ipt()->DescribeIPTransitDatacenters(
+    new DescribeIPTransitDatacentersRequest(),
+);
+
+foreach (($resp->response?->supportSet ?? []) as $support) {
+    echo $support->dataCenter?->dcId, ' ', $support->dataCenter?->dcName, PHP_EOL;
+}
 ```
 
 ### Elastic Compute (ZEC)
@@ -250,6 +271,7 @@ Switch between connections with the optional argument to the manager:
 ```php
 ZenlayerCloud::vm();              // 'default'
 ZenlayerCloud::vm('staging');     // named connection
+ZenlayerCloud::ipt('production'); // any name from the 'connections' map
 ZenlayerCloud::zec('production'); // any name from the 'connections' map
 ```
 
@@ -326,7 +348,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contributor workflow.
 
 ## Roadmap
 
-The first release line (`v0.1.x`) covers VM + ZEC. Other Zenlayer Cloud
+The current release line covers VM + IPT + ZEC. Other Zenlayer Cloud
 product groups (BMC, CCS, Traffic, ZDNS, ZGA, ZLB, ZLS, ZOS, ZRM, etc.) are
 deferred to subsequent minor versions; contributions are welcome.
 

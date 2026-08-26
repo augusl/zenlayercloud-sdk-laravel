@@ -16,7 +16,7 @@ use ZenlayerCloud\Laravel\Common\Http\HttpClientFactory;
 
 /**
  * Base class for service-specific clients shipped by this SDK
- * (`VmClient`, `ZecClient`, ...).
+ * (`VmClient`, `IptClient`, `ZecClient`, ...).
  *
  * Subclasses declare the service slug and the API version and let this base
  * class take care of:

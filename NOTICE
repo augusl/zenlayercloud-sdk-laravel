@@ -1,7 +1,7 @@
 Zenlayer Cloud Laravel SDK
 Copyright 2026 Zenlayer Cloud Laravel SDK Contributors
 
-The generated VM and ZEC API client/model definitions are derived from the
+The generated VM, IPT, and ZEC API client/model definitions are derived from the
 public Zenlayer Cloud Go SDK and cross-checked against the Zenlayer Cloud
 Python SDK and API documentation.
 

@@ -6,6 +6,7 @@ namespace ZenlayerCloud\Laravel\Tests\Feature;
 
 use ZenlayerCloud\Laravel\Common\Exception\ZenlayerCloudSdkException;
 use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
+use ZenlayerCloud\Laravel\Ipt\V20240901\IptClient;
 use ZenlayerCloud\Laravel\Tests\TestCase;
 use ZenlayerCloud\Laravel\Vm\V20260401\VmClient;
 use ZenlayerCloud\Laravel\ZenlayerCloudManager;
@@ -14,9 +15,8 @@ final class ZenlayerCloudManagerTest extends TestCase
 {
     public function test_resolves_default_connection_without_argument(): void
     {
-        $vm = ZenlayerCloud::vm();
-
-        self::assertInstanceOf(VmClient::class, $vm);
+        self::assertInstanceOf(VmClient::class, ZenlayerCloud::vm());
+        self::assertInstanceOf(IptClient::class, ZenlayerCloud::ipt());
     }
 
     public function test_caches_client_per_connection_name(): void
@@ -44,11 +44,14 @@ final class ZenlayerCloudManagerTest extends TestCase
     {
         $manager = $this->app->make(ZenlayerCloudManager::class);
 
-        $first = $manager->vm();
+        $firstVm = $manager->vm();
+        $firstIpt = $manager->ipt();
         $manager->flushClients();
-        $second = $manager->vm();
+        $secondVm = $manager->vm();
+        $secondIpt = $manager->ipt();
 
-        self::assertNotSame($first, $second);
+        self::assertNotSame($firstVm, $secondVm);
+        self::assertNotSame($firstIpt, $secondIpt);
     }
 
     public function test_missing_credential_throws_credential_missing(): void

@@ -10,12 +10,13 @@ aligned with Zenlayer's official Go and Python SDKs.
 | Service | API version | Actions | Models |
 |---------|-------------|--------:|-------:|
 | Virtual Machine (VM) | `2026-04-01` | 62 | 213 |
+| IP Transit (IPT) | `2024-09-01` | 12 | 59 |
 | Elastic Compute (ZEC) | `2025-09-01` | 225 | 761 |
-| **Total** | | **287** | **974** |
+| **Total** | | **299** | **1,033** |
 
-Only the latest VM and ZEC versions are shipped. Other Zenlayer services and
-older API versions are deliberately out of scope. Exact upstream revisions and
-known documentation differences are maintained in [UPSTREAM.md](UPSTREAM.md).
+Only the latest VM, IPT, and ZEC versions are shipped. Other Zenlayer services
+and older API versions are deliberately out of scope. Exact upstream revisions
+and known documentation differences are maintained in [UPSTREAM.md](UPSTREAM.md).
 
 ## Architecture
 
@@ -23,9 +24,9 @@ The package has three layers:
 
 1. **Laravel integration** — `ZenlayerCloudServiceProvider`, facade, manager,
    published configuration, named connections, and container bindings.
-2. **Generated service contract** — one VM client, one ZEC client, and typed
-   Request/Response/nested model classes. PascalCase method names intentionally
-   match Zenlayer Action names exactly.
+2. **Generated service contract** — one VM client, one IPT client, one ZEC
+   client, and typed Request/Response/nested model classes. PascalCase method
+   names intentionally match Zenlayer Action names exactly.
 3. **Common runtime** — credentials, HMAC signer, configuration validation,
    Laravel HTTP transport, serialization/hydration, retry policy, and typed
    exceptions.
@@ -132,10 +133,12 @@ overridden for a controlled environment.
 
 ## Generation and upstream parity
 
-`bin/codegen.php` reads `models.go` and `client.go` for VM `20260401` and ZEC
-`20250901` from the official Go SDK. Before writing it:
+`bin/codegen.php` reads `models.go` and `client.go` for VM `20260401`, IPT
+`20240901`, and ZEC `20250901` from the official Go SDK. Before writing it:
 
-- parses and validates both services;
+- parses and validates every service;
+- verifies each upstream `SERVICE` and `APIVersion` constant against the
+  configured client before any generated file is replaced;
 - rejects duplicate Actions/fields and missing request/response models;
 - refuses unsupported Go types instead of silently degrading to `mixed`;
 - emits scalar/model list PHPDoc used by PHPStan;
@@ -144,9 +147,9 @@ overridden for a controlled environment.
   `CreateEipsRequest.instanceId` while the official SDK schemas omit it.
 
 The generated Action and field sets were also compared with the official
-Python SDK and every linked public VM/ZEC Action page. See `UPSTREAM.md` for the
-precise audit snapshot and the five official-SDK Actions not yet linked in the
-ZEC documentation index.
+Python SDK and every linked public VM/IPT/ZEC Action page. See `UPSTREAM.md` for
+the precise audit snapshot and the five official-SDK Actions not yet linked in
+the ZEC documentation index.
 
 ## Quality and security controls
 

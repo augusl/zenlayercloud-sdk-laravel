@@ -12,6 +12,7 @@ use ZenlayerCloud\Laravel\Common\Exception\ZenlayerCloudSdkException;
 use ZenlayerCloud\Laravel\Common\Http\HttpClientFactory;
 use ZenlayerCloud\Laravel\Common\Signer;
 use ZenlayerCloud\Laravel\Common\TokenCredential;
+use ZenlayerCloud\Laravel\Ipt\V20240901\IptClient;
 use ZenlayerCloud\Laravel\Vm\V20260401\VmClient;
 use ZenlayerCloud\Laravel\Zec\V20250901\ZecClient;
 
@@ -19,7 +20,7 @@ use ZenlayerCloud\Laravel\Zec\V20250901\ZecClient;
  * Entry-point Manager for the Zenlayer Cloud SDK in a Laravel application.
  *
  * Resolves named "connections" defined in config/zenlayercloud.php and lazily
- * builds typed service clients (VmClient, ZecClient).
+ * builds typed service clients (VmClient, IptClient, ZecClient).
  *
  * Multi-account support is built-in:
  *
@@ -30,6 +31,9 @@ class ZenlayerCloudManager
 {
     /** @var array<string,VmClient> */
     private array $vmClients = [];
+
+    /** @var array<string,IptClient> */
+    private array $iptClients = [];
 
     /** @var array<string,ZecClient> */
     private array $zecClients = [];
@@ -57,6 +61,29 @@ class ZenlayerCloudManager
         $connectionConfig = $this->connectionConfig($name);
 
         return $this->vmClients[$name] = new VmClient(
+            $this->credential($connectionConfig),
+            $this->configFor($connectionConfig),
+            $this->http,
+            $this->signer,
+        );
+    }
+
+    /**
+     * Resolve the IPT service client for the given connection (or the
+     * default connection if `$connection` is null). Same caching contract
+     * as {@see self::vm()}.
+     */
+    public function ipt(?string $connection = null): IptClient
+    {
+        $name = $connection ?? $this->defaultConnection();
+
+        if (isset($this->iptClients[$name])) {
+            return $this->iptClients[$name];
+        }
+
+        $connectionConfig = $this->connectionConfig($name);
+
+        return $this->iptClients[$name] = new IptClient(
             $this->credential($connectionConfig),
             $this->configFor($connectionConfig),
             $this->http,
@@ -94,6 +121,7 @@ class ZenlayerCloudManager
     public function flushClients(): void
     {
         $this->vmClients = [];
+        $this->iptClients = [];
         $this->zecClients = [];
     }
 

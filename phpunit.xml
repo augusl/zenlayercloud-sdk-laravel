@@ -24,6 +24,7 @@
         </include>
         <exclude>
             <directory>src/Vm/V20260401/Models</directory>
+            <directory>src/Ipt/V20240901/Models</directory>
             <directory>src/Zec/V20250901/Models</directory>
         </exclude>
     </source>

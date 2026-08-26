@@ -2,6 +2,7 @@
     "preset": "laravel",
     "exclude": [
         "src/Vm/V20260401/Models",
+        "src/Ipt/V20240901/Models",
         "src/Zec/V20250901/Models"
     ],
     "rules": {

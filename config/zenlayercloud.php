@@ -8,8 +8,8 @@ return [
     | Default Connection
     |--------------------------------------------------------------------------
     |
-    | Name of the connection used when ZenlayerCloud::vm() / ::zec() is called
-    | without an explicit connection name.
+    | Name of the connection used when ZenlayerCloud::vm(), ::ipt(), or ::zec()
+    | is called without an explicit connection name.
     |
     */
     'default' => env('ZENLAYER_CONNECTION', 'default'),

@@ -11,6 +11,7 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use SensitiveParameter;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
+use ZenlayerCloud\Laravel\Ipt\V20240901\IptClient;
 use ZenlayerCloud\Laravel\Vm\V20260401\VmClient;
 use ZenlayerCloud\Laravel\Zec\V20250901\Models\CreateEipsRequest;
 use ZenlayerCloud\Laravel\Zec\V20250901\ZecClient;
@@ -60,9 +61,11 @@ final class GeneratedApiSurfaceTest extends TestCase
             );
         }
 
-        $probe = $clientClass === VmClient::class
-            ? new VmClientRoutingProbe
-            : new ZecClientRoutingProbe;
+        $probe = match ($clientClass) {
+            VmClient::class => new VmClientRoutingProbe,
+            IptClient::class => new IptClientRoutingProbe,
+            ZecClient::class => new ZecClientRoutingProbe,
+        };
 
         foreach ($methods as $method) {
             $requestType = $method->getParameters()[0]->getType();
@@ -117,6 +120,13 @@ final class GeneratedApiSurfaceTest extends TestCase
     {
         return [
             'VM 20260401' => [VmClient::class, 62, ['CreateInstances', 'DescribeZones']],
+            'IPT 20240901' => [IptClient::class, 12, [
+                'CreateIPTransit',
+                'DeleteIPTransit',
+                'DescribeIPTransitDatacenters',
+                'DescribeIPTransits',
+                'ModifyIPTransitConfig',
+            ]],
             'ZEC 20250901' => [ZecClient::class, 225, [
                 'CreateSubnets',
                 'DeleteSubnets',
@@ -141,6 +151,11 @@ final class GeneratedApiSurfaceTest extends TestCase
                 dirname(__DIR__, 2).'/src/Vm/V20260401/Models',
                 'ZenlayerCloud\\Laravel\\Vm\\V20260401\\Models',
                 213,
+            ],
+            'IPT models' => [
+                dirname(__DIR__, 2).'/src/Ipt/V20240901/Models',
+                'ZenlayerCloud\\Laravel\\Ipt\\V20240901\\Models',
+                59,
             ],
             'ZEC models' => [
                 dirname(__DIR__, 2).'/src/Zec/V20250901/Models',
@@ -182,6 +197,11 @@ trait RecordsActionRouting
 }
 
 final class VmClientRoutingProbe extends VmClient
+{
+    use RecordsActionRouting;
+}
+
+final class IptClientRoutingProbe extends IptClient
 {
     use RecordsActionRouting;
 }
