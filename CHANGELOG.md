@@ -56,6 +56,9 @@ All notable changes to this project are documented here. This project follows
 
 ### Fixed
 
+- Corrected the VM creation examples to include every required API field,
+  require an existing SSH key, and guard the billable call behind an explicit
+  confirmation flag instead of generating and discarding an invalid password.
 - Prevented debug mode from logging Authorization headers, credentials, and
   complete request/response bodies.
 - Rejected malformed successful response envelopes and malformed nested model

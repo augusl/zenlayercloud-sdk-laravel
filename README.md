@@ -119,6 +119,9 @@ foreach (($response->response?->zoneSet ?? []) as $zone) {
 
 ### Create a virtual machine
 
+> `CreateInstances` creates billable resources. Replace every placeholder with
+> identifiers from your own account before running it.
+
 ```php
 use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
 use ZenlayerCloud\Laravel\Vm\V20260401\Models\ChargePrepaid;
@@ -133,6 +136,10 @@ $req->instanceCount                 = 1;
 $req->instanceChargeType            = 'PREPAID';
 $req->instanceChargePrepaid         = new ChargePrepaid();
 $req->instanceChargePrepaid->period = 12;
+$req->subnetId                      = 'subnet-xxxx';
+$req->internetChargeType            = 'ByBandwidth';
+$req->internetMaxBandwidthOut       = 1;
+$req->keyId                         = 'key-xxxx'; // provide exactly one of keyId/password
 $req->systemDisk                    = new SystemDisk();
 $req->systemDisk->diskSize          = 50;
 

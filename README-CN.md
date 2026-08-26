@@ -111,6 +111,8 @@ foreach (($response->response?->zoneSet ?? []) as $zone) {
 
 ### 创建虚拟机
 
+> `CreateInstances` 会创建计费资源。调用前请将所有占位符替换为你自己账号中的真实资源 ID。
+
 ```php
 use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
 use ZenlayerCloud\Laravel\Vm\V20260401\Models\ChargePrepaid;
@@ -125,6 +127,10 @@ $req->instanceCount                 = 1;
 $req->instanceChargeType            = 'PREPAID';
 $req->instanceChargePrepaid         = new ChargePrepaid();
 $req->instanceChargePrepaid->period = 12;
+$req->subnetId                      = 'subnet-xxxx';
+$req->internetChargeType            = 'ByBandwidth';
+$req->internetMaxBandwidthOut       = 1;
+$req->keyId                         = 'key-xxxx'; // keyId/password 必须且只能提供一个
 $req->systemDisk                    = new SystemDisk();
 $req->systemDisk->diskSize          = 50;
 

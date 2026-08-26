@@ -1,11 +1,12 @@
 <?php
 
 /**
- * Example: create a single VM instance.
+ * Example: create a single billable VM instance with an existing SSH key.
  *
  *     ZENLAYER_SECRET_KEY_ID=... \
  *     ZENLAYER_SECRET_KEY_PASSWORD=... \
- *     ZONE_ID=SEL-A IMAGE_ID=IMG-xxxx \
+ *     ZONE_ID=SEL-A IMAGE_ID=IMG-xxxx INSTANCE_TYPE=S8I \
+ *     SUBNET_ID=subnet-xxxx KEY_ID=key-xxxx CONFIRM_CREATE=1 \
  *     php examples/vm_create_instance.php
  */
 
@@ -32,6 +33,22 @@ if ($secretKeyId === '' || $secretKeyPassword === '') {
     exit(1);
 }
 
+if (getenv('CONFIRM_CREATE') !== '1') {
+    fwrite(STDERR, "This example creates a billable VM. Set CONFIRM_CREATE=1 to continue.\n");
+    exit(1);
+}
+
+/** @var array<string,string> $input */
+$input = [];
+foreach (['ZONE_ID', 'IMAGE_ID', 'INSTANCE_TYPE', 'SUBNET_ID', 'KEY_ID'] as $name) {
+    $value = getenv($name);
+    if (! is_string($value) || trim($value) === '') {
+        fwrite(STDERR, "Please export {$name} with a real Zenlayer resource identifier.\n");
+        exit(1);
+    }
+    $input[$name] = trim($value);
+}
+
 $client = new VmClient(
     credential: new Credential($secretKeyId, $secretKeyPassword),
     config: new Config,
@@ -40,16 +57,19 @@ $client = new VmClient(
 );
 
 $req = new CreateInstancesRequest;
-$req->zoneId = getenv('ZONE_ID') ?: 'SEL-A';
-$req->imageId = getenv('IMAGE_ID') ?: 'IMG-xxxx';
-$req->instanceType = getenv('INSTANCE_TYPE') ?: 'S8I';
+$req->zoneId = $input['ZONE_ID'];
+$req->imageId = $input['IMAGE_ID'];
+$req->instanceType = $input['INSTANCE_TYPE'];
 $req->instanceCount = 1;
 $req->instanceChargeType = 'PREPAID';
 $req->instanceChargePrepaid = new ChargePrepaid;
 $req->instanceChargePrepaid->period = 1;
+$req->subnetId = $input['SUBNET_ID'];
+$req->internetChargeType = 'ByBandwidth';
+$req->internetMaxBandwidthOut = 1;
+$req->keyId = $input['KEY_ID'];
 $req->systemDisk = new SystemDisk;
 $req->systemDisk->diskSize = 50;
-$req->password = bin2hex(random_bytes(8)).'_Aa1!';
 
 try {
     $resp = $client->CreateInstances($req);

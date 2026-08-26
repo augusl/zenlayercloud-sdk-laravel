@@ -6,7 +6,7 @@ not inferred from examples or handwritten independently.
 
 ## Current snapshot
 
-Last contract audit: **2026-08-25**.
+Last contract audit: **2026-08-26**.
 
 | Source | Audited revision |
 |--------|------------------|
