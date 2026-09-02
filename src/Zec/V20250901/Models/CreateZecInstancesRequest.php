@@ -215,7 +215,7 @@ class CreateZecInstancesRequest extends AbstractModel
     public ?TagAssociation $tags = null;
 
     /**
-     * UserData 初始化命令。
+     * UserData 实例初始化自定义脚本，需使用Base64编码后传入，解码后大小不超过64KB。
      */
     public ?string $userData = null;
 

@@ -76,7 +76,7 @@ are regenerated from an upstream Zenlayer Cloud schema source by
 need to run the generator.
 
 ```bash
-ZENLAYER_GO_TAG=v0.2.52
+ZENLAYER_GO_TAG=v0.2.53
 git clone --branch "$ZENLAYER_GO_TAG" https://github.com/zenlayer/zenlayercloud-sdk-go.git
 composer codegen -- /path/to/zenlayercloud-sdk-go/zenlayercloud
 composer lint:fix         # Pint may want to format the new files

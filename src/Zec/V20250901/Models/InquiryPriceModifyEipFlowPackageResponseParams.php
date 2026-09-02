@@ -45,6 +45,12 @@ class InquiryPriceModifyEipFlowPackageResponseParams extends AbstractModel
      */
     public ?PriceItem $remoteBandwidthPrice = null;
 
+    /**
+     * PreviousPrices 变更前各计费项当前生效的价格，字段与上方一一对应，用于对比出哪些计费项发生了调价。
+     * 无订单时为 null。
+     */
+    public ?EipPreviousPrices $previousPrices = null;
+
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
         'bandwidthPrices' => BandwidthPriceResponseItem::class,

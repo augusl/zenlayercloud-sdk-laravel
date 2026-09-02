@@ -115,7 +115,7 @@ class DescribeEipsRequest extends AbstractModel
 
     /**
      * PrefixLength 按照 EIP 的掩码长度过滤。
-     * 32 表示单个 IP 地址，24–31 表示 CIDR 网段。
+     * 32 表示单 IP，20–31 表示网段。
      */
     public ?int $prefixLength = null;
 

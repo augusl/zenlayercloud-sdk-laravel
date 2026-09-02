@@ -13,27 +13,19 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * ModifySubnetsAttributeRequest
+ * DescribeRegionsRequest
  */
-class ModifySubnetsAttributeRequest extends AbstractModel
+class DescribeRegionsRequest extends AbstractModel
 {
     /**
-     * SubnetIds 需要修改的子网ID列表。
+     * RegionIds 根据节点ID过滤。
      *
      * @var list<string>|null
      */
-    public ?array $subnetIds = null;
-
-    /**
-     * Name 修改的子网名称。
-     * 范围2到63个字符。
-     * 仅支持输入字母、数字、连字符(-)、下划线(_)、斜杠(/)、英文句点(.)和空格。
-     * 且必须以数字或字母开头和结尾。
-     */
-    public ?string $name = null;
+    public ?array $regionIds = null;
 
     /** @var array<string,'string'|'int'|'float'|'bool'> */
     protected static array $_scalarArrayTypeMap = [
-        'subnetIds' => 'string',
+        'regionIds' => 'string',
     ];
 }

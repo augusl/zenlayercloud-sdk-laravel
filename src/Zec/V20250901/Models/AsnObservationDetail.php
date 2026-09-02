@@ -19,6 +19,7 @@ class AsnObservationDetail extends AbstractModel
 {
     /**
      * VerificationStatus ASN 验证状态。
+     * RIPE 观测到的任一 ASN 与申报 ASN 一致即为 agreed。
      */
     public ?string $verificationStatus = null;
 

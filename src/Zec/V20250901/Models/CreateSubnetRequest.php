@@ -23,8 +23,10 @@ class CreateSubnetRequest extends AbstractModel
     public ?string $vpcId = null;
 
     /**
-     * Name 子网名称，用于展示。
-     * 该参数需以数字或字母开头和结尾，长度为2到63个字符，仅支持字母、数字、连字符(-)和英文句点(.)。
+     * Name 子网名称。
+     * 范围2到63个字符。
+     * 仅支持输入字母、数字、连字符(-)、下划线(_)、斜杠(/)、英文句点(.)和空格。
+     * 且必须以数字或字母开头和结尾。
      */
     public ?string $name = null;
 

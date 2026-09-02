@@ -13,43 +13,33 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * InquiryPriceModifyEipBandwidthResponseParams
+ * EipPreviousPrices 变更前各计费项当前生效的价格。
  */
-class InquiryPriceModifyEipBandwidthResponseParams extends AbstractModel
+class EipPreviousPrices extends AbstractModel
 {
-    public ?string $requestId = null;
-
     /**
-     * EipPrice 公网弹性IP的保留价格。
-     * 通过CIDR创建的IP保留价格为null。
+     * EipPrice 变更前公网弹性IP的保留价格。
      */
     public ?PriceItem $eipPrice = null;
 
     /**
-     * BandwidthPrice 公网弹性IP的带宽价格。
-     * PathBasedBandwidthIP线路时为null，详见`bandwidthPrices`。
+     * BandwidthPrice 变更前公网弹性IP的带宽价格。
+     * 与顶层同义：PathBasedBandwidthIP线路时为null，明细见`previousPrices.bandwidthPrices`。
      */
     public ?PriceItem $bandwidthPrice = null;
 
     /**
-     * BandwidthPrices 各流量方向的带宽价格明细。
-     * PathBasedBandwidthIP线路返回多项；其他线路返回单项（trafficType=ALL）。
+     * BandwidthPrices 变更前各流量方向的带宽价格明细，与顶层`bandwidthPrices`按`trafficType`一一对应。
      *
      * @var list<BandwidthPriceResponseItem>|null
      */
     public ?array $bandwidthPrices = null;
 
     /**
-     * RemoteBandwidthPrice Remote IPT的带宽价格。
+     * RemoteBandwidthPrice 变更前Remote IPT的带宽价格。
      * EIP未开启Remote IPT时为null。
      */
     public ?PriceItem $remoteBandwidthPrice = null;
-
-    /**
-     * PreviousPrices 变更前各计费项当前生效的价格，字段与上方一一对应，用于对比出哪些计费项发生了调价。
-     * 无订单时为 null。
-     */
-    public ?EipPreviousPrices $previousPrices = null;
 
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [

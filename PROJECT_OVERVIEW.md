@@ -11,8 +11,8 @@ aligned with Zenlayer's official Go and Python SDKs.
 |---------|-------------|--------:|-------:|
 | Virtual Machine (VM) | `2026-04-01` | 62 | 213 |
 | IP Transit (IPT) | `2024-09-01` | 12 | 59 |
-| Elastic Compute (ZEC) | `2025-09-01` | 225 | 761 |
-| **Total** | | **299** | **1,033** |
+| Elastic Compute (ZEC) | `2025-09-01` | 226 | 771 |
+| **Total** | | **300** | **1,043** |
 
 Only the latest VM, IPT, and ZEC versions are shipped. Other Zenlayer services
 and older API versions are deliberately out of scope. Exact upstream revisions
@@ -143,13 +143,12 @@ overridden for a controlled environment.
 - refuses unsupported Go types instead of silently degrading to `mixed`;
 - emits scalar/model list PHPDoc used by PHPStan;
 - carries upstream deprecations into PHP `@deprecated` tags;
-- applies one documented compatibility override for
-  `CreateEipsRequest.instanceId` while the official SDK schemas omit it.
+- preserves the documented `StopInstancesRequest.forceShutdown` default when
+  upstream generated comments omit it.
 
 The generated Action and field sets were also compared with the official
 Python SDK and every linked public VM/IPT/ZEC Action page. See `UPSTREAM.md` for
-the precise audit snapshot and the five official-SDK Actions not yet linked in
-the ZEC documentation index.
+the precise audit snapshot and current SDK/documentation differences.
 
 ## Quality and security controls
 

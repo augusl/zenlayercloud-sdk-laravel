@@ -28,4 +28,10 @@ class InquiryPriceChangeIpv6InternetChargeTypeResponseParams extends AbstractMod
      * BandwidthPrice 公网IPv6的带宽价格。
      */
     public ?PriceItem $bandwidthPrice = null;
+
+    /**
+     * PreviousPrices 变更前各计费项当前生效的价格，字段与上方一一对应，用于对比出哪些计费项发生了调价。
+     * 无订单时为 null。
+     */
+    public ?Ipv6PreviousPrices $previousPrices = null;
 }

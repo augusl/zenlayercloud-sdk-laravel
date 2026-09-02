@@ -28,7 +28,17 @@ class CrossRegionBandwidthMetricValue extends AbstractModel
     public ?float $inValue = null;
 
     /**
-     * OutValue 入方向值。
+     * LoseInValue 入方向丢弃值。
+     */
+    public ?float $loseInValue = null;
+
+    /**
+     * OutValue 出方向值。
      */
     public ?float $outValue = null;
+
+    /**
+     * LoseOutValue 出方向丢弃值。
+     */
+    public ?float $loseOutValue = null;
 }

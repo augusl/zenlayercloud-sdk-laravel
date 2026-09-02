@@ -23,9 +23,9 @@ The package currently covers these Compute and Networking services:
 
 - **Virtual Machine (VM)** — API version `2026-04-01`, 62 actions.
 - **IP Transit (IPT)** — API version `2024-09-01`, 12 actions.
-- **Elastic Compute (ZEC)** — API version `2025-09-01`, 225 actions.
+- **Elastic Compute (ZEC)** — API version `2025-09-01`, 226 actions.
 
-The generated surface contains 299 Actions and 1,033 model classes in total.
+The generated surface contains 300 Actions and 1,043 model classes in total.
 Its upstream source and known documentation differences are recorded in
 [UPSTREAM.md](UPSTREAM.md).
 

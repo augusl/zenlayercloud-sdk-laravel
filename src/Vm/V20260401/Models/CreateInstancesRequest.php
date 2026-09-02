@@ -116,11 +116,12 @@ class CreateInstancesRequest extends AbstractModel
 
     /**
      * CpuPassThrough 是否开启CPU穿透。
+     * 默认不开放该权限，如需开放请联系Zenlayer Support。
      */
     public ?bool $cpuPassThrough = null;
 
     /**
-     * InitScript 初始化脚本。
+     * InitScript 初始化脚本，需进行Base64编码后传入，脚本内容大小不超过32KB。
      */
     public ?string $initScript = null;
 
@@ -152,7 +153,8 @@ class CreateInstancesRequest extends AbstractModel
     public ?string $clusterId = null;
 
     /**
-     * CidrBlockId CIDR 地址块ID。指定该字段将从CIDR 地址块里分配公网IP
+     * CidrBlockId CIDR 地址块ID。
+     * 指定该字段将从CIDR 地址块里分配公网IP。
      */
     public ?string $cidrBlockId = null;
 

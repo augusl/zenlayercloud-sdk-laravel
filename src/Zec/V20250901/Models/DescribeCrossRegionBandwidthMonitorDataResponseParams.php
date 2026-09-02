@@ -60,6 +60,36 @@ class DescribeCrossRegionBandwidthMonitorDataResponseParams extends AbstractMode
     public ?float $outTotalValue = null;
 
     /**
+     * LoseInMaxValue 入方向丢弃量最大值。
+     */
+    public ?float $loseInMaxValue = null;
+
+    /**
+     * LoseInMinValue 入方向丢弃量最小值。
+     */
+    public ?float $loseInMinValue = null;
+
+    /**
+     * LoseInTotalValue 入方向丢弃量总和值。
+     */
+    public ?float $loseInTotalValue = null;
+
+    /**
+     * LoseOutMaxValue 出方向丢弃量最大值。
+     */
+    public ?float $loseOutMaxValue = null;
+
+    /**
+     * LoseOutMinValue 出方向丢弃量最小值。
+     */
+    public ?float $loseOutMinValue = null;
+
+    /**
+     * LoseOutTotalValue 出方向丢弃量总和值。
+     */
+    public ?float $loseOutTotalValue = null;
+
+    /**
      * DataList 监控数据集合。
      *
      * @var list<CrossRegionBandwidthMetricValue>|null

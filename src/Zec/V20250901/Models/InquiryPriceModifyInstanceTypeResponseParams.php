@@ -41,4 +41,10 @@ class InquiryPriceModifyInstanceTypeResponseParams extends AbstractModel
      * SystemDiskPrice 系统盘的价格。
      */
     public ?PriceItem $systemDiskPrice = null;
+
+    /**
+     * PreviousPrices 变更前各计费项当前生效的价格，字段与上方一一对应，用于对比出哪些计费项发生了调价。
+     * 实例无订单时为 null。
+     */
+    public ?InstanceTypePreviousPrices $previousPrices = null;
 }

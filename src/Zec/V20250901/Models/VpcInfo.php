@@ -29,6 +29,7 @@ class VpcInfo extends AbstractModel
 
     /**
      * CidrBlock VPC的IPv4 CIDR。
+     * 如果VPC存在多个网段，则多个网段以英文逗号分隔，例如：`21.0.0.0/8,22.0.0.0/8`。
      */
     public ?string $cidrBlock = null;
 

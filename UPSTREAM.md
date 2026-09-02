@@ -6,15 +6,20 @@ not inferred from examples or handwritten independently.
 
 ## Current snapshot
 
-Last contract audit: **2026-08-27**.
+Last contract audit: **2026-09-02**.
 
 | Source | Audited revision |
 |--------|------------------|
-| [Official Go SDK](https://github.com/zenlayer/zenlayercloud-sdk-go/tree/v0.2.52) | `v0.2.52` / `a9ce8126ea685f57abb1c66d8f56674dd8ea338e` |
-| [Official Python SDK](https://github.com/zenlayer/zenlayercloud-sdk-python/tree/2.0.73) | `2.0.73` / `c0f22181fb03802dcd98fbd1036a4245ce5546a5` |
+| [Official Go SDK](https://github.com/zenlayer/zenlayercloud-sdk-go/tree/v0.2.53) | `v0.2.53` / `547b16fcf5e5b79ce91eab9cc52546a143c8d477` |
+| [Official Python SDK](https://github.com/zenlayer/zenlayercloud-sdk-python/tree/2.0.74) | `2.0.74` / `c6d510f5165801cc12948fd06e5629e3e97ddf34` |
 | [VM API reference](https://docs.console.zenlayer.com/api-reference/compute/vm) | API `2026-04-01` |
 | [IPT API reference](https://docs.console.zenlayer.com/api-reference/cn/networking/ipt) | API `2024-09-01` |
 | [ZEC API reference](https://docs.console.zenlayer.com/api-reference/compute/zec) | API `2025-09-01` |
+
+The same upstream release also changes ZLB, ZOS, ZRM, and ZSP. Those services
+remain intentionally excluded because this package's declared scope is only
+VM, IPT, and ZEC; omitting them here is not a partial sync of a supported
+service.
 
 The Go and Python SDKs agree on the VM/IPT/ZEC Action sets and the corresponding
 request/payload fields (their response-wrapper class layouts differ by
@@ -24,47 +29,72 @@ language):
 |---------|--------:|-------:|
 | VM | 62 | 213 |
 | IPT | 12 | 59 |
-| ZEC | 225 | 761 |
-| **Total** | **299** | **1,033** |
+| ZEC | 226 | 771 |
+| **Total** | **300** | **1,043** |
 
-An independent Go-to-PHP type audit checked every generated property and both
-runtime array maps: VM 213 models / 625 fields, IPT 59 models / 256 fields, and
-ZEC 761 models / 2,419 fields, with zero type or mapping differences. The IPT
-total represents 55 declared Go structures plus four anonymous response
-structures promoted to named PHP models. The ZEC total includes the one
-documented `CreateEipsRequest.instanceId` override described below; the Go
-schema itself contains 2,418 ZEC JSON fields.
+An independent parser/reflection audit checked every generated property and
+both runtime array maps: VM 213 models / 625 fields, IPT 59 models / 256 fields,
+and ZEC 771 models / 2,462 fields, with zero Action, field, type, route, or array
+mapping differences. That is 300 Actions, 1,043 models, and 3,343 typed fields
+in total. A separate comparison with the Python SDK checked its 743 semantic
+models after accounting for Python's flattened response wrappers, also with
+zero field or nested-model differences. The official ZEC schemas now include
+`CreateEipsRequest.instanceId` natively.
 
-A separate second-pass audit independently compared the public Action pages
-and their linked data-type tables with the Go schema: all 62 VM pages / 501
-checked field entries and all 220 linked ZEC pages / 1,945 checked field entries
-matched after applying the documented `CreateEipsRequest.instanceId` override.
-All 12 IPT pages / 112 direct request-response fields and all 23 structured
-data-type tables / 120 fields also matched, including scalar versus nested
-model and scalar/model-list wire types.
-Another structural comparison checked Python-to-Go field and nested-model
-relationships (VM 501, IPT 232, and ZEC 1,968 field relationships), also with
-zero differences. IPT additionally checked all 42 nested object/list targets.
-These checks are independent of the Go-to-PHP generator audit.
+The current public Action indexes expose all 62 VM Actions, all 12 IPT Actions,
+and 225 of the 226 ZEC Actions. A page-by-page audit checked all 299 published
+pages: 1,808 direct request/response fields plus 894 fields in 136 linked data
+structures. Every published field and wire type agrees with the SDKs; the
+SDK-only additions listed below are the complete set of missing documentation
+entries. An exact Action-set comparison leaves only `DescribeRegions` absent
+from the ZEC index.
 
 ## Known upstream/documentation differences
 
-At the audited revisions, the ZEC documentation index links 220 Actions while
-both official SDKs expose 225. The following five SDK Actions are therefore
-included here even though they are not linked from the public index:
+### Official SDKs ahead of the public ZEC reference
 
-- `CreateSubnets`
-- `DeleteSubnets`
-- `DescribeZoneAcceleratorConfigInfos`
-- `ModifyEipBlockThreshold`
-- `ReplaceNetworkInterfacePrimaryIpv4`
+Both official language SDKs expose `DescribeRegions` with `regionIds` filtering
+and typed `RegionItem` results, but the [ZEC index](https://docs.console.zenlayer.com/api-reference/compute/zec)
+and its Location section currently expose only `DescribeZones`.
+
+The official SDKs also add response fields that are not yet shown on their
+public Action pages:
+
+- `previousPrices` on `InquiryPriceModifyInstanceType`,
+  `InquiryPriceResizeDisk`, `InquiryPriceChangeIpv6InternetChargeType`,
+  `InquiryPriceModifyIpv6Bandwidth`, `InquiryPriceModifyEipBandwidth`,
+  `InquiryPriceModifyEipFlowPackage`,
+  `InquiryPriceChangeEipInternetChargeType`,
+  `InquiryPriceModifyCrossRegionBandwidth`,
+  `InquiryPriceModifyUnmanagedEgressIpBandwidth`, and
+  `InquiryPriceChangeUnmanagedEgressIpInternetChargeType`;
+- `acceleratorPrice` on `InquiryPriceResizeDisk`;
+- `loseInMaxValue`, `loseInMinValue`, `loseInTotalValue`,
+  `loseOutMaxValue`, `loseOutMinValue`, and `loseOutTotalValue` on
+  `DescribeCrossRegionBandwidthMonitorData`, plus `loseInValue` and
+  `loseOutValue` on its metric items.
+
+The SDK prose additionally documents Base64/64 KB limits for ZEC instance
+`userData` and expanded multi-CIDR VPC rules that are not yet present on the
+corresponding public pages. These are usage constraints, not PHP type changes.
+
+### Public documentation details preserved locally
+
+The [StopInstances reference](https://docs.console.zenlayer.com/api-reference/compute/vm/virtual-machine-instance/stopinstances)
+still documents `forceShutdown` as defaulting to `true`. Go `v0.2.53` removed
+that sentence without changing the field or API version, so `bin/codegen.php`
+preserves the documented default in the generated PHPDoc.
+
+### Resolved differences
+
+The five ZEC Actions previously missing from the public index
+(`CreateSubnets`, `DeleteSubnets`, `DescribeZoneAcceleratorConfigInfos`,
+`ModifyEipBlockThreshold`, and `ReplaceNetworkInterfacePrimaryIpv4`) now have
+linked public pages.
 
 The [CreateEips reference](https://docs.console.zenlayer.com/api-reference/compute/zec/elastic-ip/createeips)
-documents `instanceId`, explains its precedence over `instanceIds`, and uses it
-in request examples. Both official language SDK request models currently omit
-that field. This package includes `CreateEipsRequest::$instanceId` through an
-explicit override in `bin/codegen.php`; it is automatically skipped when the
-official Go schema adds the field.
+and both current official SDKs now include `instanceId`, its precedence over
+`instanceIds`, and the related examples, so no local field override remains.
 
 The public ZEC pages and both official SDKs still retain the following legacy
 request fields and mark them deprecated. They are not contract discrepancies;

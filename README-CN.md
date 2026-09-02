@@ -22,9 +22,9 @@ ServiceProvider 与 Facade、可发布的连接配置、基于 `Illuminate\Http\
 
 - **虚拟机 (VM)** — API 版本 `2026-04-01`，共 62 个 Action。
 - **IP Transit (IPT)** — API 版本 `2024-09-01`，共 12 个 Action。
-- **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 225 个 Action。
+- **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 226 个 Action。
 
-当前生成代码合计包含 299 个 Action、1,033 个模型类。上游版本与已知文档差异记录在
+当前生成代码合计包含 300 个 Action、1,043 个模型类。上游版本与已知文档差异记录在
 [UPSTREAM.md](UPSTREAM.md)。
 
 支持范围内的每个 Action 都映射为一个带强类型 Request / Response 的 PHP 方法，

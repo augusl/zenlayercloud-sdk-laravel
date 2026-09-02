@@ -341,52 +341,43 @@ final class SchemaParser
 }
 
 /**
- * Small, explicit corrections for fields published in the API reference but
- * temporarily absent from both upstream language SDK schemas. Keeping these
- * here makes regeneration deterministic and the divergence auditable.
+ * Small, explicit corrections for contract details published in the API
+ * reference but missing from an upstream schema snapshot. Keeping these here
+ * makes regeneration deterministic and the divergence auditable.
  */
 final class DocumentedSchemaOverrides
 {
     public static function apply(string $service, SchemaParser $parser): void
     {
-        if ($service !== 'zec') {
+        if ($service !== 'vm') {
             return;
         }
 
-        self::addCreateEipsInstanceId($parser);
+        self::preserveStopInstancesForceShutdownDefault($parser);
     }
 
-    private static function addCreateEipsInstanceId(SchemaParser $parser): void
+    private static function preserveStopInstancesForceShutdownDefault(SchemaParser $parser): void
     {
-        if (! isset($parser->structs['CreateEipsRequest'])) {
-            throw new RuntimeException('Documented override target [CreateEipsRequest] is missing.');
+        if (! isset($parser->structs['StopInstancesRequest'])) {
+            throw new RuntimeException('Documented override target [StopInstancesRequest] is missing.');
         }
-        $model = &$parser->structs['CreateEipsRequest'];
 
-        foreach ($model['fields'] as $field) {
-            if ($field['name'] === 'instanceId') {
-                return; // Upstream has caught up; do not duplicate the field.
+        foreach ($parser->structs['StopInstancesRequest']['fields'] as &$field) {
+            if ($field['name'] !== 'forceShutdown') {
+                continue;
             }
-        }
-
-        $insertAt = null;
-        foreach ($model['fields'] as $index => $field) {
-            if ($field['name'] === 'instanceIds') {
-                $insertAt = $index;
-                break;
+            if ($field['jsonName'] !== 'forceShutdown' || $field['goType'] !== '*bool') {
+                throw new RuntimeException('Documented field [StopInstancesRequest.forceShutdown] changed type.');
             }
-        }
 
-        if ($insertAt === null) {
-            throw new RuntimeException('Cannot place documented CreateEipsRequest.instanceId override.');
-        }
+            $field['doc'] = "ForceShutdown 是否强制关机。\n"
+                .'不指定时默认为 true。详见 https://docs.console.zenlayer.com/api-reference/compute/vm/virtual-machine-instance/stopinstances';
 
-        array_splice($model['fields'], $insertAt, 0, [[
-            'name' => 'instanceId',
-            'jsonName' => 'instanceId',
-            'goType' => '*string',
-            'doc' => 'InstanceId is the instance to bind all newly created EIPs to. When both `instanceId` and `instanceIds` are supplied, `instanceId` takes precedence. Documented at https://docs.console.zenlayer.com/api-reference/compute/zec/elastic-ip/createeips',
-        ]]);
+            return;
+        }
+        unset($field);
+
+        throw new RuntimeException('Documented field [StopInstancesRequest.forceShutdown] is missing.');
     }
 }
 

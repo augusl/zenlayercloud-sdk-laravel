@@ -50,7 +50,7 @@ class ResetInstanceRequest extends AbstractModel
     public ?string $lanName = null;
 
     /**
-     * InitScript 初始化脚本。
+     * InitScript 初始化脚本，需进行Base64编码后传入，脚本内容大小不超过32KB。
      */
     public ?string $initScript = null;
 }

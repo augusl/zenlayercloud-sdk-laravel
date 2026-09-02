@@ -10,9 +10,11 @@ All notable changes to this project are documented here. This project follows
 
 - Complete IP Transit (IPT) `2024-09-01` support: 12 Actions, 59 typed models,
   facade/manager/container resolution, contract tests, and a read-only example.
-- Eleven ZEC Actions present in the audited latest official SDKs but missing
+- Twelve ZEC Actions present in the audited latest official SDKs but missing
   from the previous generated snapshot, bringing the surface to VM 62 / ZEC
-  225 Actions and 974 model classes.
+  226 Actions and 984 model classes.
+- ZEC region discovery, previous-price response models, accelerator disk
+  pricing, and cross-region drop metrics from the official SDKs.
 - Official-default retries for HTTP 429 / `REQUEST_LIMIT_EXCEEDED`, with
   configurable exponential backoff.
 - Dedicated `SECURITY_CHALLENGE` (Cloudflare 403 challenge) and
@@ -26,14 +28,14 @@ All notable changes to this project are documented here. This project follows
 
 ### Changed
 
-- Regenerated VM, IPT, and ZEC from Go SDK `v0.2.52`, including updated fields,
+- Regenerated VM, IPT, and ZEC from Go SDK `v0.2.53`, including updated fields,
   deprecation annotations, and complete scalar-array PHPDoc types.
 - PHPStan level 8 now analyzes the complete generated tree, generator, and
   shipped examples instead of excluding generated source.
 - Code generation now validates every service before writing, fails on unknown
   types instead of emitting `mixed`, verifies upstream service/version
-  constants, takes an explicit source path, and applies the documented
-  `CreateEipsRequest.instanceId` compatibility override.
+  constants, takes an explicit source path, and preserves the documented VM
+  force-shutdown default.
 - Debug mode now emits redacted request metadata and status through Laravel's
   PSR-3 logger instead of Guzzle wire dumps.
 - Endpoint and numeric HTTP configuration now fail fast on invalid values.

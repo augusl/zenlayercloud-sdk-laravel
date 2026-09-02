@@ -43,6 +43,14 @@ class ZecClient extends AbstractClient
     }
 
     /**
+     * 查询节点信息。包括名称、所属的行政区划等。
+     */
+    public function DescribeRegions(#[\SensitiveParameter] Models\DescribeRegionsRequest $request): Models\DescribeRegionsResponse
+    {
+        return $this->call('DescribeRegions', $request, Models\DescribeRegionsResponse::class);
+    }
+
+    /**
      * 查询可用区售卖的机型信息。
      */
     public function DescribeZoneInstanceConfigInfos(#[\SensitiveParameter] Models\DescribeZoneInstanceConfigInfosRequest $request): Models\DescribeZoneInstanceConfigInfosResponse
@@ -227,7 +235,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询变更实例规格后的价格。
+     * 查询变更实例规格后的价格，同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceModifyInstanceType(#[\SensitiveParameter] Models\InquiryPriceModifyInstanceTypeRequest $request): Models\InquiryPriceModifyInstanceTypeResponse
     {
@@ -419,7 +427,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询云硬盘扩容后的新价格。
+     * 查询云硬盘扩容后的新价格。同时通过 previousPrices 返回扩容前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceResizeDisk(#[\SensitiveParameter] Models\InquiryPriceResizeDiskRequest $request): Models\InquiryPriceResizeDiskResponse
     {
@@ -619,7 +627,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询变更IPv6网络计费模式后的价格。
+     * 查询变更IPv6网络计费模式后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceChangeIpv6InternetChargeType(#[\SensitiveParameter] Models\InquiryPriceChangeIpv6InternetChargeTypeRequest $request): Models\InquiryPriceChangeIpv6InternetChargeTypeResponse
     {
@@ -659,7 +667,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询调整IPv6带宽后的价格。
+     * 查询调整IPv6带宽后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceModifyIpv6Bandwidth(#[\SensitiveParameter] Models\InquiryPriceModifyIpv6BandwidthRequest $request): Models\InquiryPriceModifyIpv6BandwidthResponse
     {
@@ -987,7 +995,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询调整EIP带宽后的价格。
+     * 查询调整EIP带宽后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceModifyEipBandwidth(#[\SensitiveParameter] Models\InquiryPriceModifyEipBandwidthRequest $request): Models\InquiryPriceModifyEipBandwidthResponse
     {
@@ -995,7 +1003,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询调整EIP流量包后的价格。
+     * 查询调整EIP流量包后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceModifyEipFlowPackage(#[\SensitiveParameter] Models\InquiryPriceModifyEipFlowPackageRequest $request): Models\InquiryPriceModifyEipFlowPackageResponse
     {
@@ -1003,7 +1011,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询变更EIP网络计费模式后的价格。
+     * 查询变更EIP网络计费模式后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceChangeEipInternetChargeType(#[\SensitiveParameter] Models\InquiryPriceChangeEipInternetChargeTypeRequest $request): Models\InquiryPriceChangeEipInternetChargeTypeResponse
     {
@@ -1091,7 +1099,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 调整内网跨区域带宽询价。
+     * 调整内网跨区域带宽询价。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceModifyCrossRegionBandwidth(#[\SensitiveParameter] Models\InquiryPriceModifyCrossRegionBandwidthRequest $request): Models\InquiryPriceModifyCrossRegionBandwidthResponse
     {
@@ -1291,7 +1299,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询调整非托管出口IP带宽后的价格。
+     * 查询调整非托管出口IP带宽后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceModifyUnmanagedEgressIpBandwidth(#[\SensitiveParameter] Models\InquiryPriceModifyUnmanagedEgressIpBandwidthRequest $request): Models\InquiryPriceModifyUnmanagedEgressIpBandwidthResponse
     {
@@ -1299,7 +1307,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询变更非托管出口IP网络计费模式后的价格。
+     * 查询变更非托管出口IP网络计费模式后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceChangeUnmanagedEgressIpInternetChargeType(#[\SensitiveParameter] Models\InquiryPriceChangeUnmanagedEgressIpInternetChargeTypeRequest $request): Models\InquiryPriceChangeUnmanagedEgressIpInternetChargeTypeResponse
     {

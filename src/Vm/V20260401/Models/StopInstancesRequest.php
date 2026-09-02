@@ -23,7 +23,7 @@ class StopInstancesRequest extends AbstractModel
 
     /**
      * ForceShutdown 是否强制关机。
-     * 如果不指定默认为是。
+     * 不指定时默认为 true。详见 https://docs.console.zenlayer.com/api-reference/compute/vm/virtual-machine-instance/stopinstances
      */
     public ?bool $forceShutdown = null;
 
