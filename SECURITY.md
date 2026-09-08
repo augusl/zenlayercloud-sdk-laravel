@@ -41,6 +41,12 @@ only request metadata and response status; it does not log Authorization
 headers or request/response bodies. Treat application-level HTTP middleware
 and custom log processors as separate parts of your security boundary.
 
+Wrapped transport, serialization, and parsing errors preserve diagnostic
+messages and codes without retaining the original error objects, whose trace
+arguments may contain request bodies, response bodies, or Authorization
+headers. Sensitive parameters at the HTTP and connection-resolution boundaries
+are marked `SensitiveParameter` to keep them out of exception arguments.
+
 ## Not in scope
 
 - Issues with the upstream Zenlayer Cloud OpenAPI itself. Please report

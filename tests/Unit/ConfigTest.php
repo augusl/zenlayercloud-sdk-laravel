@@ -69,13 +69,28 @@ final class ConfigTest extends TestCase
         self::assertSame(128, strlen((string) $c->requestClient));
     }
 
-    public function test_request_client_rejects_invalid_characters(): void
+    #[DataProvider('invalidRequestClientProvider')]
+    public function test_request_client_rejects_invalid_characters(string $requestClient): void
     {
-        $this->expectException(ZenlayerCloudSdkException::class);
-        $this->expectExceptionMessage('request_client must match');
+        try {
+            new Config(requestClient: $requestClient);
+            self::fail('Expected invalid request-client exception.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_CONFIG_INVALID, $e->errorCode);
+            self::assertStringContainsString('request_client must match', $e->getMessage());
+        }
+    }
 
-        // CRLF would enable header injection — must fail loudly.
-        new Config(requestClient: "abc\r\nX-Injected: 1");
+    /** @return array<string,array{string}> */
+    public static function invalidRequestClientProvider(): array
+    {
+        return [
+            'header injection' => ["abc\r\nX-Injected: 1"],
+            'trailing LF' => ["sdk\n"],
+            'trailing CRLF' => ["sdk\r\n"],
+            'embedded LF' => ["sdk\nclient"],
+            'LF at truncation boundary' => [str_repeat('a', 127)."\nextra"],
+        ];
     }
 
     public function test_request_client_accepts_allowed_punctuation(): void
@@ -164,5 +179,43 @@ final class ConfigTest extends TestCase
         $this->expectExceptionMessage('non-empty CA bundle path');
 
         new Config(verify: '  ');
+    }
+
+    #[DataProvider('sensitiveUrlProvider')]
+    public function test_config_errors_do_not_expose_url_credentials_in_traces(string $option): void
+    {
+        $ignoreArgs = ini_set('zend.exception_ignore_args', '0');
+
+        try {
+            new Config(
+                endpoint: $option === 'endpoint'
+                    ? 'https://user:private-url-password@console.zenlayer.com'
+                    : 'console.zenlayer.com',
+                timeout: $option === 'proxy' ? 0 : 60,
+                proxy: 'http://user:private-url-password@proxy.local',
+            );
+            self::fail('Expected invalid configuration exception.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_CONFIG_INVALID, $e->errorCode);
+            $sdkFrames = [];
+            foreach ($e->getTrace() as $frame) {
+                if (($frame['class'] ?? null) === self::class) {
+                    break;
+                }
+                $sdkFrames[] = $frame;
+            }
+            self::assertFalse(
+                str_contains(print_r($sdkFrames, true), 'private-url-password'),
+                'Configuration failure exposed URL credentials in exception arguments.',
+            );
+        } finally {
+            ini_set('zend.exception_ignore_args', $ignoreArgs);
+        }
+    }
+
+    /** @return array<string,array{string}> */
+    public static function sensitiveUrlProvider(): array
+    {
+        return ['proxy' => ['proxy'], 'endpoint' => ['endpoint']];
     }
 }

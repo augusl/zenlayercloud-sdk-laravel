@@ -16,7 +16,7 @@ final class Config
      * to keep the value safe to embed into an HTTP header without any
      * risk of CRLF injection.
      */
-    public const REQUEST_CLIENT_PATTERN = '/^[0-9a-zA-Z\-_ ,;.]+$/';
+    public const REQUEST_CLIENT_PATTERN = '/\A[0-9a-zA-Z\-_ ,;.]+\z/';
 
     public readonly string $endpoint;
 
@@ -29,7 +29,7 @@ final class Config
     public readonly int $rateLimitRetryDelayMs;
 
     public function __construct(
-        string $endpoint = 'console.zenlayer.com',
+        #[\SensitiveParameter] string $endpoint = 'console.zenlayer.com',
         string $scheme = 'https',
         // Seconds. Raise it (ZENLAYER_TIMEOUT) when provisioning slow
         // resources; most Zenlayer Actions are async/poll-based so 60s is a
@@ -38,7 +38,7 @@ final class Config
         public readonly bool $retry = false,
         public readonly int $retryMax = 3,
         public readonly bool $debug = false,
-        public readonly ?string $proxy = null,
+        #[\SensitiveParameter] public readonly ?string $proxy = null,
         public readonly bool|string $verify = true,
         ?string $requestClient = null,
         int $rateLimitMaxRetries = 3,
@@ -109,7 +109,7 @@ final class Config
      *
      * @return array{0:'http'|'https',1:string}
      */
-    private static function normalizeEndpoint(string $endpoint, string $scheme): array
+    private static function normalizeEndpoint(#[\SensitiveParameter] string $endpoint, string $scheme): array
     {
         $endpoint = trim($endpoint);
         $scheme = strtolower(trim($scheme));

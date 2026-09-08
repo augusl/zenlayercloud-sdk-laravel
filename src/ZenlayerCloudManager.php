@@ -202,7 +202,7 @@ class ZenlayerCloudManager
     }
 
     /** @param array<string,mixed> $connection */
-    private function credential(array $connection): CredentialInterface
+    private function credential(#[\SensitiveParameter] array $connection): CredentialInterface
     {
         // A configured Bearer token takes precedence over the AccessKey pair,
         // matching the upstream SDKs (a connection is either token- or
@@ -219,7 +219,7 @@ class ZenlayerCloudManager
     }
 
     /** @param array<string,mixed> $connection */
-    private function configFor(array $connection): Config
+    private function configFor(#[\SensitiveParameter] array $connection): Config
     {
         $verify = $connection['verify'] ?? true;
 

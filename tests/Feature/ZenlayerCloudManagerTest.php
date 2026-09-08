@@ -112,4 +112,44 @@ final class ZenlayerCloudManagerTest extends TestCase
             self::assertStringContainsString('[timeout]', $e->getMessage());
         }
     }
+
+    public function test_resolution_errors_do_not_expose_connection_secrets_in_traces(): void
+    {
+        $ignoreArgs = ini_set('zend.exception_ignore_args', '0');
+
+        try {
+            foreach (['configuration', 'credential'] as $scenario) {
+                $this->app['config']->set('zenlayercloud.connections.trace', [
+                    'secret_key_id' => $scenario === 'credential' ? '' : 'key-id',
+                    'secret_key_password' => 'private-connection-password',
+                    'endpoint' => 'ftp://console.zenlayer.com',
+                ]);
+
+                try {
+                    ZenlayerCloud::vm('trace');
+                    self::fail('Expected connection resolution failure.');
+                } catch (ZenlayerCloudSdkException $e) {
+                    self::assertSame(
+                        $scenario === 'credential'
+                            ? ZenlayerCloudSdkException::ERR_CREDENTIAL_MISSING
+                            : ZenlayerCloudSdkException::ERR_CONFIG_INVALID,
+                        $e->errorCode,
+                    );
+                    $sdkFrames = [];
+                    foreach ($e->getTrace() as $frame) {
+                        if (($frame['class'] ?? null) === self::class) {
+                            break;
+                        }
+                        $sdkFrames[] = $frame;
+                    }
+                    self::assertFalse(
+                        str_contains(print_r($sdkFrames, true), 'private-connection-password'),
+                        'Connection resolution exposed a secret in exception arguments.',
+                    );
+                }
+            }
+        } finally {
+            ini_set('zend.exception_ignore_args', $ignoreArgs);
+        }
+    }
 }

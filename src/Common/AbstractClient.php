@@ -63,11 +63,17 @@ abstract class AbstractClient
         try {
             $payload = $request->toJson();
         } catch (JsonException|TypeError $e) {
+            // Keep diagnostic type/message/code, but discard serializer frames
+            // whose arguments can contain passwords or other request values.
+            $previous = $e instanceof JsonException
+                ? new JsonException($e->getMessage(), $e->getCode())
+                : new TypeError($e->getMessage(), $e->getCode());
+
             throw new ZenlayerCloudSdkException(
                 ZenlayerCloudSdkException::ERR_INVALID_REQUEST,
                 sprintf('Failed to serialize %s: %s', $request::class, $e->getMessage()),
                 null,
-                $e,
+                $previous,
             );
         }
 
@@ -124,7 +130,7 @@ abstract class AbstractClient
                 ZenlayerCloudSdkException::ERR_JSON_PARSE,
                 sprintf('Failed to parse response body as JSON: %s', $e->getMessage()),
                 null,
-                $e,
+                new JsonException($e->getMessage(), $e->getCode()),
             );
         }
 
@@ -153,7 +159,7 @@ abstract class AbstractClient
                 ZenlayerCloudSdkException::ERR_JSON_PARSE,
                 sprintf('Response shape mismatch for %s: %s', $responseClass, $e->getMessage()),
                 $this->stringRequestId($shape->requestId ?? null),
-                $e,
+                new TypeError($e->getMessage(), $e->getCode()),
             );
         }
 
@@ -166,8 +172,10 @@ abstract class AbstractClient
      * surface a typed exception, but with the JSON-parse error code so the
      * caller can distinguish transport-level failures from API-level ones.
      */
-    private function buildException(Response $response, string $rawBody): ZenlayerCloudSdkException
-    {
+    private function buildException(
+        #[SensitiveParameter] Response $response,
+        #[SensitiveParameter] string $rawBody,
+    ): ZenlayerCloudSdkException {
         $status = $response->status();
 
         if ($status === 403 && strtolower((string) $response->header('cf-mitigated')) === 'challenge') {
@@ -191,7 +199,7 @@ abstract class AbstractClient
                 ZenlayerCloudSdkException::ERR_JSON_PARSE,
                 sprintf('HTTP %d with non-JSON body (%d bytes): %s', $status, strlen($rawBody), $e->getMessage()),
                 null,
-                $e,
+                new JsonException($e->getMessage(), $e->getCode()),
             );
         }
 
@@ -231,7 +239,7 @@ abstract class AbstractClient
      */
     private function sendWithNetworkRetries(
         string $url,
-        string $payload,
+        #[SensitiveParameter] string $payload,
         array $baseHeaders,
         string $host,
     ): Response {
@@ -252,9 +260,9 @@ abstract class AbstractClient
                         $e->getMessage(),
                         $authentication['sensitive'],
                     );
-                    $previous = $transportMessage === $e->getMessage()
-                        ? $e
-                        : new ConnectionException($transportMessage, (int) $e->getCode());
+                    // The original transport trace can retain request objects
+                    // and Authorization headers even when its message is safe.
+                    $previous = new ConnectionException($transportMessage, (int) $e->getCode());
 
                     throw new ZenlayerCloudSdkException(
                         ZenlayerCloudSdkException::ERR_NETWORK,
@@ -273,7 +281,7 @@ abstract class AbstractClient
     /**
      * @return array{headers:array<string,string>,sensitive:list<string>}
      */
-    private function authentication(string $host, string $payload): array
+    private function authentication(string $host, #[SensitiveParameter] string $payload): array
     {
         // A Bearer token takes precedence and skips signing, matching both
         // official language SDKs.
@@ -283,6 +291,14 @@ abstract class AbstractClient
                 throw new ZenlayerCloudSdkException(
                     ZenlayerCloudSdkException::ERR_CREDENTIAL_MISSING,
                     'Token must not be empty.',
+                );
+            }
+            // Validate before constructing the HTTP request: older PSR-7
+            // implementations include invalid header values in exceptions.
+            if (preg_match('/[\x00-\x1F\x7F]/', $token) === 1) {
+                throw new ZenlayerCloudSdkException(
+                    ZenlayerCloudSdkException::ERR_CONFIG_INVALID,
+                    'Token must not contain control characters.',
                 );
             }
 
@@ -298,6 +314,12 @@ abstract class AbstractClient
             throw new ZenlayerCloudSdkException(
                 ZenlayerCloudSdkException::ERR_CREDENTIAL_MISSING,
                 'SecretKeyId or SecretKeyPassword is missing.',
+            );
+        }
+        if (preg_match('/[\x00-\x1F\x7F]/', $secretKeyId) === 1) {
+            throw new ZenlayerCloudSdkException(
+                ZenlayerCloudSdkException::ERR_CONFIG_INVALID,
+                'SecretKeyId must not contain control characters.',
             );
         }
 

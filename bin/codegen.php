@@ -305,7 +305,7 @@ final class SchemaParser
         for ($i = 0; $i < $n; $i++) {
             $line = $lines[$i];
             if (preg_match(
-                '/^func\s+\(c\s+\*Client\)\s+([A-Z][A-Za-z0-9_]*)\s*\(\s*request\s+\*([A-Z][A-Za-z0-9_]*)\s*\)\s*\(\s*response\s+\*([A-Z][A-Za-z0-9_]*)/',
+                '/^func\s+\([A-Za-z_][A-Za-z0-9_]*\s+\*Client\)\s+([A-Z][A-Za-z0-9_]*)\s*\(\s*request\s+\*([A-Z][A-Za-z0-9_]*)\s*\)\s*\(\s*response\s+\*([A-Z][A-Za-z0-9_]*)/',
                 $line,
                 $m,
             )) {
@@ -333,7 +333,7 @@ final class SchemaParser
                     'responseType' => $responseType,
                     'doc' => $doc,
                 ];
-            } elseif (str_starts_with($line, 'func (c *Client) ')) {
+            } elseif (preg_match('/^\s*func\s+\([^)]*\bClient\s*\)\s*/', $line) === 1) {
                 throw new RuntimeException("Unrecognized Client method signature: {$line}");
             }
         }

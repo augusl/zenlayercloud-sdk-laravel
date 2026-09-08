@@ -9,12 +9,14 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ZenlayerCloud\Laravel\Common\AbstractClient;
+use ZenlayerCloud\Laravel\Common\AbstractModel;
 use ZenlayerCloud\Laravel\Common\Config;
 use ZenlayerCloud\Laravel\Common\Credential;
 use ZenlayerCloud\Laravel\Common\CredentialInterface;
 use ZenlayerCloud\Laravel\Common\Exception\ZenlayerCloudSdkException;
 use ZenlayerCloud\Laravel\Common\Http\HttpClientFactory;
 use ZenlayerCloud\Laravel\Common\Signer;
+use ZenlayerCloud\Laravel\Common\TokenCredential;
 use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
 use ZenlayerCloud\Laravel\Tests\TestCase;
 use ZenlayerCloud\Laravel\Vm\V20260401\Models;
@@ -113,6 +115,209 @@ final class VmClientTest extends TestCase
             return $r->url() === 'https://staging.zenlayer.local/api/v2/vm'
                 && $r->header('x-zc-request-client')[0] === 'tests-suite-1.0';
         });
+    }
+
+    #[DataProvider('unsafeCredentialHeaderProvider')]
+    public function test_credential_header_control_characters_are_rejected_without_exposing_secrets(
+        bool $tokenMode,
+        bool $custom,
+        string $control,
+    ): void {
+        Http::fake();
+        $value = 'sensitive-prefix'.$control.'sensitive-suffix';
+        $credential = $custom
+            ? new class($value, $tokenMode) implements CredentialInterface
+            {
+                public function __construct(
+                    private readonly string $value,
+                    private readonly bool $tokenMode,
+                ) {}
+
+                public function getSecretKeyId(): string
+                {
+                    return $this->tokenMode ? 'unused-key' : $this->value;
+                }
+
+                public function getSecretKeyPassword(): string
+                {
+                    return 'hmac-password';
+                }
+
+                public function getToken(): ?string
+                {
+                    return $this->tokenMode ? $this->value : null;
+                }
+            }
+        : ($tokenMode ? new TokenCredential($value) : new Credential($value, 'hmac-password'));
+        $client = new VmClient(
+            $credential,
+            new Config,
+            $this->app->make(HttpClientFactory::class),
+            $this->app->make(Signer::class),
+        );
+
+        try {
+            $client->DescribeZones(new Models\DescribeZonesRequest);
+            self::fail('Expected invalid credential header exception.');
+        } catch (ZenlayerCloudSdkException $e) {
+            self::assertSame(ZenlayerCloudSdkException::ERR_CONFIG_INVALID, $e->errorCode);
+            self::assertStringNotContainsString('sensitive-prefix', $e->getMessage());
+            self::assertStringNotContainsString('sensitive-suffix', $e->getMessage());
+            self::assertStringNotContainsString('hmac-password', $e->getMessage());
+            self::assertNull($e->getPrevious());
+        }
+
+        Http::assertNothingSent();
+    }
+
+    /** @return array<string,array{bool,bool,string}> */
+    public static function unsafeCredentialHeaderProvider(): array
+    {
+        $cases = [];
+        foreach (['token' => true, 'key id' => false] as $mode => $tokenMode) {
+            foreach (['built in' => false, 'custom' => true] as $source => $custom) {
+                foreach (['NUL' => "\0", 'tab' => "\t", 'LF' => "\n", 'CR' => "\r", 'DEL' => "\x7F"] as $name => $control) {
+                    $cases["{$source} {$mode} {$name}"] = [$tokenMode, $custom, $control];
+                }
+            }
+        }
+
+        return $cases;
+    }
+
+    public function test_hmac_password_is_not_subject_to_header_character_restrictions(): void
+    {
+        Http::fake([
+            '*' => Http::response(['response' => ['requestId' => 'ok']], 200),
+        ]);
+        $password = "secret\npassword";
+        $client = new VmClient(
+            new Credential('test-key', $password),
+            new Config,
+            $this->app->make(HttpClientFactory::class),
+            $this->app->make(Signer::class),
+        );
+
+        $client->DescribeZones(new Models\DescribeZonesRequest);
+
+        Http::assertSent(function (Request $request) use ($password): bool {
+            $expected = (new Signer)->sign(
+                'POST',
+                'console.zenlayer.com',
+                'application/json',
+                '{}',
+                (int) $request->header('x-zc-timestamp')[0],
+                'test-key',
+                $password,
+            );
+
+            return $request->header('Authorization')[0] === $expected;
+        });
+    }
+
+    #[DataProvider('requestFailureTraceProvider')]
+    public function test_request_failure_traces_do_not_expose_request_or_authentication_secrets(
+        string $failure,
+        string $expectedCode,
+        ?string $expectedPrevious,
+    ): void {
+        $ignoreArgs = (string) ini_get('zend.exception_ignore_args');
+        $paramMaxLength = (string) ini_get('zend.exception_string_param_max_len');
+        ini_set('zend.exception_ignore_args', '0');
+        ini_set('zend.exception_string_param_max_len', '10000');
+
+        try {
+            Http::fake(static function () use ($failure) {
+                if ($failure === 'network' || $failure === 'credential') {
+                    throw new ConnectionException('Connection refused.', 7);
+                }
+
+                return Http::response(
+                    match ($failure) {
+                        'response json', 'error json' => '{"password":"private-trace-password","incomplete":',
+                        'api error' => ['code' => 'API_FAILED', 'message' => 'Failed.', 'password' => 'private-trace-password'],
+                        default => ['requestId' => 42, 'response' => (object) ['password' => 'private-trace-password']],
+                    },
+                    in_array($failure, ['error json', 'api error'], true) ? 500 : 200,
+                );
+            });
+            $client = new VmClient(
+                new TokenCredential($failure === 'credential' ? "invalid\ntoken" : 'private-trace-token'),
+                new Config,
+                $this->app->make(HttpClientFactory::class),
+                $this->app->make(Signer::class),
+            );
+            $request = new Models\CreateInstancesRequest;
+            $request->password = 'private-trace-password';
+            if ($failure === 'request json') {
+                $request->instanceName = "\xB1\x31";
+            } elseif ($failure === 'request type') {
+                $request->dataDisks = [['secret' => 'private-trace-password']];
+            }
+
+            try {
+                $client->CreateInstances($request);
+                self::fail('Expected request failure.');
+            } catch (ZenlayerCloudSdkException $e) {
+                self::assertSame($expectedCode, $e->errorCode);
+                if ($expectedPrevious !== null) {
+                    self::assertInstanceOf($expectedPrevious, $e->getPrevious());
+                } else {
+                    self::assertNull($e->getPrevious());
+                }
+                if ($failure === 'network') {
+                    self::assertSame(7, $e->getPrevious()->getCode());
+                    self::assertSame('Connection refused.', $e->getPrevious()->getMessage());
+                }
+
+                for ($exception = $e; $exception !== null; $exception = $exception->getPrevious()) {
+                    $sdkFrames = [];
+                    foreach ($exception->getTrace() as $frame) {
+                        // Caller-owned frames may reference their own secrets;
+                        // inspect the SDK/transport frames up to this test call.
+                        if (($frame['class'] ?? null) === self::class
+                            && $frame['function'] === __FUNCTION__) {
+                            break;
+                        }
+                        $sdkFrames[] = $frame;
+                    }
+                    $trace = $exception->getTraceAsString();
+                    $values = $sdkFrames;
+                    while ($values !== []) {
+                        $value = array_pop($values);
+                        if (is_string($value)) {
+                            $trace .= $value;
+                        } elseif ($value instanceof AbstractModel || $value instanceof \stdClass) {
+                            array_push($values, ...array_values(get_object_vars($value)));
+                        } elseif (is_array($value)) {
+                            array_push($values, ...array_values($value));
+                        }
+                    }
+                    self::assertFalse(str_contains($trace, 'private-trace-password'), 'Exception trace exposed the request password.');
+                    self::assertFalse(str_contains($trace, 'private-trace-token'), 'Exception trace exposed the Bearer token.');
+                }
+            }
+
+            Http::assertSentCount(in_array($failure, ['credential', 'network', 'request json', 'request type'], true) ? 0 : 1);
+        } finally {
+            ini_set('zend.exception_ignore_args', $ignoreArgs);
+            ini_set('zend.exception_string_param_max_len', $paramMaxLength);
+        }
+    }
+
+    /** @return array<string,array{string,string,class-string<\Throwable>|null}> */
+    public static function requestFailureTraceProvider(): array
+    {
+        return [
+            'invalid credential' => ['credential', ZenlayerCloudSdkException::ERR_CONFIG_INVALID, null],
+            'network failure' => ['network', ZenlayerCloudSdkException::ERR_NETWORK, ConnectionException::class],
+            'request JSON failure' => ['request json', ZenlayerCloudSdkException::ERR_INVALID_REQUEST, \JsonException::class],
+            'request type failure' => ['request type', ZenlayerCloudSdkException::ERR_INVALID_REQUEST, \TypeError::class],
+            'response JSON failure' => ['response json', ZenlayerCloudSdkException::ERR_JSON_PARSE, \JsonException::class],
+            'response type failure' => ['response type', ZenlayerCloudSdkException::ERR_JSON_PARSE, \TypeError::class],
+            'error JSON failure' => ['error json', ZenlayerCloudSdkException::ERR_JSON_PARSE, \JsonException::class],
+            'API error' => ['api error', 'API_FAILED', null],
+        ];
     }
 
     public function test_serializes_nested_request_body(): void

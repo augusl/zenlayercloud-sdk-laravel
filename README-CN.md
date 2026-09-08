@@ -179,10 +179,12 @@ foreach (($resp->response?->dataSet ?? []) as $vpc) {
 
 ### 错误处理
 
-所有传输层与 API 错误统一抛 `ZenlayerCloudSdkException`：
+SDK 将请求序列化、连接、API 和响应解析错误统一包装为 `ZenlayerCloudSdkException`：
 
 ```php
 use ZenlayerCloud\Laravel\Common\Exception\ZenlayerCloudSdkException;
+use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
+use ZenlayerCloud\Laravel\Vm\V20260401\Models\DescribeInstancesRequest;
 
 try {
     $resp = ZenlayerCloud::vm()->DescribeInstances(new DescribeInstancesRequest());
@@ -204,6 +206,8 @@ try {
 或 `$e->getErrorMessage()` 读取；`$e->getMessage()` 是包含错误码和 RequestId 的完整格式。
 传输层失败（DNS、连接拒绝、TLS、超时）统一包装为 `NETWORK_ERROR`——
 无需单独捕获 Laravel 的 `ConnectionException`。
+
+应用自定义中间件或无效传输资源（例如不存在的 CA 文件）抛出的异常保留原始类型。
 
 重试分为两套互不混淆的策略：
 

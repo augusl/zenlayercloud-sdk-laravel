@@ -99,8 +99,10 @@ Retry policies remain separate:
 - HMAC headers are regenerated for every physical network/rate-limit retry, so
   a long backoff never reuses an expired signing timestamp.
 
-Every request-execution failure is a `ZenlayerCloudSdkException`. SDK-defined
-codes include:
+The SDK reports request serialization, connection, API, and response parsing
+failures as `ZenlayerCloudSdkException`. Exceptions from application-supplied
+middleware or invalid transport resources (such as a missing CA file) retain
+their original types. SDK-defined codes include:
 
 - `NETWORK_ERROR`
 - `JSON_PARSE_FAILED`

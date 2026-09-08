@@ -61,6 +61,17 @@ All notable changes to this project are documented here. This project follows
 
 ### Fixed
 
+- Reject trailing newlines in `request_client`, including after truncation,
+  before constructing HTTP headers.
+- Reject control characters in Bearer tokens and access-key IDs at the HTTP
+  authentication boundary without exposing credential values in errors.
+- Hide request bodies, connection settings, and URL credentials from SDK
+  exception arguments, and retain safe diagnostic causes instead of original
+  HTTP/serialization/parsing exceptions whose traces can retain sensitive data.
+- Generate Actions regardless of their Go receiver variable name, and reject
+  unsupported Client signatures before replacing any generated output.
+- Include the required imports in both README error-handling examples and
+  clarify which errors the SDK wraps.
 - Corrected the VM creation examples to include every required API field,
   require an existing SSH key, and guard the billable call behind an explicit
   confirmation flag instead of generating and discarding an invalid password.

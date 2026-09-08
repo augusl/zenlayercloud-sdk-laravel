@@ -6,7 +6,7 @@ not inferred from examples or handwritten independently.
 
 ## Current snapshot
 
-Last contract audit: **2026-09-02**.
+Last contract audit: **2026-09-08**.
 
 | Source | Audited revision |
 |--------|------------------|
@@ -15,6 +15,9 @@ Last contract audit: **2026-09-02**.
 | [VM API reference](https://docs.console.zenlayer.com/api-reference/compute/vm) | API `2026-04-01` |
 | [IPT API reference](https://docs.console.zenlayer.com/api-reference/cn/networking/ipt) | API `2024-09-01` |
 | [ZEC API reference](https://docs.console.zenlayer.com/api-reference/compute/zec) | API `2025-09-01` |
+
+Both audited tags are still the latest releases and match their repositories'
+default `main` branches as of the audit date.
 
 The same upstream release also changes ZLB, ZOS, ZRM, and ZSP. Those services
 remain intentionally excluded because this package's declared scope is only
@@ -38,8 +41,9 @@ and ZEC 771 models / 2,462 fields, with zero Action, field, type, route, or arra
 mapping differences. That is 300 Actions, 1,043 models, and 3,343 typed fields
 in total. A separate comparison with the Python SDK checked its 743 semantic
 models after accounting for Python's flattened response wrappers, also with
-zero field or nested-model differences. The official ZEC schemas now include
-`CreateEipsRequest.instanceId` natively.
+zero field or nested-model differences. Full-field recursive JSON round trips
+and null omission were also verified for all 1,043 PHP models. The official ZEC
+schemas now include `CreateEipsRequest.instanceId` natively.
 
 The current public Action indexes expose all 62 VM Actions, all 12 IPT Actions,
 and 225 of the 226 ZEC Actions. A page-by-page audit checked all 299 published

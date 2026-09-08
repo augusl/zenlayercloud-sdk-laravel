@@ -187,10 +187,13 @@ foreach (($resp->response?->dataSet ?? []) as $vpc) {
 
 ### Error handling
 
-Every transport- and API-level failure surfaces as one typed exception:
+The SDK wraps request serialization, connection, API, and response parsing
+failures in `ZenlayerCloudSdkException`:
 
 ```php
 use ZenlayerCloud\Laravel\Common\Exception\ZenlayerCloudSdkException;
+use ZenlayerCloud\Laravel\Facades\ZenlayerCloud;
+use ZenlayerCloud\Laravel\Vm\V20260401\Models\DescribeInstancesRequest;
 
 try {
     $resp = ZenlayerCloud::vm()->DescribeInstances(new DescribeInstancesRequest());
@@ -213,6 +216,9 @@ message is available as `$e->errorMessage` or `$e->getErrorMessage()`;
 `$e->getMessage()` includes the formatted code and request id. Transport-level failures (DNS,
 connection refused, TLS, timeout) are wrapped with code `NETWORK_ERROR`;
 you never need to catch Laravel's `ConnectionException` separately.
+
+Exceptions from application-supplied middleware or invalid transport resources
+(such as a missing CA file) retain their original types.
 
 There are two deliberately separate retry policies:
 
