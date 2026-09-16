@@ -8,6 +8,11 @@ All notable changes to this project are documented here. This project follows
 
 ### Added
 
+- Eight ZEC Actions for BYO ASN management and public IPv6 listing/deletion,
+  together with 27 typed models, from Go SDK `v0.2.54` / Python SDK `2.0.75`.
+- IPT BGP tier selection for pricing and creation, available tier/peer ASN
+  metadata, and the typed `RiptPeerAsn` model.
+- ZEC instance type/series filters and public IPv6 price-inquiry quantity.
 - Complete IP Transit (IPT) `2024-09-01` support: 12 Actions, 59 typed models,
   facade/manager/container resolution, contract tests, and a read-only example.
 - Twelve ZEC Actions present in the audited latest official SDKs but missing
@@ -28,6 +33,10 @@ All notable changes to this project are documented here. This project follows
 
 ### Changed
 
+- Synchronized the supported surface to 308 Actions and 1,071 models without
+  changing API versions, public transport behavior, or package dependencies.
+- Updated upstream notes on VPC CIDR replacement/quotas, instance naming,
+  the decoded `userData` size limit, and per-item IPv6 deletion failures.
 - Regenerated VM, IPT, and ZEC from Go SDK `v0.2.53`, including updated fields,
   deprecation annotations, and complete scalar-array PHPDoc types.
 - PHPStan level 8 now analyzes the complete generated tree, generator, and

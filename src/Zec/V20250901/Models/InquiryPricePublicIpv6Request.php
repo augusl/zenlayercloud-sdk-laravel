@@ -34,4 +34,10 @@ class InquiryPricePublicIpv6Request extends AbstractModel
      * 不同机型带宽上限范围不一致，具体限制详见购买网络带宽。
      */
     public ?int $bandwidth = null;
+
+    /**
+     * Amount 询价的公网IPv6数量。
+     * 价格按数量累计。
+     */
+    public ?int $amount = null;
 }

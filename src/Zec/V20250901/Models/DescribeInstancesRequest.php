@@ -36,6 +36,18 @@ class DescribeInstancesRequest extends AbstractModel
     public ?string $imageId = null;
 
     /**
+     * InstanceType 根据实例规格ID精确过滤，如`z2a.cpu.1`。
+     * 取值与返回结果中的`instanceType`一致，可直接回传。
+     */
+    public ?string $instanceType = null;
+
+    /**
+     * InstanceTypeSeries 根据实例的机型系列精确过滤，如`z2a`。
+     * 一个机型系列下包含多种规格，指定后返回该系列下的全部实例。
+     */
+    public ?string $instanceTypeSeries = null;
+
+    /**
      * Ipv4Address 根据实例关联的IPv4过滤。
      * 若指定为网段(CIDR)形式，掩码长度必须在20–31之间。
      */

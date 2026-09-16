@@ -238,7 +238,15 @@ final class GeneratedApiSurfaceTest extends TestCase
                 'DescribeIPTransits',
                 'ModifyIPTransitConfig',
             ]],
-            'ZEC 20250901' => [ZecClient::class, 226, [
+            'ZEC 20250901' => [ZecClient::class, 234, [
+                'CreateByoAsn',
+                'DeleteByoAsn',
+                'DescribeByoAsns',
+                'DescribeUsableByoAsns',
+                'RegenerateByoAsnVerifyCode',
+                'VerifyByoAsn',
+                'DescribeIpv6Addresses',
+                'DeleteIpv6Addresses',
                 'CreateSubnets',
                 'DeleteSubnets',
                 'DescribeEipNetworkLineTypes',
@@ -267,12 +275,12 @@ final class GeneratedApiSurfaceTest extends TestCase
             'IPT models' => [
                 dirname(__DIR__, 2).'/src/Ipt/V20240901/Models',
                 'ZenlayerCloud\\Laravel\\Ipt\\V20240901\\Models',
-                59,
+                60,
             ],
             'ZEC models' => [
                 dirname(__DIR__, 2).'/src/Zec/V20250901/Models',
                 'ZenlayerCloud\\Laravel\\Zec\\V20250901\\Models',
-                771,
+                798,
             ],
         ];
     }

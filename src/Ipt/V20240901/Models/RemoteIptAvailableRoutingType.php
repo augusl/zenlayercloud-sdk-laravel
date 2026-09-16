@@ -31,6 +31,22 @@ class RemoteIptAvailableRoutingType extends AbstractModel
     public ?array $availableBgpRouteTypes = null;
 
     /**
+     * AvailableBgpTiers 可选的 BGP 档位列表。
+     * 仅 `routingType` 为 BGP 时有值。
+     *
+     * @var list<string>|null
+     */
+    public ?array $availableBgpTiers = null;
+
+    /**
+     * PeerAsns 各 BGP 档位对应的 Zenlayer 侧（对端）AS 号，供客户本地路由器 BGP 邻居配置。
+     * 仅 `routingType` 为 BGP 时有值。
+     *
+     * @var list<RiptPeerAsn>|null
+     */
+    public ?array $peerAsns = null;
+
+    /**
      * DeliveryType 开通方式。
      */
     public ?string $deliveryType = null;
@@ -43,9 +59,15 @@ class RemoteIptAvailableRoutingType extends AbstractModel
      */
     public ?array $publicInterconnectNetmasks = null;
 
+    /** @var array<string,class-string<AbstractModel>> */
+    protected static array $_typeMap = [
+        'peerAsns' => RiptPeerAsn::class,
+    ];
+
     /** @var array<string,'string'|'int'|'float'|'bool'> */
     protected static array $_scalarArrayTypeMap = [
         'availableBgpRouteTypes' => 'string',
+        'availableBgpTiers' => 'string',
         'publicInterconnectNetmasks' => 'int',
     ];
 }

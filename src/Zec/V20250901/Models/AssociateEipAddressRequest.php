@@ -19,6 +19,7 @@ class AssociateEipAddressRequest extends AbstractModel
 {
     /**
      * LoadBalancerId 负载均衡实例的ID。
+     * 仅`ipStackType`为`IPv4`的负载均衡可绑定弹性IP——负载均衡只支持单栈，`IPv6`的公网地址通过`AssignLoadBalancerIpv6`接口分配。
      */
     public ?string $loadBalancerId = null;
 

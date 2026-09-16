@@ -611,83 +611,11 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询指定弹性网卡（vNIC）上已分配的公网 IPv6 地址及其计费、带宽配置信息。
-     */
-    public function DescribeNetworkInterfacePublicIPv6(#[\SensitiveParameter] Models\DescribeNetworkInterfacePublicIPv6Request $request): Models\DescribeNetworkInterfacePublicIPv6Response
-    {
-        return $this->call('DescribeNetworkInterfacePublicIPv6', $request, Models\DescribeNetworkInterfacePublicIPv6Response::class);
-    }
-
-    /**
-     * 公网Ipv6流量包或固定带宽询价。
-     */
-    public function InquiryPricePublicIpv6(#[\SensitiveParameter] Models\InquiryPricePublicIpv6Request $request): Models\InquiryPricePublicIpv6Response
-    {
-        return $this->call('InquiryPricePublicIpv6', $request, Models\InquiryPricePublicIpv6Response::class);
-    }
-
-    /**
-     * 查询变更IPv6网络计费模式后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
-     */
-    public function InquiryPriceChangeIpv6InternetChargeType(#[\SensitiveParameter] Models\InquiryPriceChangeIpv6InternetChargeTypeRequest $request): Models\InquiryPriceChangeIpv6InternetChargeTypeResponse
-    {
-        return $this->call('InquiryPriceChangeIpv6InternetChargeType', $request, Models\InquiryPriceChangeIpv6InternetChargeTypeResponse::class);
-    }
-
-    /**
-     * 给网卡添加IPv6。
-     */
-    public function AssignNetworkInterfaceIpv6(#[\SensitiveParameter] Models\AssignNetworkInterfaceIpv6Request $request): Models\AssignNetworkInterfaceIpv6Response
-    {
-        return $this->call('AssignNetworkInterfaceIpv6', $request, Models\AssignNetworkInterfaceIpv6Response::class);
-    }
-
-    /**
-     * 删除网卡IPv6。
-     */
-    public function UnassignNetworkInterfaceIpv6(#[\SensitiveParameter] Models\UnassignNetworkInterfaceIpv6Request $request): Models\UnassignNetworkInterfaceIpv6Response
-    {
-        return $this->call('UnassignNetworkInterfaceIpv6', $request, Models\UnassignNetworkInterfaceIpv6Response::class);
-    }
-
-    /**
      * 查询一段时间内的网卡监控指标数据。包含带宽、包量、丢包、错误包等指标。
      */
     public function DescribeNetworkInterfaceMonitorData(#[\SensitiveParameter] Models\DescribeNetworkInterfaceMonitorDataRequest $request): Models\DescribeNetworkInterfaceMonitorDataResponse
     {
         return $this->call('DescribeNetworkInterfaceMonitorData', $request, Models\DescribeNetworkInterfaceMonitorDataResponse::class);
-    }
-
-    /**
-     * 修改指定公网IPv6的带宽限速模式。
-     */
-    public function ModifyNetworkInterfacePublicIPv6BandwidthLimitMode(#[\SensitiveParameter] Models\ModifyNetworkInterfacePublicIPv6BandwidthLimitModeRequest $request): Models\ModifyNetworkInterfacePublicIPv6BandwidthLimitModeResponse
-    {
-        return $this->call('ModifyNetworkInterfacePublicIPv6BandwidthLimitMode', $request, Models\ModifyNetworkInterfacePublicIPv6BandwidthLimitModeResponse::class);
-    }
-
-    /**
-     * 查询调整IPv6带宽后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
-     */
-    public function InquiryPriceModifyIpv6Bandwidth(#[\SensitiveParameter] Models\InquiryPriceModifyIpv6BandwidthRequest $request): Models\InquiryPriceModifyIpv6BandwidthResponse
-    {
-        return $this->call('InquiryPriceModifyIpv6Bandwidth', $request, Models\InquiryPriceModifyIpv6BandwidthResponse::class);
-    }
-
-    /**
-     * 调整公网IPv6的带宽限速。
-     */
-    public function ModifyIpv6Bandwidth(#[\SensitiveParameter] Models\ModifyIpv6BandwidthRequest $request): Models\ModifyIpv6BandwidthResponse
-    {
-        return $this->call('ModifyIpv6Bandwidth', $request, Models\ModifyIpv6BandwidthResponse::class);
-    }
-
-    /**
-     * 调整公网IPv6流量包。
-     */
-    public function ModifyIpv6TrafficPackage(#[\SensitiveParameter] Models\ModifyIpv6TrafficPackageRequest $request): Models\ModifyIpv6TrafficPackageResponse
-    {
-        return $this->call('ModifyIpv6TrafficPackage', $request, Models\ModifyIpv6TrafficPackageResponse::class);
     }
 
     /**
@@ -1840,5 +1768,141 @@ class ZecClient extends AbstractClient
     public function UnassociateHaVip(#[\SensitiveParameter] Models\UnassociateHaVipRequest $request): Models\UnassociateHaVipResponse
     {
         return $this->call('UnassociateHaVip', $request, Models\UnassociateHaVipResponse::class);
+    }
+
+    /**
+     * 给网卡添加IPv6。
+     */
+    public function AssignNetworkInterfaceIpv6(#[\SensitiveParameter] Models\AssignNetworkInterfaceIpv6Request $request): Models\AssignNetworkInterfaceIpv6Response
+    {
+        return $this->call('AssignNetworkInterfaceIpv6', $request, Models\AssignNetworkInterfaceIpv6Response::class);
+    }
+
+    /**
+     * 删除网卡IPv6。
+     */
+    public function UnassignNetworkInterfaceIpv6(#[\SensitiveParameter] Models\UnassignNetworkInterfaceIpv6Request $request): Models\UnassignNetworkInterfaceIpv6Response
+    {
+        return $this->call('UnassignNetworkInterfaceIpv6', $request, Models\UnassignNetworkInterfaceIpv6Response::class);
+    }
+
+    /**
+     * 调整公网IPv6的带宽限速。
+     */
+    public function ModifyIpv6Bandwidth(#[\SensitiveParameter] Models\ModifyIpv6BandwidthRequest $request): Models\ModifyIpv6BandwidthResponse
+    {
+        return $this->call('ModifyIpv6Bandwidth', $request, Models\ModifyIpv6BandwidthResponse::class);
+    }
+
+    /**
+     * 调整公网IPv6流量包。
+     */
+    public function ModifyIpv6TrafficPackage(#[\SensitiveParameter] Models\ModifyIpv6TrafficPackageRequest $request): Models\ModifyIpv6TrafficPackageResponse
+    {
+        return $this->call('ModifyIpv6TrafficPackage', $request, Models\ModifyIpv6TrafficPackageResponse::class);
+    }
+
+    /**
+     * 批量删除公网 IPv6。逐个独立处理，部分失败不影响其余项，失败项通过 failedIpv6Addresses 返回其错误码与错误信息。
+     */
+    public function DeleteIpv6Addresses(#[\SensitiveParameter] Models\DeleteIpv6AddressesRequest $request): Models\DeleteIpv6AddressesResponse
+    {
+        return $this->call('DeleteIpv6Addresses', $request, Models\DeleteIpv6AddressesResponse::class);
+    }
+
+    /**
+     * 公网Ipv6流量包或固定带宽询价。
+     */
+    public function InquiryPricePublicIpv6(#[\SensitiveParameter] Models\InquiryPricePublicIpv6Request $request): Models\InquiryPricePublicIpv6Response
+    {
+        return $this->call('InquiryPricePublicIpv6', $request, Models\InquiryPricePublicIpv6Response::class);
+    }
+
+    /**
+     * 查询调整IPv6带宽后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
+     */
+    public function InquiryPriceModifyIpv6Bandwidth(#[\SensitiveParameter] Models\InquiryPriceModifyIpv6BandwidthRequest $request): Models\InquiryPriceModifyIpv6BandwidthResponse
+    {
+        return $this->call('InquiryPriceModifyIpv6Bandwidth', $request, Models\InquiryPriceModifyIpv6BandwidthResponse::class);
+    }
+
+    /**
+     * 查询变更IPv6网络计费模式后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
+     */
+    public function InquiryPriceChangeIpv6InternetChargeType(#[\SensitiveParameter] Models\InquiryPriceChangeIpv6InternetChargeTypeRequest $request): Models\InquiryPriceChangeIpv6InternetChargeTypeResponse
+    {
+        return $this->call('InquiryPriceChangeIpv6InternetChargeType', $request, Models\InquiryPriceChangeIpv6InternetChargeTypeResponse::class);
+    }
+
+    /**
+     * 修改指定公网IPv6的带宽限速模式。
+     */
+    public function ModifyNetworkInterfacePublicIPv6BandwidthLimitMode(#[\SensitiveParameter] Models\ModifyNetworkInterfacePublicIPv6BandwidthLimitModeRequest $request): Models\ModifyNetworkInterfacePublicIPv6BandwidthLimitModeResponse
+    {
+        return $this->call('ModifyNetworkInterfacePublicIPv6BandwidthLimitMode', $request, Models\ModifyNetworkInterfacePublicIPv6BandwidthLimitModeResponse::class);
+    }
+
+    /**
+     * 指定条件查询已分配的公网 IPv6 信息。用户可以根据 ID、名称、绑定的资源等信息来搜索。
+     */
+    public function DescribeIpv6Addresses(#[\SensitiveParameter] Models\DescribeIpv6AddressesRequest $request): Models\DescribeIpv6AddressesResponse
+    {
+        return $this->call('DescribeIpv6Addresses', $request, Models\DescribeIpv6AddressesResponse::class);
+    }
+
+    /**
+     * 查询指定弹性网卡（vNIC）上已分配的公网 IPv6 地址及其计费、带宽配置信息。
+     */
+    public function DescribeNetworkInterfacePublicIPv6(#[\SensitiveParameter] Models\DescribeNetworkInterfacePublicIPv6Request $request): Models\DescribeNetworkInterfacePublicIPv6Response
+    {
+        return $this->call('DescribeNetworkInterfacePublicIPv6', $request, Models\DescribeNetworkInterfacePublicIPv6Response::class);
+    }
+
+    /**
+     * 返回可作为 BYOIP 起源ASN使用的ASN号列表。
+     */
+    public function DescribeUsableByoAsns(#[\SensitiveParameter] Models\DescribeUsableByoAsnsRequest $request): Models\DescribeUsableByoAsnsResponse
+    {
+        return $this->call('DescribeUsableByoAsns', $request, Models\DescribeUsableByoAsnsResponse::class);
+    }
+
+    /**
+     * 确认指定自带ASN在 RIR 上的 export 声明是否已生效。
+     */
+    public function VerifyByoAsn(#[\SensitiveParameter] Models\VerifyByoAsnRequest $request): Models\VerifyByoAsnResponse
+    {
+        return $this->call('VerifyByoAsn', $request, Models\VerifyByoAsnResponse::class);
+    }
+
+    /**
+     * 为指定自带ASN重新签发校验码，旧校验码同时失效。
+     */
+    public function RegenerateByoAsnVerifyCode(#[\SensitiveParameter] Models\RegenerateByoAsnVerifyCodeRequest $request): Models\RegenerateByoAsnVerifyCodeResponse
+    {
+        return $this->call('RegenerateByoAsnVerifyCode', $request, Models\RegenerateByoAsnVerifyCodeResponse::class);
+    }
+
+    /**
+     * 提交自带ASN并获取用于归属校验的校验码。
+     */
+    public function CreateByoAsn(#[\SensitiveParameter] Models\CreateByoAsnRequest $request): Models\CreateByoAsnResponse
+    {
+        return $this->call('CreateByoAsn', $request, Models\CreateByoAsnResponse::class);
+    }
+
+    /**
+     * 删除指定自带ASN。删除前需确保该ASN下没有已宣告的 BYOIP 段。
+     */
+    public function DeleteByoAsn(#[\SensitiveParameter] Models\DeleteByoAsnRequest $request): Models\DeleteByoAsnResponse
+    {
+        return $this->call('DeleteByoAsn', $request, Models\DeleteByoAsnResponse::class);
+    }
+
+    /**
+     * 查询一个或多个自带ASN的详细信息。
+     */
+    public function DescribeByoAsns(#[\SensitiveParameter] Models\DescribeByoAsnsRequest $request): Models\DescribeByoAsnsResponse
+    {
+        return $this->call('DescribeByoAsns', $request, Models\DescribeByoAsnsResponse::class);
     }
 }

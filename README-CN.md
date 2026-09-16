@@ -22,9 +22,9 @@ ServiceProvider 与 Facade、可发布的连接配置、基于 `Illuminate\Http\
 
 - **虚拟机 (VM)** — API 版本 `2026-04-01`，共 62 个 Action。
 - **IP Transit (IPT)** — API 版本 `2024-09-01`，共 12 个 Action。
-- **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 226 个 Action。
+- **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 234 个 Action。
 
-当前生成代码合计包含 300 个 Action、1,043 个模型类。上游版本与已知文档差异记录在
+当前生成代码合计包含 308 个 Action、1,071 个模型类。上游版本与已知文档差异记录在
 [UPSTREAM.md](UPSTREAM.md)。
 
 支持范围内的每个 Action 都映射为一个带强类型 Request / Response 的 PHP 方法，
@@ -208,6 +208,10 @@ try {
 无需单独捕获 Laravel 的 `ConnectionException`。
 
 应用自定义中间件或无效传输资源（例如不存在的 CA 文件）抛出的异常保留原始类型。
+
+批量接口整体成功时仍可能有单项失败。例如 `DeleteIpv6Addresses` 会通过
+`$response->response?->failedIpv6Addresses` 返回失败项，即使没有抛异常也应检查该列表。
+SDK 会保留这些结果，不会因此自动重试整批请求。
 
 重试分为两套互不混淆的策略：
 

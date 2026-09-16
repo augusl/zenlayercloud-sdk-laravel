@@ -76,13 +76,16 @@ are regenerated from an upstream Zenlayer Cloud schema source by
 need to run the generator.
 
 ```bash
-ZENLAYER_GO_TAG=v0.2.53
+ZENLAYER_GO_TAG=v0.2.54
 git clone --branch "$ZENLAYER_GO_TAG" https://github.com/zenlayer/zenlayercloud-sdk-go.git
 composer codegen -- /path/to/zenlayercloud-sdk-go/zenlayercloud
 composer lint:fix         # Pint may want to format the new files
 composer analyse
 composer test
 ```
+
+Use the audited Go tag recorded in [`UPSTREAM.md`](UPSTREAM.md) when reproducing
+the current generated tree. An older tag can remove newly supported APIs.
 
 The generator is idempotent: re-running it with the same input produces
 byte-identical output. If you see a diff with no upstream change, that is a

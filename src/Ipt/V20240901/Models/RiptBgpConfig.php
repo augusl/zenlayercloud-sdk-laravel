@@ -23,6 +23,13 @@ class RiptBgpConfig extends AbstractModel
     public ?string $routeType = null;
 
     /**
+     * Tier BGP 档位。
+     * STANDARD-普通 BGP，PREMIUM-优质 BGP。
+     * 不传默认优质档（与拆分前行为一致）。
+     */
+    public ?string $tier = null;
+
+    /**
      * Asn 宣告出站路由的ASN号。
      */
     public ?int $asn = null;

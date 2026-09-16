@@ -68,6 +68,13 @@ class InquiryCreateIPTransitPriceRequest extends AbstractModel
     public ?string $bgpRouteType = null;
 
     /**
+     * BgpTier BGP 档位。
+     * 不传默认 PREMIUM（优质档）。
+     * `zbgRegionId` 非空（基于 router 的 IP Transit）时不支持 STANDARD。
+     */
+    public ?string $bgpTier = null;
+
+    /**
      * IpType IP 类型（IPV4 / IPV6）。
      * 默认 IPV4。
      */

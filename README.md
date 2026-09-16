@@ -23,9 +23,9 @@ The package currently covers these Compute and Networking services:
 
 - **Virtual Machine (VM)** — API version `2026-04-01`, 62 actions.
 - **IP Transit (IPT)** — API version `2024-09-01`, 12 actions.
-- **Elastic Compute (ZEC)** — API version `2025-09-01`, 226 actions.
+- **Elastic Compute (ZEC)** — API version `2025-09-01`, 234 actions.
 
-The generated surface contains 300 Actions and 1,043 model classes in total.
+The generated surface contains 308 Actions and 1,071 model classes in total.
 Its upstream source and known documentation differences are recorded in
 [UPSTREAM.md](UPSTREAM.md).
 
@@ -219,6 +219,11 @@ you never need to catch Laravel's `ConnectionException` separately.
 
 Exceptions from application-supplied middleware or invalid transport resources
 (such as a missing CA file) retain their original types.
+
+A successful batch response can still contain item-level failures. For example,
+`DeleteIpv6Addresses` returns failed items in
+`$response->response?->failedIpv6Addresses`; inspect that list even when no
+exception is thrown. The SDK preserves the result without retrying the batch.
 
 There are two deliberately separate retry policies:
 

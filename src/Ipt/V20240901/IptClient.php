@@ -35,7 +35,7 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 查询IP Transit可连接数据中心
+     * 查询IP Transit可连接数据中心。
      */
     public function DescribeIPTransitDatacenters(#[\SensitiveParameter] Models\DescribeIPTransitDatacentersRequest $request): Models\DescribeIPTransitDatacentersResponse
     {
@@ -43,7 +43,7 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 查询IP Transit可用 ASN
+     * 查询IP Transit可用 ASN。
      */
     public function DescribeIPTransitAvailableAsns(#[\SensitiveParameter] Models\DescribeIPTransitAvailableAsnsRequest $request): Models\DescribeIPTransitAvailableAsnsResponse
     {
@@ -51,7 +51,7 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 查询IP Transit可用公网地址段
+     * 查询IP Transit可用公网地址段。
      */
     public function DescribeIPTransitAvailableCidrBlocks(#[\SensitiveParameter] Models\DescribeIPTransitAvailableCidrBlocksRequest $request): Models\DescribeIPTransitAvailableCidrBlocksResponse
     {
@@ -59,7 +59,7 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * iP Transit创建询价
+     * IP Transit创建询价。
      */
     public function InquiryCreateIPTransitPrice(#[\SensitiveParameter] Models\InquiryCreateIPTransitPriceRequest $request): Models\InquiryCreateIPTransitPriceResponse
     {
@@ -67,7 +67,7 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 创建IP Transit
+     * 创建IP Transit。
      */
     public function CreateIPTransit(#[\SensitiveParameter] Models\CreateIPTransitRequest $request): Models\CreateIPTransitResponse
     {
@@ -75,7 +75,7 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 查询IP Transit列表
+     * 查询IP Transit列表。
      */
     public function DescribeIPTransits(#[\SensitiveParameter] Models\DescribeIPTransitsRequest $request): Models\DescribeIPTransitsResponse
     {
@@ -83,7 +83,7 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 修改IP Transit带宽
+     * 修改IP Transit带宽。
      */
     public function ModifyIPTransitBandwidth(#[\SensitiveParameter] Models\ModifyIPTransitBandwidthRequest $request): Models\ModifyIPTransitBandwidthResponse
     {
@@ -91,7 +91,7 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 修改IP Transit属性
+     * 修改IP Transit属性。
      */
     public function ModifyIPTransitsAttribute(#[\SensitiveParameter] Models\ModifyIPTransitsAttributeRequest $request): Models\ModifyIPTransitsAttributeResponse
     {
@@ -99,7 +99,7 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 删除IP Transit
+     * 删除IP Transit。
      */
     public function DeleteIPTransit(#[\SensitiveParameter] Models\DeleteIPTransitRequest $request): Models\DeleteIPTransitResponse
     {
@@ -107,7 +107,7 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 查询IP Transit流量
+     * 查询IP Transit流量。
      */
     public function DescribeIPTransitTraffic(#[\SensitiveParameter] Models\DescribeIPTransitTrafficRequest $request): Models\DescribeIPTransitTrafficResponse
     {
@@ -115,7 +115,7 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * IP Transit变配询价
+     * IP Transit变配询价。
      */
     public function InquiryModifyIPTransitPrice(#[\SensitiveParameter] Models\InquiryModifyIPTransitPriceRequest $request): Models\InquiryModifyIPTransitPriceResponse
     {
@@ -123,7 +123,7 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 修改IP Transit配置
+     * 修改IP Transit配置。
      */
     public function ModifyIPTransitConfig(#[\SensitiveParameter] Models\ModifyIPTransitConfigRequest $request): Models\ModifyIPTransitConfigResponse
     {
