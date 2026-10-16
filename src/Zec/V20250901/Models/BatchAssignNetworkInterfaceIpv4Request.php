@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * BatchAssignNetworkInterfaceIpv4Request
+ */
 class BatchAssignNetworkInterfaceIpv4Request extends AbstractModel
 {
     /**
      * NicId 要操作的网卡ID。
+     * 可通过调用 ~~DescribeNetworkInterfaces~~ 获取。
      */
     public ?string $nicId = null;
 
@@ -29,7 +33,7 @@ class BatchAssignNetworkInterfaceIpv4Request extends AbstractModel
 
     /**
      * IpAddressCount 指定额外绑定的内网IP数量。
-     * 该字段和`ipAddresses`必须指定其一，如果都指定，则会以 `ipAddresses` 有效。
+     * 该字段与`ipAddresses`必须指定其一，如果都指定，则会以`ipAddresses`有效。
      */
     public ?int $ipAddressCount = null;
 

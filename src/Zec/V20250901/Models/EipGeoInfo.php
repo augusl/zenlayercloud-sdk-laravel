@@ -13,7 +13,7 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * EipGeoInfo 基于DB-IP/ipdata/... 第三方IP数据库服务商查询到的 IP 地理信息结果。
+ * EipGeoInfo 基于DB-IP/ipdata/... 第三方IP数据库服务商查询到的IP地理信息结果。
  */
 class EipGeoInfo extends AbstractModel
 {

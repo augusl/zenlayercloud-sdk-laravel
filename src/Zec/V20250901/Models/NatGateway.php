@@ -43,7 +43,7 @@ class NatGateway extends AbstractModel
     public ?string $name = null;
 
     /**
-     * SubnetIds NAT网关所属的Subnet子网ID集合。
+     * SubnetIds NAT网关关联的子网ID集合。
      *
      * @var list<string>|null
      */
@@ -88,13 +88,13 @@ class NatGateway extends AbstractModel
 
     /**
      * CreateTime 创建时间。
-     * 按照ISO8601标准表示，并且使用UTC时间, 格式为：YYYY-MM-ddTHH:mm:ssZ。
+     * 按照ISO8601标准表示，使用UTC时间，格式为：YYYY-MM-ddTHH:mm:ssZ。
      */
     public ?string $createTime = null;
 
     /**
      * ExpiredTime 到期时间。
-     * 按照ISO8601标准表示，并且使用UTC时间, 格式为：YYYY-MM-ddTHH:mm:ssZ。
+     * 按照ISO8601标准表示，使用UTC时间，格式为：YYYY-MM-ddTHH:mm:ssZ。
      */
     public ?string $expiredTime = null;
 

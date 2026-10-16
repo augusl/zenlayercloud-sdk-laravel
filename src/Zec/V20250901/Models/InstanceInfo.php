@@ -38,7 +38,7 @@ class InstanceInfo extends AbstractModel
     public ?string $instanceType = null;
 
     /**
-     * Cpu CPU 核数。
+     * Cpu CPU核数。
      * 单位：个。
      */
     public ?int $cpu = null;
@@ -121,7 +121,7 @@ class InstanceInfo extends AbstractModel
     public ?bool $enableAgent = null;
 
     /**
-     * EnableAgentMonitor 是否开启QGA 监控采集。
+     * EnableAgentMonitor 是否开启QGA监控采集。
      */
     public ?bool $enableAgentMonitor = null;
 

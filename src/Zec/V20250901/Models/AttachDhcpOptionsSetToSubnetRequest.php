@@ -12,15 +12,20 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * AttachDhcpOptionsSetToSubnetRequest
+ */
 class AttachDhcpOptionsSetToSubnetRequest extends AbstractModel
 {
     /**
-     * DhcpOptionsSetId DHCP 选项集ID。
+     * DhcpOptionsSetId DHCP选项集ID。
+     * 可通过调用 ~~DescribeDhcpOptionsSets~~ 获取。
      */
     public ?string $dhcpOptionsSetId = null;
 
     /**
-     * SubnetIds 要与 DHCP 选项集关联的 Subnet 的 ID集合。
+     * SubnetIds 要与DHCP选项集关联的子网ID集合。
+     * 可通过调用 ~~DescribeSubnets~~ 获取。
      *
      * @var list<string>|null
      */

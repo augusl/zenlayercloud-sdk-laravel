@@ -12,12 +12,15 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * CreateDhcpOptionsSetResponseParams
+ */
 class CreateDhcpOptionsSetResponseParams extends AbstractModel
 {
     public ?string $requestId = null;
 
     /**
-     * DhcpOptionsSetId DHCP 选项集ID。
+     * DhcpOptionsSetId DHCP选项集ID。
      */
     public ?string $dhcpOptionsSetId = null;
 }

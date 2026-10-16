@@ -19,6 +19,7 @@ class DeletePlacementGroupsRequest extends AbstractModel
 {
     /**
      * PlacementGroupIds 要删除的置放组ID列表。
+     * 可通过调用 ~~DescribePlacementGroups~~ 获取。
      *
      * @var list<string>|null
      */

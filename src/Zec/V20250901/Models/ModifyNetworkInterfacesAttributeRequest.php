@@ -19,6 +19,7 @@ class ModifyNetworkInterfacesAttributeRequest extends AbstractModel
 {
     /**
      * NicIds 需要修改的网卡ID列表。
+     * 可通过调用 ~~DescribeNetworkInterfaces~~ 获取。
      *
      * @var list<string>|null
      */

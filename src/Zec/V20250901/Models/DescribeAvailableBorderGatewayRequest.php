@@ -18,7 +18,8 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class DescribeAvailableBorderGatewayRequest extends AbstractModel
 {
     /**
-     * NatGatewayId NAT网关 ID。
+     * NatGatewayId NAT网关ID。
+     * 可通过调用 ~~DescribeNatGateways~~ 获取。
      */
     public ?string $natGatewayId = null;
 }

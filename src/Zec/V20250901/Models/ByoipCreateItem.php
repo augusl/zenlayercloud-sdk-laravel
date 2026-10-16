@@ -13,7 +13,7 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * ByoipCreateItem 创建 BYOIP 单项。
+ * ByoipCreateItem 创建BYOIP单项。
  */
 class ByoipCreateItem extends AbstractModel
 {
@@ -30,6 +30,7 @@ class ByoipCreateItem extends AbstractModel
 
     /**
      * RegionId 区域id。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 
@@ -42,7 +43,7 @@ class ByoipCreateItem extends AbstractModel
      * SubnetMaskLength 该参数仅在`cidrBlock`字段为IPv6地址段时生效。
      * 分配给子网的掩码长度。
      * 必须大于或等于CIDR的掩码长度。
-     * 与CIDR的掩码长度范围差值小于等于4, 最大值为64。
+     * 与CIDR掩码长度的差值不超过4，且最大不超过64。
      * 默认为CIDR的掩码长度。
      */
     public ?int $subnetMaskLength = null;

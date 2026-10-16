@@ -23,15 +23,22 @@ The package currently covers these Compute and Networking services:
 
 - **Virtual Machine (VM)** — API version `2026-04-01`, 62 actions.
 - **IP Transit (IPT)** — API version `2024-09-01`, 12 actions.
-- **Elastic Compute (ZEC)** — API version `2025-09-01`, 234 actions.
+- **Elastic Compute (ZEC)** — API version `2025-09-01`, 239 actions.
 
-The generated surface contains 308 Actions and 1,071 model classes in total.
+The generated surface contains 313 Actions and 1,088 model classes in total.
 Its upstream source and known documentation differences are recorded in
 [UPSTREAM.md](UPSTREAM.md).
 
 Every Action in the supported services is exposed as a typed PHP method backed
 by typed Request and Response model classes, so IDEs autocomplete the entire
 surface area.
+
+When upgrading to this snapshot, update IPT references from
+`RemoteIptAvailableRoutingType` to the official `IPTransitAvailableRoutingType`.
+For ZEC VPCs, `cidrBlock` now represents the primary CIDR only;
+`secondaryCidrBlocks` contains secondary CIDRs. Add/remove secondary CIDRs with
+`AssociateVpcCidrBlock` / `UnassociateVpcCidrBlock`, rather than passing a
+comma-separated list to `ModifyVpcAttribute`. See [UPSTREAM.md](UPSTREAM.md).
 
 ---
 
@@ -48,6 +55,9 @@ surface area.
 
 The 64-bit requirement is intentional: the official VM/IPT/ZEC schemas contain
 signed `int64` counters and limits that a 32-bit PHP integer cannot represent.
+
+Framework/PHP combinations follow Laravel's [official support policy](https://laravel.com/docs/13.x/releases#support-policy):
+Laravel 11 on PHP 8.2–8.4, Laravel 12 on PHP 8.2–8.5, and Laravel 13 on PHP 8.3–8.5.
 
 Laravel 11 remains compatibility-tested for existing applications, but its
 upstream security-fix window has ended. New production deployments should use

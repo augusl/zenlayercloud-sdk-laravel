@@ -13,7 +13,7 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * Region 支持售卖 BYOIP 的区域。
+ * Region 支持售卖BYOIP的区域。
  */
 class Region extends AbstractModel
 {

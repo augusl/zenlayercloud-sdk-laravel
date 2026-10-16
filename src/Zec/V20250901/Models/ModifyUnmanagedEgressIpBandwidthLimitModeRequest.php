@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * ModifyUnmanagedEgressIpBandwidthLimitModeRequest
+ */
 class ModifyUnmanagedEgressIpBandwidthLimitModeRequest extends AbstractModel
 {
     /**
      * UnmanagedEgressIpId 非托管出口IP的唯一ID。
+     * 可通过调用 ~~DescribeUnmanagedEgressIps~~ 获取。
      */
     public ?string $unmanagedEgressIpId = null;
 

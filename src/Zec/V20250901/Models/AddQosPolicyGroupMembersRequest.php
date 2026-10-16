@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * AddQosPolicyGroupMembersRequest
+ */
 class AddQosPolicyGroupMembersRequest extends AbstractModel
 {
     /**
      * QosPolicyGroupId QoS策略组ID。
+     * 可通过调用 ~~DescribeQosPolicyGroups~~ 获取。
      */
     public ?string $qosPolicyGroupId = null;
 

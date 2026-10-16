@@ -28,7 +28,7 @@ class EipMetricValue extends AbstractModel
     public ?float $inValue = null;
 
     /**
-     * OutValue 入方向值。
+     * OutValue 出方向值。
      */
     public ?float $outValue = null;
 

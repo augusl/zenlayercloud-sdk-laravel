@@ -16,7 +16,7 @@ use ZenlayerCloud\Laravel\Common\AbstractClient;
  * Zenlayer Cloud IP Transit (IPT) client (API version 2024-09-01).
  *
  * Each public method maps 1:1 to an official Action name. The public API
- * reference is at https://docs.console.zenlayer.com/api-reference/cn/networking/ipt;
+ * reference is at https://docs.console.zenlayer.com/api-reference/ipt/overview;
  * UPSTREAM.md records any Action currently present only in the official SDKs.
  * Method names remain PascalCase so the protocol mapping is unambiguous.
  *

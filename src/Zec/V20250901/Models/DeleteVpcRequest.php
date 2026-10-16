@@ -19,6 +19,7 @@ class DeleteVpcRequest extends AbstractModel
 {
     /**
      * VpcId 要删除的VPC ID。
+     * 可通过调用 ~~DescribeVpcs~~ 获取。
      */
     public ?string $vpcId = null;
 }

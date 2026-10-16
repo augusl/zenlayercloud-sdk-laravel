@@ -13,7 +13,7 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * ByoipPriceItem BYOIP 询价单项。
+ * ByoipPriceItem BYOIP询价单项。
  */
 class ByoipPriceItem extends AbstractModel
 {
@@ -29,6 +29,7 @@ class ByoipPriceItem extends AbstractModel
 
     /**
      * RegionId 区域id。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 }

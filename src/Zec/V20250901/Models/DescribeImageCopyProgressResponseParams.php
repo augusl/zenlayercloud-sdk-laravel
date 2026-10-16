@@ -12,6 +12,9 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DescribeImageCopyProgressResponseParams
+ */
 class DescribeImageCopyProgressResponseParams extends AbstractModel
 {
     public ?string $requestId = null;

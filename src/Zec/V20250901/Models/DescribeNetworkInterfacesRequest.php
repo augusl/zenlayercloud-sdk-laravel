@@ -12,6 +12,9 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DescribeNetworkInterfacesRequest
+ */
 class DescribeNetworkInterfacesRequest extends AbstractModel
 {
     /**
@@ -29,22 +32,26 @@ class DescribeNetworkInterfacesRequest extends AbstractModel
     public ?string $name = null;
 
     /**
-     * RegionId 根据网卡所属的节点 ID过滤。
+     * RegionId 根据网卡所属的节点ID过滤。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 
     /**
      * VpcId 根据网卡所属的VPC ID过滤。
+     * 可通过调用 ~~DescribeVpcs~~ 获取。
      */
     public ?string $vpcId = null;
 
     /**
      * SubnetId 根据网卡所属的子网ID过滤。
+     * 可通过调用 ~~DescribeSubnets~~ 获取。
      */
     public ?string $subnetId = null;
 
     /**
      * InstanceId 网卡关联的实例ID过滤。
+     * 可通过调用 ~~DescribeInstances~~ 获取。
      */
     public ?string $instanceId = null;
 
@@ -75,6 +82,7 @@ class DescribeNetworkInterfacesRequest extends AbstractModel
 
     /**
      * SecurityGroupId 根据网卡所属的安全组ID过滤。
+     * 可通过调用 ~~DescribeSecurityGroups~~ 获取。
      */
     public ?string $securityGroupId = null;
 

@@ -16,7 +16,7 @@ use ZenlayerCloud\Laravel\Common\AbstractClient;
  * Zenlayer Cloud Elastic Compute (ZEC) client (API version 2025-09-01).
  *
  * Each public method maps 1:1 to an official Action name. The public API
- * reference is at https://docs.console.zenlayer.com/api-reference/compute/zec;
+ * reference is at https://docs.console.zenlayer.com/api-reference/zec/overview;
  * UPSTREAM.md records any Action currently present only in the official SDKs.
  * Method names remain PascalCase so the protocol mapping is unambiguous.
  *
@@ -51,7 +51,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询可用区售卖的机型信息。
+     * 查询可用区售卖的机型规格及价格信息。
      */
     public function DescribeZoneInstanceConfigInfos(#[\SensitiveParameter] Models\DescribeZoneInstanceConfigInfosRequest $request): Models\DescribeZoneInstanceConfigInfosResponse
     {
@@ -67,7 +67,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询时区信息。
+     * 查询创建实例时可选的时区列表。
      */
     public function DescribeTimeZones(#[\SensitiveParameter] Models\DescribeTimeZonesRequest $request): Models\DescribeTimeZonesResponse
     {
@@ -75,7 +75,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 创建虚拟机实例询价。
+     * 查询创建虚拟机实例的价格。
      */
     public function InquiryPriceCreateInstance(#[\SensitiveParameter] Models\InquiryPriceCreateInstanceRequest $request): Models\InquiryPriceCreateInstanceResponse
     {
@@ -99,7 +99,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 批量查询一个或多个弹性计算实例的当前运行状态，支持按实例 ID 列表和资源组筛选，支持分页查询。
+     * 批量查询一个或多个弹性计算实例的当前运行状态，支持按实例ID列表和资源组筛选，支持分页查询。
      */
     public function DescribeInstancesStatus(#[\SensitiveParameter] Models\DescribeInstancesStatusRequest $request): Models\DescribeInstancesStatusResponse
     {
@@ -163,7 +163,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 为指定弹性计算实例开启 IP 转发，开启后该实例可作为路由器或网关转发来自其他资源的网络流量。
+     * 为指定弹性计算实例开启IP转发，开启后该实例可作为路由器或网关转发来自其他资源的网络流量。
      */
     public function StartIpForward(#[\SensitiveParameter] Models\StartIpForwardRequest $request): Models\StartIpForwardResponse
     {
@@ -171,7 +171,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 为指定弹性计算实例关闭 IP 转发功能，关闭后该实例将不再转发非本机目的地的网络流量。
+     * 为指定弹性计算实例关闭IP转发功能，关闭后该实例将不再转发非本机目的地的网络流量。
      */
     public function StopIpForward(#[\SensitiveParameter] Models\StopIpForwardRequest $request): Models\StopIpForwardResponse
     {
@@ -179,7 +179,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 为指定弹性计算实例开启 QEMU Guest Agent（QGA）监控数据采集，开启后可通过监控接口获取实例内部性能指标数据。
+     * 为指定弹性计算实例开启QEMU Guest Agent（QGA）监控数据采集，开启后可通过监控接口获取实例内部性能指标数据。
      */
     public function StartAgentMonitor(#[\SensitiveParameter] Models\StartAgentMonitorRequest $request): Models\StartAgentMonitorResponse
     {
@@ -187,7 +187,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 为指定弹性计算实例关闭 QEMU Guest Agent（QGA）监控数据采集功能，关闭后将无法通过监控接口获取实例内部性能数据。
+     * 为指定弹性计算实例关闭QEMU Guest Agent（QGA）监控数据采集功能，关闭后将无法通过监控接口获取实例内部性能数据。
      */
     public function StopAgentMonitor(#[\SensitiveParameter] Models\StopAgentMonitorRequest $request): Models\StopAgentMonitorResponse
     {
@@ -219,7 +219,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 获取实例VNC地址。
+     * 查询指定实例的VNC登录地址。
      */
     public function DescribeVncUrl(#[\SensitiveParameter] Models\DescribeVncUrlRequest $request): Models\DescribeVncUrlResponse
     {
@@ -227,7 +227,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询一段时间的实例的监控指标数据。包括CPU,内存等相关指标数据。
+     * 查询一段时间的实例的监控指标数据。包括CPU、内存等相关指标数据。
      */
     public function DescribeInstanceMonitorData(#[\SensitiveParameter] Models\DescribeInstanceMonitorDataRequest $request): Models\DescribeInstanceMonitorDataResponse
     {
@@ -235,7 +235,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询变更实例规格后的价格，同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
+     * 查询变更实例规格后的价格，同时通过previousPrices返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceModifyInstanceType(#[\SensitiveParameter] Models\InquiryPriceModifyInstanceTypeRequest $request): Models\InquiryPriceModifyInstanceTypeResponse
     {
@@ -243,7 +243,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询可用区售卖的 GPU 规格信息。
+     * 查询可用区售卖的GPU规格信息。
      */
     public function DescribeZoneGpuInstanceConfigInfos(#[\SensitiveParameter] Models\DescribeZoneGpuInstanceConfigInfosRequest $request): Models\DescribeZoneGpuInstanceConfigInfosResponse
     {
@@ -251,7 +251,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询可用区售卖的加速卡规格信息。
+     * 查询可用区售卖的加速卡规格及价格信息。
      */
     public function DescribeZoneAcceleratorConfigInfos(#[\SensitiveParameter] Models\DescribeZoneAcceleratorConfigInfosRequest $request): Models\DescribeZoneAcceleratorConfigInfosResponse
     {
@@ -323,7 +323,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询支持售卖云硬盘的节点信息。
+     * 查询支持售卖云硬盘的节点列表。
      */
     public function DescribeDiskRegions(#[\SensitiveParameter] Models\DescribeDiskRegionsRequest $request): Models\DescribeDiskRegionsResponse
     {
@@ -331,7 +331,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询可用区支持的云盘类型。
+     * 查询指定可用区支持售卖的云硬盘类型。
      */
     public function DescribeDiskCategory(#[\SensitiveParameter] Models\DescribeDiskCategoryRequest $request): Models\DescribeDiskCategoryResponse
     {
@@ -363,7 +363,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 云硬盘挂载到实例上。
+     * 将一块或多块云硬盘挂载到指定实例上。
      */
     public function AttachDisks(#[\SensitiveParameter] Models\AttachDisksRequest $request): Models\AttachDisksResponse
     {
@@ -395,7 +395,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 删除释放一块云硬盘。
+     * 释放一块云硬盘。
      */
     public function ReleaseDisk(#[\SensitiveParameter] Models\ReleaseDiskRequest $request): Models\ReleaseDiskResponse
     {
@@ -427,7 +427,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询云硬盘扩容后的新价格。同时通过 previousPrices 返回扩容前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
+     * 查询云硬盘扩容后的新价格。同时通过previousPrices返回扩容前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceResizeDisk(#[\SensitiveParameter] Models\InquiryPriceResizeDiskRequest $request): Models\InquiryPriceResizeDiskResponse
     {
@@ -459,7 +459,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 回滚快照到原云盘。
+     * 将快照回滚到其所属的云硬盘。
      */
     public function ApplySnapshot(#[\SensitiveParameter] Models\ApplySnapshotRequest $request): Models\ApplySnapshotResponse
     {
@@ -491,7 +491,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 云硬盘添加到指定的自动快照策略。
+     * 将一块或多块云硬盘添加到指定的自动快照策略。
      */
     public function ApplyAutoSnapshotPolicy(#[\SensitiveParameter] Models\ApplyAutoSnapshotPolicyRequest $request): Models\ApplyAutoSnapshotPolicyResponse
     {
@@ -499,7 +499,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 云硬盘从指定的自动快照策略中移除。
+     * 将一块或多块云硬盘从指定的自动快照策略中移除。
      */
     public function CancelAutoSnapshotPolicy(#[\SensitiveParameter] Models\CancelAutoSnapshotPolicyRequest $request): Models\CancelAutoSnapshotPolicyResponse
     {
@@ -523,7 +523,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 支持售卖网卡的区域信息。
+     * 查询支持创建网卡的节点列表。
      */
     public function DescribeNetworkInterfaceRegions(#[\SensitiveParameter] Models\DescribeNetworkInterfaceRegionsRequest $request): Models\DescribeNetworkInterfaceRegionsResponse
     {
@@ -531,7 +531,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询一个或多个指定网卡的信息。用户可以根据 网卡ID、网卡名称等信息来搜索网卡信息。
+     * 查询一个或多个指定网卡的信息。用户可以根据网卡ID、网卡名称等信息搜索。
      */
     public function DescribeNetworkInterfaces(#[\SensitiveParameter] Models\DescribeNetworkInterfacesRequest $request): Models\DescribeNetworkInterfacesResponse
     {
@@ -571,7 +571,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 网卡绑定实例。
+     * 将一张网卡绑定到指定实例上。
      */
     public function AttachNetworkInterface(#[\SensitiveParameter] Models\AttachNetworkInterfaceRequest $request): Models\AttachNetworkInterfaceResponse
     {
@@ -587,7 +587,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 网卡绑定内网IPv4。
+     * 为指定网卡分配一个内网IPv4地址。
      */
     public function AssignNetworkInterfaceIpv4(#[\SensitiveParameter] Models\AssignNetworkInterfaceIpv4Request $request): Models\AssignNetworkInterfaceIpv4Response
     {
@@ -627,7 +627,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询账户下的公网 IP 池信息，支持按 IP 池 ID、地域或名称进行筛选，支持分页查询。
+     * 查询账户下的公网IP池信息，支持按IP池ID、地域或名称进行筛选，支持分页查询。
      */
     public function DescribePools(#[\SensitiveParameter] Models\DescribePoolsRequest $request): Models\DescribePoolsResponse
     {
@@ -635,7 +635,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 支持售卖CIDR的节点信息。
+     * 查询支持售卖CIDR的节点信息。
      */
     public function DescribeCidrRegions(#[\SensitiveParameter] Models\DescribeCidrRegionsRequest $request): Models\DescribeCidrRegionsResponse
     {
@@ -643,7 +643,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询 IPv4 CIDR 地址块售卖价格。
+     * 查询创建IPv4 CIDR地址块的价格。
      */
     public function DescribeCidrPrice(#[\SensitiveParameter] Models\DescribeCidrPriceRequest $request): Models\DescribeCidrPriceResponse
     {
@@ -651,7 +651,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询IPv4 CIDR地址块列表。
+     * 查询一个或多个IPv4 CIDR地址块的详细信息。
      */
     public function DescribeCidrs(#[\SensitiveParameter] Models\DescribeCidrsRequest $request): Models\DescribeCidrsResponse
     {
@@ -667,7 +667,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 修改IPv4 CIDR地址段的属性。 目前只能修改名称。
+     * 修改IPv4 CIDR地址段的属性。目前只能修改名称。
      */
     public function ModifyCidrAttribute(#[\SensitiveParameter] Models\ModifyCidrAttributeRequest $request): Models\ModifyCidrAttributeResponse
     {
@@ -691,7 +691,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 将一个处于回收站的IPv6 CIDR地址段恢复回正常。
+     * 恢复处于回收状态的IPv6 CIDR地址段，使其重新可用。
      */
     public function RenewIpv6Cidr(#[\SensitiveParameter] Models\RenewIpv6CidrRequest $request): Models\RenewIpv6CidrResponse
     {
@@ -699,7 +699,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询账户下的 IPv6 CIDR 地址块信息，支持按 CIDR ID、地域、名称、地址段筛选，支持标签过滤和分页查询。
+     * 查询账户下的IPv6 CIDR地址块信息，支持按CIDR ID、地域、名称、地址段筛选，支持标签过滤和分页查询。
      */
     public function DescribeIpv6Cidrs(#[\SensitiveParameter] Models\DescribeIpv6CidrsRequest $request): Models\DescribeIpv6CidrsResponse
     {
@@ -707,7 +707,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 删除IPv6 CIDR地址块。
+     * 删除指定的IPv6 CIDR地址块。
      */
     public function DeleteIpv6Cidr(#[\SensitiveParameter] Models\DeleteIpv6CidrRequest $request): Models\DeleteIpv6CidrResponse
     {
@@ -715,7 +715,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 将一个处于回收站的IPv4 CIDR地址段恢复回正常。
+     * 恢复处于回收状态的IPv4 CIDR地址段，使其重新可用。
      */
     public function RenewCidr(#[\SensitiveParameter] Models\RenewCidrRequest $request): Models\RenewCidrResponse
     {
@@ -723,7 +723,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 提交自带 IP 段（BYOIP）创建 CIDR。返回 RPKI/IRR 校验失败列表。
+     * 提交自带IP段（BYOIP）创建CIDR。返回RPKI/IRR校验失败列表。
      */
     public function CreateByoip(#[\SensitiveParameter] Models\CreateByoipRequest $request): Models\CreateByoipResponse
     {
@@ -731,7 +731,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 返回支持售卖 BYOIP 的区域及对应网段、网络类型等信息。
+     * 返回支持售卖BYOIP的区域及对应网段、网络类型等信息。
      */
     public function DescribeByoipRegions(#[\SensitiveParameter] Models\DescribeByoipRegionsRequest $request): Models\DescribeByoipRegionsResponse
     {
@@ -739,7 +739,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 根据宣告 IP 段、区域、线路类型等查询 BYOIP 价格。
+     * 根据宣告IP段、区域、线路类型等查询BYOIP价格。
      */
     public function DescribeByoipPrice(#[\SensitiveParameter] Models\DescribeByoipPriceRequest $request): Models\DescribeByoipPriceResponse
     {
@@ -763,7 +763,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询 EIP 支持的网络计费模式。
+     * 查询EIP支持的网络计费模式。
      */
     public function DescribeEipInternetChargeTypes(#[\SensitiveParameter] Models\DescribeEipInternetChargeTypesRequest $request): Models\DescribeEipInternetChargeTypesResponse
     {
@@ -779,7 +779,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 创建公网弹性IP询价。
+     * 查询创建弹性公网IP的价格。
      */
     public function DescribeEipPrice(#[\SensitiveParameter] Models\DescribeEipPriceRequest $request): Models\DescribeEipPriceResponse
     {
@@ -811,7 +811,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询可与指定弹性公网 IP（EIP）进行绑定的弹性网卡（vNIC）及其内网 IPv4 地址列表。
+     * 查询可与指定弹性公网IP（EIP）进行绑定的弹性网卡（vNIC）及其内网IPv4地址列表。
      */
     public function AvailableLanIp(#[\SensitiveParameter] Models\AvailableLanIpRequest $request): Models\AvailableLanIpResponse
     {
@@ -843,7 +843,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 变更弹性公网IP更网络计费模式。
+     * 变更弹性公网IP的网络计费模式。
      */
     public function ChangeEipInternetChargeType(#[\SensitiveParameter] Models\ChangeEipInternetChargeTypeRequest $request): Models\ChangeEipInternetChargeTypeResponse
     {
@@ -875,7 +875,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 指定IP作为出口IP。
+     * 将绑定在网卡上的指定弹性公网IP设置为该网卡的出口IP。
      */
     public function ConfigEipEgressIp(#[\SensitiveParameter] Models\ConfigEipEgressIpRequest $request): Models\ConfigEipEgressIpResponse
     {
@@ -891,7 +891,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 恢复弹性公网IP。
+     * 恢复处于回收状态的弹性公网IP，使其重新可用。
      */
     public function RenewEip(#[\SensitiveParameter] Models\RenewEipRequest $request): Models\RenewEipResponse
     {
@@ -899,7 +899,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询指定弹性公网 IP 在指定时间段内的流量监控数据，支持按统计粒度（step）聚合，可按出口公网 IP 过滤。
+     * 查询指定弹性公网IP在指定时间段内的流量监控数据，支持按统计粒度（step）聚合，可按出口公网IP过滤。
      */
     public function DescribeEipTraffic(#[\SensitiveParameter] Models\DescribeEipTrafficRequest $request): Models\DescribeEipTrafficResponse
     {
@@ -923,7 +923,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询调整EIP带宽后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
+     * 查询调整EIP带宽后的价格。同时通过previousPrices返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceModifyEipBandwidth(#[\SensitiveParameter] Models\InquiryPriceModifyEipBandwidthRequest $request): Models\InquiryPriceModifyEipBandwidthResponse
     {
@@ -931,7 +931,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询调整EIP流量包后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
+     * 查询调整EIP流量包后的价格。同时通过previousPrices返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceModifyEipFlowPackage(#[\SensitiveParameter] Models\InquiryPriceModifyEipFlowPackageRequest $request): Models\InquiryPriceModifyEipFlowPackageResponse
     {
@@ -939,7 +939,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询变更EIP网络计费模式后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
+     * 查询变更EIP网络计费模式后的价格。同时通过previousPrices返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceChangeEipInternetChargeType(#[\SensitiveParameter] Models\InquiryPriceChangeEipInternetChargeTypeRequest $request): Models\InquiryPriceChangeEipInternetChargeTypeResponse
     {
@@ -960,6 +960,22 @@ class ZecClient extends AbstractClient
     public function ModifyEipBlockThreshold(#[\SensitiveParameter] Models\ModifyEipBlockThresholdRequest $request): Models\ModifyEipBlockThresholdResponse
     {
         return $this->call('ModifyEipBlockThreshold', $request, Models\ModifyEipBlockThresholdResponse::class);
+    }
+
+    /**
+     * 查询一段时间的弹性公网IP并发连接数（Concurrent Connections）监控数据；也可传实例ID，查询其名下所有EIP的聚合数据。
+     */
+    public function DescribeEipConcurrentConnsMonitorData(#[\SensitiveParameter] Models\DescribeEipConcurrentConnsMonitorDataRequest $request): Models\DescribeEipConcurrentConnsMonitorDataResponse
+    {
+        return $this->call('DescribeEipConcurrentConnsMonitorData', $request, Models\DescribeEipConcurrentConnsMonitorDataResponse::class);
+    }
+
+    /**
+     * 查询一段时间的弹性公网IP每秒新建连接数（CPS，All/In/Out）监控数据；也可传实例ID，查询其名下所有EIP的聚合数据。
+     */
+    public function DescribeEipNewConnsMonitorData(#[\SensitiveParameter] Models\DescribeEipNewConnsMonitorDataRequest $request): Models\DescribeEipNewConnsMonitorDataResponse
+    {
+        return $this->call('DescribeEipNewConnsMonitorData', $request, Models\DescribeEipNewConnsMonitorDataResponse::class);
     }
 
     /**
@@ -995,7 +1011,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询支持售卖内网跨区域带宽的区域信息。
+     * 查询支持售卖VPC跨区域带宽的区域信息。
      */
     public function DescribeCrossRegionBandwidthRegions(#[\SensitiveParameter] Models\DescribeCrossRegionBandwidthRegionsRequest $request): Models\DescribeCrossRegionBandwidthRegionsResponse
     {
@@ -1003,7 +1019,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 创建内网跨区域带宽询价。
+     * 查询创建VPC跨区域带宽的价格。
      */
     public function InquiryPriceCreateCrossRegionBandwidth(#[\SensitiveParameter] Models\InquiryPriceCreateCrossRegionBandwidthRequest $request): Models\InquiryPriceCreateCrossRegionBandwidthResponse
     {
@@ -1011,7 +1027,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 创建内网跨区域带宽。
+     * 创建VPC跨区域带宽。
      */
     public function CreateCrossRegionBandwidth(#[\SensitiveParameter] Models\CreateCrossRegionBandwidthRequest $request): Models\CreateCrossRegionBandwidthResponse
     {
@@ -1019,7 +1035,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询内网跨区域带宽列表。
+     * 查询VPC跨区域带宽列表。
      */
     public function DescribeCrossRegionBandwidth(#[\SensitiveParameter] Models\DescribeCrossRegionBandwidthRequest $request): Models\DescribeCrossRegionBandwidthResponse
     {
@@ -1027,7 +1043,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 调整内网跨区域带宽询价。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
+     * 查询调整VPC跨区域带宽后的价格。同时通过previousPrices返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceModifyCrossRegionBandwidth(#[\SensitiveParameter] Models\InquiryPriceModifyCrossRegionBandwidthRequest $request): Models\InquiryPriceModifyCrossRegionBandwidthResponse
     {
@@ -1035,7 +1051,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 修改内网跨区域带宽属性（名称）。
+     * 修改VPC跨区域带宽属性（名称）。
      */
     public function ModifyCrossRegionBandwidthAttribute(#[\SensitiveParameter] Models\ModifyCrossRegionBandwidthAttributeRequest $request): Models\ModifyCrossRegionBandwidthAttributeResponse
     {
@@ -1043,7 +1059,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 调整内网跨区域带宽。
+     * 调整VPC跨区域带宽。
      */
     public function ModifyCrossRegionBandwidth(#[\SensitiveParameter] Models\ModifyCrossRegionBandwidthRequest $request): Models\ModifyCrossRegionBandwidthResponse
     {
@@ -1051,7 +1067,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 删除内网跨区域带宽。
+     * 删除VPC跨区域带宽。
      */
     public function DeleteCrossRegionBandwidth(#[\SensitiveParameter] Models\DeleteCrossRegionBandwidthRequest $request): Models\DeleteCrossRegionBandwidthResponse
     {
@@ -1059,7 +1075,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 恢复内网跨区域带宽。
+     * 恢复VPC跨区域带宽。
      */
     public function RenewCrossRegionBandwidth(#[\SensitiveParameter] Models\RenewCrossRegionBandwidthRequest $request): Models\RenewCrossRegionBandwidthResponse
     {
@@ -1067,7 +1083,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询内网跨区域带宽监控指标数据。
+     * 查询VPC跨区域带宽监控指标数据。
      */
     public function DescribeCrossRegionBandwidthMonitorData(#[\SensitiveParameter] Models\DescribeCrossRegionBandwidthMonitorDataRequest $request): Models\DescribeCrossRegionBandwidthMonitorDataResponse
     {
@@ -1099,7 +1115,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 将DHCP选项集关联到Subnet。
+     * 将DHCP选项集关联到一个或多个子网。
      */
     public function AttachDhcpOptionsSetToSubnet(#[\SensitiveParameter] Models\AttachDhcpOptionsSetToSubnetRequest $request): Models\AttachDhcpOptionsSetToSubnetResponse
     {
@@ -1107,7 +1123,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 将DHCP选项集与Subnet取消关联。
+     * 将DHCP选项集与一个或多个子网取消关联。
      */
     public function DetachDhcpOptionsSetFromSubnet(#[\SensitiveParameter] Models\DetachDhcpOptionsSetFromSubnetRequest $request): Models\DetachDhcpOptionsSetFromSubnetResponse
     {
@@ -1155,7 +1171,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 获取可绑定边界网关的NAT网关列表。
+     * 查询可绑定边界网关的NAT网关列表。
      */
     public function DescribeAvailableNats(#[\SensitiveParameter] Models\DescribeAvailableNatsRequest $request): Models\DescribeAvailableNatsResponse
     {
@@ -1163,7 +1179,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 边界网关绑定NAT网关。
+     * 将NAT网关绑定到指定边界网关。
      */
     public function AssignBorderGateway(#[\SensitiveParameter] Models\AssignBorderGatewayRequest $request): Models\AssignBorderGatewayResponse
     {
@@ -1171,7 +1187,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 解除指定边界网关（ZBG）与 NAT 网关的绑定关系，解绑后边界网关将不再为该 NAT 网关广播路由。
+     * 解除指定边界网关（ZBG）与NAT网关的绑定关系，解绑后边界网关将不再为该NAT网关广播路由。
      */
     public function UnassignBorderGateway(#[\SensitiveParameter] Models\UnassignBorderGatewayRequest $request): Models\UnassignBorderGatewayResponse
     {
@@ -1179,7 +1195,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 边界网关绑定自定义路由。即自定义路由发布到zbg网关。
+     * 将自定义路由绑定到指定边界网关，即把该路由发布到边界网关。
      */
     public function AssignBorderGatewayRoute(#[\SensitiveParameter] Models\AssignBorderGatewayRouteRequest $request): Models\AssignBorderGatewayRouteResponse
     {
@@ -1187,7 +1203,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 边界网关路由宣告中移除指定的自定义路由。
+     * 从边界网关的路由宣告中移除指定的自定义路由。
      */
     public function UnassignBorderGatewayRoute(#[\SensitiveParameter] Models\UnassignBorderGatewayRouteRequest $request): Models\UnassignBorderGatewayRouteResponse
     {
@@ -1203,11 +1219,19 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询当前账号下边界网关可支持互联的节点与数据中心信息。边界网关可绑定 CloudRouter 以实现 VPC 的 L3 互联，本接口返回支持此功能的节点列表，可按节点ID或数据中心进行过滤。
+     * 查询当前账号下边界网关可支持互联的节点与数据中心信息。边界网关可绑定CloudRouter以实现VPC的L3互联，本接口返回支持此功能的节点列表，可按节点ID或数据中心进行过滤。
      */
     public function DescribeInterconnectBorderGatewayRegions(#[\SensitiveParameter] Models\DescribeInterconnectBorderGatewayRegionsRequest $request): Models\DescribeInterconnectBorderGatewayRegionsResponse
     {
         return $this->call('DescribeInterconnectBorderGatewayRegions', $request, Models\DescribeInterconnectBorderGatewayRegionsResponse::class);
+    }
+
+    /**
+     * 修改边界网关的互联IP网段。
+     */
+    public function ModifyBorderGatewayInterconnectCidr(#[\SensitiveParameter] Models\ModifyBorderGatewayInterconnectCidrRequest $request): Models\ModifyBorderGatewayInterconnectCidrResponse
+    {
+        return $this->call('ModifyBorderGatewayInterconnectCidr', $request, Models\ModifyBorderGatewayInterconnectCidrResponse::class);
     }
 
     /**
@@ -1227,7 +1251,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询调整非托管出口IP带宽后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
+     * 查询调整非托管出口IP带宽后的价格。同时通过previousPrices返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceModifyUnmanagedEgressIpBandwidth(#[\SensitiveParameter] Models\InquiryPriceModifyUnmanagedEgressIpBandwidthRequest $request): Models\InquiryPriceModifyUnmanagedEgressIpBandwidthResponse
     {
@@ -1235,7 +1259,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询变更非托管出口IP网络计费模式后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
+     * 查询变更非托管出口IP网络计费模式后的价格。同时通过previousPrices返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceChangeUnmanagedEgressIpInternetChargeType(#[\SensitiveParameter] Models\InquiryPriceChangeUnmanagedEgressIpInternetChargeTypeRequest $request): Models\InquiryPriceChangeUnmanagedEgressIpInternetChargeTypeResponse
     {
@@ -1299,7 +1323,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询私有网络（VPC）列表，用户可以根据 VPC ID、VPC 名称等信息来筛选过滤VPC信息。
+     * 查询私有网络（VPC）列表，用户可以根据VPC ID、VPC名称等信息筛选。
      */
     public function DescribeVpcs(#[\SensitiveParameter] Models\DescribeVpcsRequest $request): Models\DescribeVpcsResponse
     {
@@ -1331,7 +1355,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 删除VPC。
+     * 删除指定的VPC。
      */
     public function DeleteVpc(#[\SensitiveParameter] Models\DeleteVpcRequest $request): Models\DeleteVpcResponse
     {
@@ -1339,7 +1363,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询支持创建子网区域以及是否IPv6。
+     * 查询支持创建子网的节点，以及各节点是否支持IPv6。
      */
     public function DescribeSubnetRegions(#[\SensitiveParameter] Models\DescribeSubnetRegionsRequest $request): Models\DescribeSubnetRegionsResponse
     {
@@ -1347,7 +1371,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询子网列表信息。可以根据子网ID, 名称等信息筛选查询子网。
+     * 查询子网列表信息。可以根据子网ID、名称等信息筛选子网。
      */
     public function DescribeSubnets(#[\SensitiveParameter] Models\DescribeSubnetsRequest $request): Models\DescribeSubnetsResponse
     {
@@ -1379,7 +1403,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 修改指定子网的 IP 地址堆栈类型（IPv4 / IPv4_IPv6 / IPv6）。变更为双栈或纯 IPv6 时须配置 IPv6 类型及对应的 CIDR 地址块。
+     * 修改指定子网的IP地址堆栈类型（IPv4 / IPv4_IPv6 / IPv6）。变更为双栈或纯IPv6时须配置IPv6类型及对应的CIDR地址块。
      */
     public function ModifySubnetStackType(#[\SensitiveParameter] Models\ModifySubnetStackTypeRequest $request): Models\ModifySubnetStackTypeResponse
     {
@@ -1411,7 +1435,23 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 支持售卖NAT网关的区域信息。
+     * 为指定VPC添加一个附属IPv4网段。
+     */
+    public function AssociateVpcCidrBlock(#[\SensitiveParameter] Models\AssociateVpcCidrBlockRequest $request): Models\AssociateVpcCidrBlockResponse
+    {
+        return $this->call('AssociateVpcCidrBlock', $request, Models\AssociateVpcCidrBlockResponse::class);
+    }
+
+    /**
+     * 移除指定VPC的一个附属IPv4网段。
+     */
+    public function UnassociateVpcCidrBlock(#[\SensitiveParameter] Models\UnassociateVpcCidrBlockRequest $request): Models\UnassociateVpcCidrBlockResponse
+    {
+        return $this->call('UnassociateVpcCidrBlock', $request, Models\UnassociateVpcCidrBlockResponse::class);
+    }
+
+    /**
+     * 查询支持售卖NAT网关的区域信息。
      */
     public function DescribeNatGatewayRegions(#[\SensitiveParameter] Models\DescribeNatGatewayRegionsRequest $request): Models\DescribeNatGatewayRegionsResponse
     {
@@ -1419,7 +1459,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 获取可绑定NAT的边界网关。
+     * 查询可绑定NAT网关的边界网关列表。
      */
     public function DescribeAvailableBorderGateway(#[\SensitiveParameter] Models\DescribeAvailableBorderGatewayRequest $request): Models\DescribeAvailableBorderGatewayResponse
     {
@@ -1443,7 +1483,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询NAT网关列表。
+     * 查询一个或多个NAT网关的详细信息。
      */
     public function DescribeNatGateways(#[\SensitiveParameter] Models\DescribeNatGatewaysRequest $request): Models\DescribeNatGatewaysResponse
     {
@@ -1451,7 +1491,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询NAT网关详情规则表。
+     * 查询指定NAT网关的详情，包含其DNAT与SNAT规则。
      */
     public function DescribeNatGatewayDetail(#[\SensitiveParameter] Models\DescribeNatGatewayDetailRequest $request): Models\DescribeNatGatewayDetailResponse
     {
@@ -1459,7 +1499,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 修改指定 NAT 网关的名称、关联子网、ICMP 回应及安全组配置。
+     * 修改指定NAT网关的名称、关联子网、ICMP回应及安全组配置。
      */
     public function ModifyNatGatewayAttribute(#[\SensitiveParameter] Models\ModifyNatGatewayAttributeRequest $request): Models\ModifyNatGatewayAttributeResponse
     {
@@ -1531,7 +1571,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 创建防护策略。
+     * 创建一个DDoS防护策略。
      */
     public function CreatePolicy(#[\SensitiveParameter] Models\CreatePolicyRequest $request): Models\CreatePolicyResponse
     {
@@ -1539,7 +1579,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询账户下的 DDoS 防护策略信息，支持按策略 ID、策略名称筛选，支持标签过滤和分页查询。
+     * 查询账户下的DDoS防护策略信息，支持按策略ID、策略名称筛选，支持标签过滤和分页查询。
      */
     public function DescribePolicys(#[\SensitiveParameter] Models\DescribePolicysRequest $request): Models\DescribePolicysResponse
     {
@@ -1547,7 +1587,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询指定 DDoS 防护策略的详细配置，包括黑白名单、封禁协议、区域封禁、特征过滤及流量控制规则等。
+     * 查询指定DDoS防护策略的详细配置，包括黑白名单、封禁协议、区域封禁、特征过滤及流量控制规则等。
      */
     public function DescribePolicyDetail(#[\SensitiveParameter] Models\DescribePolicyDetailRequest $request): Models\DescribePolicyDetailResponse
     {
@@ -1555,7 +1595,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 修改指定 DDoS 防护策略的配置，包括策略名称、IP 黑白名单、封禁协议、区域封禁、特征过滤及流量控制规则。
+     * 修改指定DDoS防护策略的配置，包括策略名称、IP黑白名单、封禁协议、区域封禁、特征过滤及流量控制规则。
      */
     public function ModifyPolicy(#[\SensitiveParameter] Models\ModifyPolicyRequest $request): Models\ModifyPolicyResponse
     {
@@ -1563,7 +1603,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 防护对象关联防护策略。
+     * 将一个或多个IP添加到指定DDoS防护策略的防护对象中。
      */
     public function AttachToPolicy(#[\SensitiveParameter] Models\AttachToPolicyRequest $request): Models\AttachToPolicyResponse
     {
@@ -1571,7 +1611,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 防护对象取消关联防护策略。
+     * 将一个或多个IP从指定DDoS防护策略的防护对象中移除。
      */
     public function DetachFromPolicy(#[\SensitiveParameter] Models\DetachFromPolicyRequest $request): Models\DetachFromPolicyResponse
     {
@@ -1579,7 +1619,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询 DDoS 防护策略中区域封禁功能支持的可选地区列表，用于配置防护策略 `blockRegions` 参数前的参考。
+     * 查询DDoS防护策略中区域封禁功能支持的可选地区列表，用于配置防护策略`blockRegions`参数前的参考。
      */
     public function DescribePolicyRegions(#[\SensitiveParameter] Models\DescribePolicyRegionsRequest $request): Models\DescribePolicyRegionsResponse
     {
@@ -1587,7 +1627,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询 DDoS 防护策略中 UDP 反射攻击防护功能的默认封禁源端口列表，用于配置防护策略 `reflectUdpPort` 参数前的参考。
+     * 查询DDoS防护策略中UDP反射攻击防护功能的默认封禁源端口列表，用于配置防护策略`reflectUdpPort`参数前的参考。
      */
     public function DescribeReflectUdpPortOptions(#[\SensitiveParameter] Models\DescribeReflectUdpPortOptionsRequest $request): Models\DescribeReflectUdpPortOptionsResponse
     {
@@ -1595,7 +1635,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 删除防护策略。
+     * 删除指定的DDoS防护策略。
      */
     public function DeletePolicy(#[\SensitiveParameter] Models\DeletePolicyRequest $request): Models\DeletePolicyResponse
     {
@@ -1603,7 +1643,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 获取攻击事件详情。
+     * 查询指定DDoS攻击事件的详细信息。
      */
     public function DescribeDDosEventDetail(#[\SensitiveParameter] Models\DescribeDDosEventDetailRequest $request): Models\DescribeDDosEventDetailResponse
     {
@@ -1611,7 +1651,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 获取攻击事件列表。
+     * 查询DDoS攻击事件列表。
      */
     public function DescribeDDosAllEventList(#[\SensitiveParameter] Models\DescribeDDosAllEventListRequest $request): Models\DescribeDDosAllEventListResponse
     {
@@ -1619,7 +1659,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询账户下的安全组信息，支持按安全组 ID 或名称进行筛选，支持分页查询。
+     * 查询账户下的安全组信息，支持按安全组ID或名称进行筛选，支持分页查询。
      */
     public function DescribeSecurityGroups(#[\SensitiveParameter] Models\DescribeSecurityGroupsRequest $request): Models\DescribeSecurityGroupsResponse
     {
@@ -1667,7 +1707,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * VPC更换绑定安全组。
+     * 为指定VPC更换绑定的安全组。
      */
     public function AssignSecurityGroupVpc(#[\SensitiveParameter] Models\AssignSecurityGroupVpcRequest $request): Models\AssignSecurityGroupVpcResponse
     {
@@ -1675,7 +1715,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * VPC解绑安全组。
+     * 解除指定VPC与安全组的绑定关系。
      */
     public function UnAssignSecurityGroupVpc(#[\SensitiveParameter] Models\UnAssignSecurityGroupVpcRequest $request): Models\UnAssignSecurityGroupVpcResponse
     {
@@ -1683,7 +1723,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 创建置放组。
+     * 创建一个置放组。
      */
     public function CreatePlacementGroup(#[\SensitiveParameter] Models\CreatePlacementGroupRequest $request): Models\CreatePlacementGroupResponse
     {
@@ -1771,7 +1811,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 给网卡添加IPv6。
+     * 为指定网卡分配IPv6地址。
      */
     public function AssignNetworkInterfaceIpv6(#[\SensitiveParameter] Models\AssignNetworkInterfaceIpv6Request $request): Models\AssignNetworkInterfaceIpv6Response
     {
@@ -1779,7 +1819,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 删除网卡IPv6。
+     * 释放指定网卡上的IPv6地址。
      */
     public function UnassignNetworkInterfaceIpv6(#[\SensitiveParameter] Models\UnassignNetworkInterfaceIpv6Request $request): Models\UnassignNetworkInterfaceIpv6Response
     {
@@ -1803,7 +1843,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 批量删除公网 IPv6。逐个独立处理，部分失败不影响其余项，失败项通过 failedIpv6Addresses 返回其错误码与错误信息。
+     * 批量删除公网IPv6。逐个独立处理，部分失败不影响其余项，失败项通过failedIpv6Addresses返回其错误码与错误信息。
      */
     public function DeleteIpv6Addresses(#[\SensitiveParameter] Models\DeleteIpv6AddressesRequest $request): Models\DeleteIpv6AddressesResponse
     {
@@ -1811,7 +1851,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 公网Ipv6流量包或固定带宽询价。
+     * 查询分配公网IPv6的价格，支持流量包与固定带宽两种计费方式。
      */
     public function InquiryPricePublicIpv6(#[\SensitiveParameter] Models\InquiryPricePublicIpv6Request $request): Models\InquiryPricePublicIpv6Response
     {
@@ -1819,7 +1859,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询调整IPv6带宽后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
+     * 查询调整IPv6带宽后的价格。同时通过previousPrices返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceModifyIpv6Bandwidth(#[\SensitiveParameter] Models\InquiryPriceModifyIpv6BandwidthRequest $request): Models\InquiryPriceModifyIpv6BandwidthResponse
     {
@@ -1827,7 +1867,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询变更IPv6网络计费模式后的价格。同时通过 previousPrices 返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
+     * 查询变更IPv6网络计费模式后的价格。同时通过previousPrices返回变更前各计费项当前生效的价格，用于对比出哪些计费项发生了调价。
      */
     public function InquiryPriceChangeIpv6InternetChargeType(#[\SensitiveParameter] Models\InquiryPriceChangeIpv6InternetChargeTypeRequest $request): Models\InquiryPriceChangeIpv6InternetChargeTypeResponse
     {
@@ -1843,7 +1883,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 指定条件查询已分配的公网 IPv6 信息。用户可以根据 ID、名称、绑定的资源等信息来搜索。
+     * 指定条件查询已分配的公网IPv6信息。用户可以根据ID、名称、绑定的资源等信息来搜索。
      */
     public function DescribeIpv6Addresses(#[\SensitiveParameter] Models\DescribeIpv6AddressesRequest $request): Models\DescribeIpv6AddressesResponse
     {
@@ -1851,7 +1891,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询指定弹性网卡（vNIC）上已分配的公网 IPv6 地址及其计费、带宽配置信息。
+     * 查询指定弹性网卡（vNIC）上已分配的公网IPv6地址及其计费、带宽配置信息。
      */
     public function DescribeNetworkInterfacePublicIPv6(#[\SensitiveParameter] Models\DescribeNetworkInterfacePublicIPv6Request $request): Models\DescribeNetworkInterfacePublicIPv6Response
     {
@@ -1859,7 +1899,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 返回可作为 BYOIP 起源ASN使用的ASN号列表。
+     * 返回可作为BYOIP起源ASN使用的ASN号列表。
      */
     public function DescribeUsableByoAsns(#[\SensitiveParameter] Models\DescribeUsableByoAsnsRequest $request): Models\DescribeUsableByoAsnsResponse
     {
@@ -1867,7 +1907,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 确认指定自带ASN在 RIR 上的 export 声明是否已生效。
+     * 确认指定自带ASN在RIR上的export声明是否已生效。
      */
     public function VerifyByoAsn(#[\SensitiveParameter] Models\VerifyByoAsnRequest $request): Models\VerifyByoAsnResponse
     {
@@ -1891,7 +1931,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 删除指定自带ASN。删除前需确保该ASN下没有已宣告的 BYOIP 段。
+     * 删除指定自带ASN。删除前需确保该ASN下没有已宣告的BYOIP段。
      */
     public function DeleteByoAsn(#[\SensitiveParameter] Models\DeleteByoAsnRequest $request): Models\DeleteByoAsnResponse
     {

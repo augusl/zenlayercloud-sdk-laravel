@@ -19,7 +19,7 @@ class InstanceOptions extends AbstractModel
 {
     /**
      * NestedVirtualization 是否启用嵌套虚拟化。
-     * 如果要开启嵌套虚拟化，需要联系Support开通,否则设置无效。
+     * 如果要开启嵌套虚拟化，需要联系Support开通，否则设置无效。
      */
     public ?bool $nestedVirtualization = null;
 }

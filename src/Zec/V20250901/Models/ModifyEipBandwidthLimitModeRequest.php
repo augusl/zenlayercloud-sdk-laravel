@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * ModifyEipBandwidthLimitModeRequest
+ */
 class ModifyEipBandwidthLimitModeRequest extends AbstractModel
 {
     /**
      * EipId 弹性公网IP的唯一ID。
+     * 可通过调用 ~~DescribeEips~~ 获取。
      */
     public ?string $eipId = null;
 

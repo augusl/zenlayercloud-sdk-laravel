@@ -12,17 +12,21 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * UnassignNetworkInterfaceIpv4Request
+ */
 class UnassignNetworkInterfaceIpv4Request extends AbstractModel
 {
     /**
      * NicId 网卡ID。
+     * 可通过调用 ~~DescribeNetworkInterfaces~~ 获取。
      */
     public ?string $nicId = null;
 
     /**
      * Deprecated: IpAddress 已废弃，请不要使用。
      * IpAddress 需要解绑的IPv4地址。
-     * 该字段已过时，请使用`ipAddresses`，如果两者均指定， 则以`ipAddresses`为准。
+     * 该字段已过时，请使用`ipAddresses`，如果两者均指定，则以`ipAddresses`为准。
      *
      * @deprecated
      */

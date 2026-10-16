@@ -13,7 +13,7 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * CrossRegionBandwidthMetricValue 描述内网跨区域带宽的监控指标数据。
+ * CrossRegionBandwidthMetricValue 描述VPC跨区域带宽的监控指标数据。
  */
 class CrossRegionBandwidthMetricValue extends AbstractModel
 {

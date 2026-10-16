@@ -18,7 +18,8 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class InquiryPriceModifyCrossRegionBandwidthRequest extends AbstractModel
 {
     /**
-     * CrossRegionBandwidthId 要修改的内网跨区域带宽ID。
+     * CrossRegionBandwidthId 要修改的VPC跨区域带宽ID。
+     * 可通过调用 ~~DescribeCrossRegionBandwidth~~ 获取。
      */
     public ?string $crossRegionBandwidthId = null;
 

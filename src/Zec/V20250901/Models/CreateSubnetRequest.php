@@ -19,6 +19,7 @@ class CreateSubnetRequest extends AbstractModel
 {
     /**
      * VpcId 需要添加子网的VPC ID。
+     * 可通过调用 ~~DescribeVpcs~~ 获取。
      */
     public ?string $vpcId = null;
 
@@ -31,7 +32,9 @@ class CreateSubnetRequest extends AbstractModel
     public ?string $name = null;
 
     /**
-     * RegionId 子网所在节点的ID。必须是VPC所在节点之一。
+     * RegionId 子网所在节点的ID。
+     * 必须是VPC所在节点之一。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 
@@ -42,19 +45,20 @@ class CreateSubnetRequest extends AbstractModel
 
     /**
      * CidrBlock 子网的IPv4 CIDR地址段。
-     * 如果指定堆栈类型`stackType` 包含 `IPv4`, 则该字段必填。
+     * 当`stackType`包含`IPv4`时，该字段必填。
      * 指定的CIDR地址段必须属于VPC的CIDR范围内。
      */
     public ?string $cidrBlock = null;
 
     /**
      * Ipv6Type IPv6的类型。
-     * 如果指定堆栈类型`stackType` 包含 `IPv6`, 则该字段必填。
+     * 当`stackType`包含`IPv6`时，该字段必填。
      */
     public ?string $ipv6Type = null;
 
     /**
-     * DhcpOptionsSetId 要绑定的DHCP 选项集ID。
+     * DhcpOptionsSetId 要绑定的DHCP选项集ID。
+     * 可通过调用 ~~DescribeDhcpOptionsSets~~ 获取。
      */
     public ?string $dhcpOptionsSetId = null;
 

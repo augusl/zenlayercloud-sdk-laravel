@@ -19,6 +19,7 @@ class ConfigureSecurityGroupRulesRequest extends AbstractModel
 {
     /**
      * SecurityGroupId 要配置的安全组ID。
+     * 可通过调用 ~~DescribeSecurityGroups~~ 获取。
      */
     public ?string $securityGroupId = null;
 

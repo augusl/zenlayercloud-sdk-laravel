@@ -13,17 +13,17 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * PrivateIpInfo 公网弹性IP可以绑定的网卡及内网信息
+ * PrivateIpInfo 公网弹性IP可以绑定的网卡及内网信息。
  */
 class PrivateIpInfo extends AbstractModel
 {
     /**
-     * LanIp 该 vNIC 上已分配的内网 IPv4 地址，可用于与指定 EIP 进行绑定。
+     * LanIp 该vNIC上已分配的内网IPv4地址，可用于与指定EIP进行绑定。
      */
     public ?string $lanIp = null;
 
     /**
-     * NicId 弹性网卡（vNIC）的 ID。
+     * NicId 弹性网卡（vNIC）的ID。
      */
     public ?string $nicId = null;
 
@@ -33,14 +33,14 @@ class PrivateIpInfo extends AbstractModel
     public ?string $nicName = null;
 
     /**
-     * InstanceId vNIC 所挂载实例的 ID。
-     * 若 vNIC 未挂载至任何实例，则为 null。
+     * InstanceId vNIC所挂载实例的ID。
+     * 若vNIC未挂载至任何实例，则为null。
      */
     public ?string $instanceId = null;
 
     /**
-     * InstanceName vNIC 所挂载实例的名称。
-     * 若 vNIC 未挂载至任何实例，则为 null。
+     * InstanceName vNIC所挂载实例的名称。
+     * 若vNIC未挂载至任何实例，则为null。
      */
     public ?string $instanceName = null;
 }

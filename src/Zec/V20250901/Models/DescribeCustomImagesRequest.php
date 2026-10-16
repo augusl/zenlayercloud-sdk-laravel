@@ -19,11 +19,13 @@ class DescribeCustomImagesRequest extends AbstractModel
 {
     /**
      * RegionId 区域ID，传入时仅返回该区域可用的自定义镜像。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 
     /**
      * ImageIds 镜像ID列表。
+     * 可通过调用 ~~DescribeImages~~ 获取。
      *
      * @var list<string>|null
      */

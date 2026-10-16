@@ -19,6 +19,7 @@ class ReleaseDiskRequest extends AbstractModel
 {
     /**
      * DiskId 要删除的云硬盘ID。
+     * 可通过调用 ~~DescribeDisks~~ 获取。
      */
     public ?string $diskId = null;
 }

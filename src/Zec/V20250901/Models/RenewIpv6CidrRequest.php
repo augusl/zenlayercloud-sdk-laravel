@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * RenewIpv6CidrRequest
+ */
 class RenewIpv6CidrRequest extends AbstractModel
 {
     /**
-     * CidrId IPv6 地址块ID。
+     * CidrId IPv6地址块ID。
+     * 可通过调用 ~~DescribeCidrs~~ 获取。
      */
     public ?string $cidrId = null;
 }

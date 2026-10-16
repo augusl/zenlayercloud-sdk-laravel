@@ -20,7 +20,7 @@ class DescribeByoipRegionsResponseParams extends AbstractModel
     public ?string $requestId = null;
 
     /**
-     * Regions 支持售卖 BYOIP 的区域列表。
+     * Regions 支持售卖BYOIP的区域列表。
      *
      * @var list<Region>|null
      */

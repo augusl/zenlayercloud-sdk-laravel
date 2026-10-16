@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DescribeImageCopyProgressRequest
+ */
 class DescribeImageCopyProgressRequest extends AbstractModel
 {
     /**
-     * ImageId 自定义镜像 ID。
+     * ImageId 自定义镜像ID。
+     * 可通过调用 ~~DescribeImages~~ 获取。
      */
     public ?string $imageId = null;
 }

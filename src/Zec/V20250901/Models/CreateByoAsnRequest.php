@@ -19,18 +19,18 @@ class CreateByoAsnRequest extends AbstractModel
 {
     /**
      * Asn 待接入的公网ASN号。
-     * 支持 2 字节与 4 字节 ASN，最大值 4294967295。
+     * 支持2字节与4字节ASN，最大值4294967295。
      */
     public ?int $asn = null;
 
     /**
-     * ResourceGroupId 创建后 BYO ASN 所在的资源组ID。
+     * ResourceGroupId 创建后BYO ASN所在的资源组ID。
      * 如不指定则放入默认资源组。
      */
     public ?string $resourceGroupId = null;
 
     /**
-     * Tags 创建 BYO ASN 时关联的标签。
+     * Tags 创建BYO ASN时关联的标签。
      * 注意：关联「标签键」不能重复。
      */
     public ?TagAssociation $tags = null;

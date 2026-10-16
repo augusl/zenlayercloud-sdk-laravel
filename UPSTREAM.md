@@ -6,20 +6,20 @@ not inferred from examples or handwritten independently.
 
 ## Current snapshot
 
-Last contract audit: **2026-09-16**.
+Last contract audit: **2026-10-17**.
 
 | Source | Audited revision |
 |--------|------------------|
-| [Official Go SDK](https://github.com/zenlayer/zenlayercloud-sdk-go/tree/v0.2.54) | `v0.2.54` / `4a534faeaaff891d848c10e5af518ac9e25a259e` |
-| [Official Python SDK](https://github.com/zenlayer/zenlayercloud-sdk-python/tree/2.0.75) | `2.0.75` / `3cd8d44ae1dec89c200226f5bd248a46ba0ff380` |
-| [VM API reference](https://docs.console.zenlayer.com/api-reference/compute/vm) | API `2026-04-01` |
-| [IPT API reference](https://docs.console.zenlayer.com/api-reference/cn/networking/ipt) | API `2024-09-01` |
-| [ZEC API reference](https://docs.console.zenlayer.com/api-reference/compute/zec) | API `2025-09-01` |
+| [Official Go SDK](https://github.com/zenlayer/zenlayercloud-sdk-go/tree/v0.2.55) | `v0.2.55` / `f25b7ca8a0b5655f2362f20bd39d53fb4eb664e7` |
+| [Official Python SDK](https://github.com/zenlayer/zenlayercloud-sdk-python/tree/2.0.76) | `2.0.76` / `091f85fcbdc29acb03dcf9e1dba393e74e81a4c3` |
+| [VM API reference](https://docs.console.zenlayer.com/api-reference/legacy/vm/overview) | API `2026-04-01` |
+| [IPT API reference](https://docs.console.zenlayer.com/api-reference/ipt/overview) | API `2024-09-01` |
+| [ZEC API reference](https://docs.console.zenlayer.com/api-reference/zec/overview) | API `2025-09-01` |
 
 Both audited tags are still the latest releases and match their repositories'
 default `main` branches as of the audit date.
 
-The same upstream release also changes SDN and ZLB. Those services
+The same upstream release also changes BMC, SDN, and ZLB. Those services
 remain intentionally excluded because this package's declared scope is only
 VM, IPT, and ZEC; omitting them here is not a partial sync of a supported
 service.
@@ -31,57 +31,73 @@ language):
 | Service | Actions | Models |
 |---------|--------:|-------:|
 | VM | 62 | 213 |
-| IPT | 12 | 60 |
-| ZEC | 234 | 798 |
-| **Total** | **308** | **1,071** |
+| IPT | 12 | 61 |
+| ZEC | 239 | 814 |
+| **Total** | **313** | **1,088** |
 
 An independent parser/reflection audit checked every generated property and
-both runtime array maps: VM 213 models / 625 fields, IPT 60 models / 262 fields,
-and ZEC 798 models / 2,568 fields, with zero Action, field, type, route, or array
-mapping differences. That is 308 Actions, 1,071 models, and 3,455 typed fields
-in total. A separate comparison with the Python SDK checked its 763 semantic
+both runtime array maps: VM 213 models / 625 fields, IPT 61 models / 268 fields,
+and ZEC 814 models / 2,623 fields, with zero Action, field, type, route, or array
+mapping differences. That is 313 Actions, 1,088 models, and 3,516 typed fields
+in total. A separate comparison with the Python SDK checked its 775 semantic
 models after accounting for Python's flattened response wrappers, also with
 zero field or nested-model differences. Full-field recursive JSON round trips
-and null omission were also verified for all 1,071 PHP models, including
+and null omission were also verified for all 1,088 PHP models, including
 preservation of 4-byte ASN values on the required 64-bit PHP platform.
 
-The current public Action indexes expose all 62 VM Actions, all 12 IPT Actions,
-and all 234 ZEC Actions. A page-by-page audit checked all 308 published pages:
-1,887 direct request/response fields plus 952 fields in 147 linked data
-structures. All 2,839 business fields agree with the official SDKs; no Action,
-field, or wire-type discrepancy remains in those tables.
+The official documentation has moved VM under `legacy/vm`, IPT under `ipt`,
+and ZEC under `zec`. The [sitemap](https://docs.console.zenlayer.com/api-reference/sitemap.md)
+is used to locate Action and data-type pages; overview pages no longer contain
+the complete Action indexes.
+
+All 313 supported Action pages were checked, covering 1,930 direct
+request/response fields and 960 fields in 149 published data structures.
+All 2,890 business fields agree with the official SDK schemas.
 
 ## Changes in this snapshot
 
-- IPT adds `bgpTier` for price inquiries, `RiptBgpConfig.tier` for creation,
-  and available tier/peer ASN metadata through `RiptPeerAsn`. Unset tier fields
-  are omitted so the server's existing `PREMIUM` default remains effective.
-- ZEC adds six BYO ASN Actions and two public IPv6 Actions
-  (`DescribeIpv6Addresses` and `DeleteIpv6Addresses`), plus instance
-  type/series filters and `InquiryPricePublicIpv6.amount`.
-- `DeleteIpv6Addresses` can succeed at the API level while individual items
-  fail. Callers must inspect `failedIpv6Addresses`; the SDK does not turn these
-  results into transport exceptions or retry the successful batch request.
-- VM is unchanged. No existing Action/model/field was removed or retyped,
-  and the three service API versions are unchanged. The official common
-  request implementation changed only its SDK version string, so no common
-  runtime or dependency changes are required here.
+- ZEC adds `AssociateVpcCidrBlock`, `UnassociateVpcCidrBlock`,
+  `ModifyBorderGatewayInterconnectCidr`, `DescribeEipConcurrentConnsMonitorData`,
+  and `DescribeEipNewConnsMonitorData`, together with 16 models.
+- ZEC adds `CreateZecInstancesRequest.placementGroupId`,
+  `CreateBorderGatewayRequest.interConnectCidr`,
+  `ZbgInfo.interconnectCidrEditable`, and `VpcInfo.secondaryCidrBlocks`.
+- IPT adds `DescribeIPTransitTrafficRequest.period` / `statistic`, plus
+  `marketingInfo` on modification pricing and ordering, with `MarketingInfo`.
+- VM's wire contract and all three service API versions are unchanged.
+  Go's common client changed only its SDK version string; Python's common
+  implementation is unchanged, so this update needs no transport or dependency
+  changes.
 
-## Known upstream/documentation differences
+## Upgrading applications and documented details
 
-### VPC example prose lags behind the parameter table
+### IPT model rename
 
-The [ModifyVpcAttribute reference](https://docs.console.zenlayer.com/api-reference/compute/zec/vpc-network/modifyvpcattribute)
-parameter table and Go SDK agree that `cidrBlock` is a full replacement and
-must still contain every existing subnet; unused ranges can be narrowed or
-removed. One example's explanatory paragraph still says that every original
-VPC range must be covered whenever subnets exist. Generated PHPDoc follows
-the parameter table and SDK. The PHP SDK does not add a conflicting local
-business-rule validator.
+Both official SDKs replace `RemoteIptAvailableRoutingType` with
+`IPTransitAvailableRoutingType`. PHP follows that rename: update imports,
+construction, and type references to the new name. The JSON fields are
+unchanged. The old model is removed; no compatibility alias is provided.
+
+### ZEC VPC primary and secondary CIDRs
+
+The [VPC data structure](https://docs.console.zenlayer.com/api-reference/zec/datastructure#vpcinfo)
+returns the primary CIDR in `cidrBlock` and secondary CIDRs in
+`secondaryCidrBlocks`. Applications that need every CIDR must read both.
+The SDK preserves the fields separately, as the official SDKs do.
+
+`CreateVpc` creates the primary CIDR. Use `AssociateVpcCidrBlock` to add a
+secondary CIDR and `UnassociateVpcCidrBlock` to remove one.
+[ModifyVpcAttribute](https://docs.console.zenlayer.com/api-reference/zec/vpc-network/modifyvpcattribute)
+updates only the primary CIDR; it no longer accepts a comma-separated list
+that overwrites all CIDRs. The primary-CIDR overlap and subnet constraints
+are enforced by the API, not by a separate PHP business-rule validator.
+
+The previous documentation inconsistency about full VPC CIDR replacement is
+superseded by these explicit primary/secondary semantics.
 
 ### Public documentation details preserved locally
 
-The [StopInstances reference](https://docs.console.zenlayer.com/api-reference/compute/vm/virtual-machine-instance/stopinstances)
+The [StopInstances reference](https://docs.console.zenlayer.com/api-reference/legacy/vm/virtual-machine-instance/stopinstances)
 still documents `forceShutdown` as defaulting to `true`. Go `v0.2.53` removed
 that sentence without changing the field or API version, so `bin/codegen.php`
 preserves the documented default in the generated PHPDoc.
@@ -92,14 +108,14 @@ preserves the documented default in the generated PHPDoc.
 `previousPrices`, accelerator pricing, and cross-region packet-loss fields
 are also documented. The public pages now describe the Base64-encoded
 `userData` limit as strictly less than 64 KiB after decoding, and document
-the multi-CIDR VPC quota and replacement semantics.
+the VPC primary/secondary CIDR semantics described above.
 
 The five ZEC Actions previously missing from the public index
 (`CreateSubnets`, `DeleteSubnets`, `DescribeZoneAcceleratorConfigInfos`,
 `ModifyEipBlockThreshold`, and `ReplaceNetworkInterfacePrimaryIpv4`) now have
 linked public pages.
 
-The [CreateEips reference](https://docs.console.zenlayer.com/api-reference/compute/zec/elastic-ip/createeips)
+The [CreateEips reference](https://docs.console.zenlayer.com/api-reference/zec/elastic-ip/createeips)
 and both current official SDKs now include `instanceId`, its precedence over
 `instanceIds`, and the related examples, so no local field override remains.
 

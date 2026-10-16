@@ -19,6 +19,7 @@ class ConfigEipEgressIpRequest extends AbstractModel
 {
     /**
      * EipId 要作为出口的公网弹性IP。
+     * 可通过调用 ~~DescribeEips~~ 获取。
      */
     public ?string $eipId = null;
 }

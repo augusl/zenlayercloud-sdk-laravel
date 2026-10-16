@@ -12,17 +12,20 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DescribeIpv6AddressesResponseParams
+ */
 class DescribeIpv6AddressesResponseParams extends AbstractModel
 {
     public ?string $requestId = null;
 
     /**
-     * TotalCount 满足过滤条件的公网 IPv6 总数。
+     * TotalCount 满足过滤条件的公网IPv6总数。
      */
     public ?int $totalCount = null;
 
     /**
-     * DataSet 返回的公网 IPv6 列表。
+     * DataSet 返回的公网IPv6列表。
      *
      * @var list<Ipv6AddressInfo>|null
      */

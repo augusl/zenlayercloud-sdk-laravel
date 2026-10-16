@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DeleteImagesRequest
+ */
 class DeleteImagesRequest extends AbstractModel
 {
     /**
      * ImageIds 镜像ID列表。
+     * 可通过调用 ~~DescribeImages~~ 获取。
      *
      * @var list<string>|null
      */

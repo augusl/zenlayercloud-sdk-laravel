@@ -19,11 +19,13 @@ class AssignBorderGatewayRequest extends AbstractModel
 {
     /**
      * ZbgId 边界网关ID。
+     * 可通过调用 ~~DescribeBorderGateways~~ 获取。
      */
     public ?string $zbgId = null;
 
     /**
      * NatId NAT网关ID。
+     * 可通过调用 ~~DescribeNatGateways~~ 获取。
      */
     public ?string $natId = null;
 }

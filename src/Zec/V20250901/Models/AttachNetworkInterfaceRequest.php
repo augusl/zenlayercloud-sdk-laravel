@@ -19,11 +19,13 @@ class AttachNetworkInterfaceRequest extends AbstractModel
 {
     /**
      * NicId 需要操作的网卡ID。
+     * 可通过调用 ~~DescribeNetworkInterfaces~~ 获取。
      */
     public ?string $nicId = null;
 
     /**
      * InstanceId 需要绑定的实例ID。
+     * 可通过调用 ~~DescribeInstances~~ 获取。
      */
     public ?string $instanceId = null;
 }

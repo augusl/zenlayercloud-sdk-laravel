@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class DescribeByoAsnsRequest extends AbstractModel
 {
     /**
-     * ByoAsnIds BYO ASN 的ID列表。
+     * ByoAsnIds BYO ASN的ID列表。
      * 最多支持100个ID查询。
      *
      * @var list<string>|null

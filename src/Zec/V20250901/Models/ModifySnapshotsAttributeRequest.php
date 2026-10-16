@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * ModifySnapshotsAttributeRequest
+ */
 class ModifySnapshotsAttributeRequest extends AbstractModel
 {
     /**
      * SnapshotIds 快照ID列表。
+     * 可通过调用 ~~DescribeSnapshots~~ 获取。
      *
      * @var list<string>|null
      */
@@ -29,7 +33,8 @@ class ModifySnapshotsAttributeRequest extends AbstractModel
     /**
      * RetentionTime 快照过期时间。
      * 格式为：yyyy-MM-ddTHH:mm:ssZ。
-     * 如果改成永久保留，请设置`isPermanent`=`true`，如果设置该时间必须设置为当前时间后24小时。
+     * 需要永久保留时，请设置`isPermanent`=`true`。
+     * 指定该时间时，必须晚于当前时间24小时。
      */
     public ?string $retentionTime = null;
 

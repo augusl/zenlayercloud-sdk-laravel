@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DescribeSecurityGroupRuleRequest
+ */
 class DescribeSecurityGroupRuleRequest extends AbstractModel
 {
     /**
      * SecurityGroupId 安全组ID。
+     * 可通过调用 ~~DescribeSecurityGroups~~ 获取。
      */
     public ?string $securityGroupId = null;
 }

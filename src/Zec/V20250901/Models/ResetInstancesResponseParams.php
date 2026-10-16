@@ -12,6 +12,9 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * ResetInstancesResponseParams
+ */
 class ResetInstancesResponseParams extends AbstractModel
 {
     public ?string $requestId = null;

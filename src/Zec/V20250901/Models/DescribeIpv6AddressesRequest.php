@@ -12,10 +12,13 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DescribeIpv6AddressesRequest
+ */
 class DescribeIpv6AddressesRequest extends AbstractModel
 {
     /**
-     * Ipv6Ids 按照公网 IPv6 的唯一 ID 过滤。
+     * Ipv6Ids 按照公网IPv6的唯一ID过滤。
      * 最大不能超过100个。
      *
      * @var list<string>|null
@@ -23,22 +26,23 @@ class DescribeIpv6AddressesRequest extends AbstractModel
     public ?array $ipv6Ids = null;
 
     /**
-     * RegionId 按照公网 IPv6 所属节点ID过滤。
+     * RegionId 按照公网IPv6所属节点ID过滤。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 
     /**
-     * Ipv6Cidr 按照公网 IPv6 的 CIDR 地址段过滤，该字段支持模糊匹配。
+     * Ipv6Cidr 按照公网IPv6的CIDR地址段过滤，该字段支持模糊匹配。
      */
     public ?string $ipv6Cidr = null;
 
     /**
-     * Status 按照公网 IPv6 的状态过滤。
+     * Status 按照公网IPv6的状态过滤。
      */
     public ?string $status = null;
 
     /**
-     * AssociatedIds 按照公网 IPv6 绑定的资源 ID 过滤。
+     * AssociatedIds 按照公网IPv6绑定的资源ID过滤。
      * 取值可以是网卡ID或负载均衡ID。
      *
      * @var list<string>|null
@@ -46,7 +50,7 @@ class DescribeIpv6AddressesRequest extends AbstractModel
     public ?array $associatedIds = null;
 
     /**
-     * ResourceGroupId 按照公网 IPv6 所属的资源组ID过滤。
+     * ResourceGroupId 按照公网IPv6所属的资源组ID过滤。
      */
     public ?string $resourceGroupId = null;
 

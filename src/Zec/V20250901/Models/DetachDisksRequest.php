@@ -19,6 +19,7 @@ class DetachDisksRequest extends AbstractModel
 {
     /**
      * DiskIds 要卸载的云盘ID列表。
+     * 可通过调用 ~~DescribeDisks~~ 获取。
      *
      * @var list<string>|null
      */
@@ -26,8 +27,7 @@ class DetachDisksRequest extends AbstractModel
 
     /**
      * InstanceCheckFlag 是否检测实例的运行状态。
-     * 默认为true，即实例关机才允许被卸载。
-     * 否则必须实例关机才能调用本接口。
+     * 开启时，云硬盘所挂载的实例必须已关机才允许卸载；关闭时，不检测实例状态。
      */
     public ?bool $instanceCheckFlag = null;
 

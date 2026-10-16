@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * ModifyBorderGatewaysAttributeRequest
+ */
 class ModifyBorderGatewaysAttributeRequest extends AbstractModel
 {
     /**
      * ZbgIds 边界网关的ID列表。
+     * 可通过调用 ~~DescribeBorderGateways~~ 获取。
      *
      * @var list<string>|null
      */
@@ -37,8 +41,9 @@ class ModifyBorderGatewaysAttributeRequest extends AbstractModel
     public ?string $advertisedSubnet = null;
 
     /**
-     * AdvertisedSubnetIds Subnet子网ID集合。
-     * 若要该字段生效,需将该字段(`advertisedSubnet`)值设置为PART。
+     * AdvertisedSubnetIds 要宣告的子网ID集合。
+     * 仅当`advertisedSubnet`取值为`PART`时该字段生效。
+     * 可通过调用 ~~DescribeSubnets~~ 获取。
      *
      * @var list<string>|null
      */

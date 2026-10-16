@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * CreateSnatEntryRequest
+ */
 class CreateSnatEntryRequest extends AbstractModel
 {
     /**
-     * NatGatewayId NAT网关 ID。
+     * NatGatewayId NAT网关ID。
+     * 可通过调用 ~~DescribeNatGateways~~ 获取。
      */
     public ?string $natGatewayId = null;
 
@@ -23,6 +27,7 @@ class CreateSnatEntryRequest extends AbstractModel
      * EipIds SNAT规则添加的弹性公网IP集合。
      * 指定的公网IP ID必须属于NAT网关上绑定的公网弹性IP。
      * 为空则代表与该NAT网关绑定的所有的弹性公网IP。
+     * 可通过调用 ~~DescribeEips~~ 获取。
      *
      * @var list<string>|null
      */
@@ -47,6 +52,7 @@ class CreateSnatEntryRequest extends AbstractModel
      * SubnetIds 指定子网ID集合。
      * 该参数表示该子网内的实例均可以通过`SNAT`规则访问外部网络。
      * 与`sourceCidrBlocks`必须指定其中的一种。
+     * 可通过调用 ~~DescribeSubnets~~ 获取。
      *
      * @var list<string>|null
      */

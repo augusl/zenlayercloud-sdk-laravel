@@ -19,6 +19,7 @@ class UnassignNetworkInterfaceIpv6Request extends AbstractModel
 {
     /**
      * NicId 要删除IPv6的网卡ID。
+     * 可通过调用 ~~DescribeNetworkInterfaces~~ 获取。
      */
     public ?string $nicId = null;
 }

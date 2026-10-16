@@ -12,15 +12,19 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * ModifyDnatEntryRequest
+ */
 class ModifyDnatEntryRequest extends AbstractModel
 {
     /**
-     * DnatEntryId DNAT规则 ID。
+     * DnatEntryId DNAT规则ID。
      */
     public ?string $dnatEntryId = null;
 
     /**
      * EipId 修改DNAT关联的弹性公网IP ID。
+     * 可通过调用 ~~DescribeEips~~ 获取。
      */
     public ?string $eipId = null;
 

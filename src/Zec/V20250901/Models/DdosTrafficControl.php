@@ -18,42 +18,42 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class DdosTrafficControl extends AbstractModel
 {
     /**
-     * BpsEnabled 是否开启 bps 限速。
+     * BpsEnabled 是否开启bps限速。
      */
     public ?bool $bpsEnabled = null;
 
     /**
-     * Bps bps 限速值。
+     * Bps bps限速值。
      */
     public ?int $bps = null;
 
     /**
-     * PpsEnabled 是否开启 pps 限速。
+     * PpsEnabled 是否开启pps限速。
      */
     public ?bool $ppsEnabled = null;
 
     /**
-     * Pps pps 限速值。
+     * Pps pps限速值。
      */
     public ?int $pps = null;
 
     /**
-     * SynBPSEnabled 是否开启 sync bps 限速。
+     * SynBPSEnabled 是否开启sync bps限速。
      */
     public ?bool $synBPSEnabled = null;
 
     /**
-     * SynBPS syn bps 限速值。
+     * SynBPS syn bps限速值。
      */
     public ?int $synBPS = null;
 
     /**
-     * SynPPSEnabled 是否开启 sync pps 限速。
+     * SynPPSEnabled 是否开启sync pps限速。
      */
     public ?bool $synPPSEnabled = null;
 
     /**
-     * SynPPS syn pps 限速值。
+     * SynPPS syn pps限速值。
      */
     public ?int $synPPS = null;
 }

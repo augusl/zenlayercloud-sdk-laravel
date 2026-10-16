@@ -19,6 +19,7 @@ class DescribeDiskMonitorDataRequest extends AbstractModel
 {
     /**
      * DiskId 云硬盘唯一标识ID。
+     * 可通过调用 ~~DescribeDisks~~ 获取。
      */
     public ?string $diskId = null;
 

@@ -18,7 +18,8 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class DeleteByoAsnRequest extends AbstractModel
 {
     /**
-     * ByoAsnId 待删除的 BYO ASN 的ID。
+     * ByoAsnId 待删除的BYO ASN的ID。
+     * 可通过调用 ~~DescribeByoAsns~~ 获取。
      */
     public ?string $byoAsnId = null;
 }

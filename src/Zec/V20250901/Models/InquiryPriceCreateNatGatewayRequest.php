@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * InquiryPriceCreateNatGatewayRequest
+ */
 class InquiryPriceCreateNatGatewayRequest extends AbstractModel
 {
     /**
      * RegionId 区域节点ID。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 }

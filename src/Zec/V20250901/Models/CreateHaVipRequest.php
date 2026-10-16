@@ -19,6 +19,7 @@ class CreateHaVipRequest extends AbstractModel
 {
     /**
      * SubnetId HaVip所属子网ID。
+     * 可通过调用 ~~DescribeSubnets~~ 获取。
      */
     public ?string $subnetId = null;
 
@@ -30,6 +31,7 @@ class CreateHaVipRequest extends AbstractModel
 
     /**
      * IpAddress 指定HaVip的私网IP地址。
+     * 必须在子网CIDR范围内，且不能是网关地址或已被占用的地址。
      * 不填时系统自动分配。
      */
     public ?string $ipAddress = null;
@@ -37,6 +39,7 @@ class CreateHaVipRequest extends AbstractModel
     /**
      * SecurityGroupId 安全组ID。
      * 不填时使用VPC默认安全组。
+     * 可通过调用 ~~DescribeSecurityGroups~~ 获取。
      */
     public ?string $securityGroupId = null;
 

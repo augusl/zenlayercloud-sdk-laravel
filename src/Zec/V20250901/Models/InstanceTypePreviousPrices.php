@@ -23,7 +23,7 @@ class InstanceTypePreviousPrices extends AbstractModel
     public ?PriceItem $specPrice = null;
 
     /**
-     * GpuPrice 变更前 GPU 规格的价格。
+     * GpuPrice 变更前GPU规格的价格。
      */
     public ?PriceItem $gpuPrice = null;
 

@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class DescribeIpv6CidrsRequest extends AbstractModel
 {
     /**
-     * CidrIds 一个或多个待操作的Cidr ID，根据cidrId进行过滤。
+     * CidrIds 根据IPv6 CIDR地址块ID进行过滤。
      *
      * @var list<string>|null
      */
@@ -26,6 +26,7 @@ class DescribeIpv6CidrsRequest extends AbstractModel
 
     /**
      * RegionId 根据CIDR所在的节点ID进行过滤。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 

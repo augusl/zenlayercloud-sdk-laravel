@@ -57,7 +57,7 @@ class ZoneInfo extends AbstractModel
     public ?string $cityCode = null;
 
     /**
-     * CountryCode 可用区所在的国家，ISO 3166-1 alpha-2 两字母代码（如 US、JP）。
+     * CountryCode 可用区所在的国家，ISO 3166-1 alpha-2两字母代码（如US、JP）。
      */
     public ?string $countryCode = null;
 

@@ -20,7 +20,7 @@ class DescribeUsableByoAsnsResponseParams extends AbstractModel
     public ?string $requestId = null;
 
     /**
-     * Asns 可作为 BYOIP 起源ASN使用的ASN号列表。
+     * Asns 可作为BYOIP起源ASN使用的ASN号列表。
      * 包含已通过归属验证的自带ASN，以及线下已授权给该账号的ASN。
      *
      * @var list<int>|null

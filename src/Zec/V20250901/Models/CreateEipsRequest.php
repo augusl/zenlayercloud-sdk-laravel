@@ -19,6 +19,7 @@ class CreateEipsRequest extends AbstractModel
 {
     /**
      * RegionId 创建EIP所在的节点ID。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 
@@ -63,6 +64,8 @@ class CreateEipsRequest extends AbstractModel
     /**
      * Deprecated: PrimaryIsp 已废弃，请不要使用。
      * PrimaryIsp 主公网IP的运营商。
+     * 已废弃，该参数不再生效，传值将被忽略。
+     * 请使用`networkLineType`指定线路类型。
      *
      * @deprecated
      */
@@ -77,6 +80,7 @@ class CreateEipsRequest extends AbstractModel
     /**
      * CidrId 指定CIDR ID，使用CIDR内分配弹性IP。
      * 该字段和`eipV4Type`不能同时指定。
+     * 可通过调用 ~~DescribeCidrs~~ 获取。
      */
     public ?string $cidrId = null;
 
@@ -127,12 +131,14 @@ class CreateEipsRequest extends AbstractModel
     /**
      * InstanceId 要绑定的实例ID。
      * 本批次创建的EIP全部绑定到该实例。
+     * 可通过调用 ~~DescribeInstances~~ 获取。
      */
     public ?string $instanceId = null;
 
     /**
      * InstanceIds 要绑定的实例ID集合。
      * 数量需要与`amount`字段一致，每个EIP各绑定一个不同实例；与`instanceId`同时传递时以`instanceId`为准。
+     * 可通过调用 ~~DescribeInstances~~ 获取。
      *
      * @var list<string>|null
      */

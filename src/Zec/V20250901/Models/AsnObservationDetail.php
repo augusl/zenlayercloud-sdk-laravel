@@ -13,13 +13,13 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * AsnObservationDetail ASN 观测详情。
+ * AsnObservationDetail ASN观测详情。
  */
 class AsnObservationDetail extends AbstractModel
 {
     /**
      * VerificationStatus ASN 验证状态。
-     * RIPE 观测到的任一 ASN 与申报 ASN 一致即为 agreed。
+     * RIPE 仅观测到一个 Origin ASN 且与申报 ASN 一致为 agreed；观测到多个 Origin ASN 且其中包含申报 ASN 为 moas。
      */
     public ?string $verificationStatus = null;
 
@@ -29,7 +29,7 @@ class AsnObservationDetail extends AbstractModel
     public ?string $observedPrefix = null;
 
     /**
-     * PrimarySource 主数据源名称，如 RIPE。
+     * PrimarySource 主数据源名称，如RIPE。
      */
     public ?string $primarySource = null;
 
@@ -39,24 +39,24 @@ class AsnObservationDetail extends AbstractModel
     public ?string $primaryStatus = null;
 
     /**
-     * PrimaryAsns 主数据源观测到的 ASN 列表。
+     * PrimaryAsns 主数据源观测到的ASN列表。
      *
      * @var list<int>|null
      */
     public ?array $primaryAsns = null;
 
     /**
-     * SecondarySource 该字段已下线，恒为 null。
+     * SecondarySource 该字段已下线，恒为null。
      */
     public ?string $secondarySource = null;
 
     /**
-     * SecondaryStatus 该字段已下线，恒为 null。
+     * SecondaryStatus 该字段已下线，恒为null。
      */
     public ?string $secondaryStatus = null;
 
     /**
-     * SecondaryAsns 该字段已下线，恒为 null。
+     * SecondaryAsns 该字段已下线，恒为null。
      *
      * @var list<int>|null
      */

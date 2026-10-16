@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class ImageCopyProgress extends AbstractModel
 {
     /**
-     * DestRegionId 目标区域 ID。
+     * DestRegionId 目标区域ID。
      */
     public ?string $destRegionId = null;
 

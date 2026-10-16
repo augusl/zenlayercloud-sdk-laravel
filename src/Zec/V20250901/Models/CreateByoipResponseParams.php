@@ -20,21 +20,21 @@ class CreateByoipResponseParams extends AbstractModel
     public ?string $requestId = null;
 
     /**
-     * RpkiFailedList RPKI 校验失败的 BYOIP 列表。
+     * RpkiFailedList RPKI校验失败的BYOIP列表。
      *
      * @var list<string>|null
      */
     public ?array $rpkiFailedList = null;
 
     /**
-     * IrrFailedList IRR 校验失败的 BYOIP 列表。
+     * IrrFailedList IRR校验失败的BYOIP列表。
      *
      * @var list<string>|null
      */
     public ?array $irrFailedList = null;
 
     /**
-     * ByoipIds 创建成功的 BYOIP ID 列表。
+     * ByoipIds 创建成功的BYOIP ID列表。
      *
      * @var list<string>|null
      */

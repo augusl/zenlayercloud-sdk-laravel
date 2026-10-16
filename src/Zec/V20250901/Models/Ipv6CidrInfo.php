@@ -39,7 +39,7 @@ class Ipv6CidrInfo extends AbstractModel
 
     /**
      * Source CIDR的来源。
-     * 如CONSOLE（属于zenlayer）或 BYOIP（客户自带IP）。
+     * 如CONSOLE（属于zenlayer）或BYOIP（客户自带IP）。
      */
     public ?string $source = null;
 
@@ -107,7 +107,7 @@ class Ipv6CidrInfo extends AbstractModel
     public ?Tags $tags = null;
 
     /**
-     * AsnObservation ASN 观测结果。
+     * AsnObservation ASN观测结果。
      */
     public ?AsnObservationDetail $asnObservation = null;
 

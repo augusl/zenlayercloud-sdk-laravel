@@ -19,6 +19,7 @@ class ReplaceIp extends AbstractModel
 {
     /**
      * EipId 需要替换的弹性公网IP ID。
+     * 可通过调用 ~~DescribeEips~~ 获取。
      */
     public ?string $eipId = null;
 

@@ -1,0 +1,48 @@
+<?php
+
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Derived from the official Zenlayer Cloud SDK schema and modified for
+ * PHP/Laravel. See NOTICE and UPSTREAM.md for attribution and revisions.
+ */
+
+declare(strict_types=1);
+
+namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
+
+use ZenlayerCloud\Laravel\Common\AbstractModel;
+
+/**
+ * DescribeEipConcurrentConnsMonitorDataResponseParams
+ */
+class DescribeEipConcurrentConnsMonitorDataResponseParams extends AbstractModel
+{
+    public ?string $requestId = null;
+
+    /**
+     * MaxValue 数据点的最大值。
+     */
+    public ?float $maxValue = null;
+
+    /**
+     * MinValue 数据点的最小值。
+     */
+    public ?float $minValue = null;
+
+    /**
+     * AvgValue 数据点的平均值。
+     */
+    public ?float $avgValue = null;
+
+    /**
+     * DataList 监控数据集合。
+     *
+     * @var list<MetricValue>|null
+     */
+    public ?array $dataList = null;
+
+    /** @var array<string,class-string<AbstractModel>> */
+    protected static array $_typeMap = [
+        'dataList' => MetricValue::class,
+    ];
+}

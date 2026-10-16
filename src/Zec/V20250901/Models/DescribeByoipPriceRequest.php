@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class DescribeByoipPriceRequest extends AbstractModel
 {
     /**
-     * ByoipList 待询价的 BYOIP 列表。
+     * ByoipList 待询价的BYOIP列表。
      *
      * @var list<ByoipPriceItem>|null
      */

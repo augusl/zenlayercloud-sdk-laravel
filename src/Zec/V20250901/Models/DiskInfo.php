@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class DiskInfo extends AbstractModel
 {
     /**
-     * DiskId 云盘的 ID。
+     * DiskId 云盘的ID。
      */
     public ?string $diskId = null;
 
@@ -120,7 +120,7 @@ class DiskInfo extends AbstractModel
     public ?Tags $tags = null;
 
     /**
-     * BurstingEnabled 是否开启 Burst。
+     * BurstingEnabled 是否开启Burst。
      */
     public ?bool $burstingEnabled = null;
 }

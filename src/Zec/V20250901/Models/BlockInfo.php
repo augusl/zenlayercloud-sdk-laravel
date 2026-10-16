@@ -13,12 +13,12 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * BlockInfo ip封堵信息详情
+ * BlockInfo ip封堵信息详情。
  */
 class BlockInfo extends AbstractModel
 {
     /**
-     * Ip ip。
+     * Ip 被封堵的IP地址。
      */
     public ?string $ip = null;
 

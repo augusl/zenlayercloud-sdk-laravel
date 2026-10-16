@@ -19,11 +19,13 @@ class CreateBorderGatewayRequest extends AbstractModel
 {
     /**
      * RegionId 节点ID。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 
     /**
      * VpcId VPC ID。
+     * 可通过调用 ~~DescribeVpcs~~ 获取。
      */
     public ?string $vpcId = null;
 
@@ -51,8 +53,9 @@ class CreateBorderGatewayRequest extends AbstractModel
     public ?string $advertisedSubnet = null;
 
     /**
-     * AdvertisedSubnetIds 子网ID集合。
-     * 若要该字段生效,需将该字段(`advertisedSubnet`)值设置为PART。
+     * AdvertisedSubnetIds 要宣告的子网ID集合。
+     * 仅当`advertisedSubnet`取值为`PART`时该字段生效。
+     * 可通过调用 ~~DescribeSubnets~~ 获取。
      *
      * @var list<string>|null
      */
@@ -71,6 +74,12 @@ class CreateBorderGatewayRequest extends AbstractModel
      * @var list<string>|null
      */
     public ?array $advertisedRouteIds = null;
+
+    /**
+     * InterConnectCidr 互联IP网段。
+     * 仅支持169.254.x.x/27，留空则自动分配。
+     */
+    public ?string $interConnectCidr = null;
 
     /** @var array<string,'string'|'int'|'float'|'bool'> */
     protected static array $_scalarArrayTypeMap = [

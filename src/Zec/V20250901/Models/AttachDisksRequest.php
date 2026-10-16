@@ -19,6 +19,7 @@ class AttachDisksRequest extends AbstractModel
 {
     /**
      * DiskIds 需要挂载的云硬盘ID列表。
+     * 可通过调用 ~~DescribeDisks~~ 获取。
      *
      * @var list<string>|null
      */
@@ -26,6 +27,7 @@ class AttachDisksRequest extends AbstractModel
 
     /**
      * InstanceId 被挂载的实例ID。
+     * 可通过调用 ~~DescribeInstances~~ 获取。
      */
     public ?string $instanceId = null;
 

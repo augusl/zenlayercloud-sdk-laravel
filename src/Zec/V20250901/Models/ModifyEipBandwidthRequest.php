@@ -19,6 +19,7 @@ class ModifyEipBandwidthRequest extends AbstractModel
 {
     /**
      * EipId EIP唯一标识ID。
+     * 可通过调用 ~~DescribeEips~~ 获取。
      */
     public ?string $eipId = null;
 
@@ -31,7 +32,7 @@ class ModifyEipBandwidthRequest extends AbstractModel
     /**
      * Deprecated: CommitBandwidth 已废弃，请不要使用。
      * CommitBandwidth 已废弃，该参数不再生效，传值将被忽略。
-     * 已配置突发带宽的 EIP 保持原值不变；若本次 `bandwidth` 超过原突发带宽，突发带宽将自动上调至与 `bandwidth` 一致。
+     * 已配置突发带宽的EIP保持原值不变；若本次`bandwidth`超过原突发带宽，突发带宽将自动上调至与`bandwidth`一致。
      *
      * @deprecated
      */

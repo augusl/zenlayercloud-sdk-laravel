@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class VmRegionCapacityItem extends AbstractModel
 {
     /**
-     * RegionId 节点 ID，格式如 asia-north-1。
+     * RegionId 节点ID，格式如asia-north-1。
      */
     public ?string $regionId = null;
 
@@ -29,7 +29,7 @@ class VmRegionCapacityItem extends AbstractModel
     public ?string $capacity = null;
 
     /**
-     * InstanceTypes 各实例类型的库存容量明细，不含库存为 0 的条目。
+     * InstanceTypes 各实例类型的库存容量明细，不含库存为0的条目。
      *
      * @var list<InstanceTypeCapacityItem>|null
      */

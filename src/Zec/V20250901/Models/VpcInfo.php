@@ -28,10 +28,18 @@ class VpcInfo extends AbstractModel
     public ?string $name = null;
 
     /**
-     * CidrBlock VPC的IPv4 CIDR。
-     * 如果VPC存在多个网段，则多个网段以英文逗号分隔，例如：`21.0.0.0/8,22.0.0.0/8`。
+     * CidrBlock VPC的主IPv4 CIDR。
+     * 只包含主网段，附属网段见 `secondaryCidrBlocks`。
      */
     public ?string $cidrBlock = null;
+
+    /**
+     * SecondaryCidrBlocks VPC的附属IPv4 CIDR列表。
+     * 如果没有附属网段，则为空列表。
+     *
+     * @var list<string>|null
+     */
+    public ?array $secondaryCidrBlocks = null;
 
     /**
      * Ipv6CidrBlock VPC的内网IPv6 CIDR。
@@ -88,6 +96,7 @@ class VpcInfo extends AbstractModel
 
     /** @var array<string,'string'|'int'|'float'|'bool'> */
     protected static array $_scalarArrayTypeMap = [
+        'secondaryCidrBlocks' => 'string',
         'dnsZoneIds' => 'string',
     ];
 }

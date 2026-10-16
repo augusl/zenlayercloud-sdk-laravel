@@ -32,7 +32,7 @@ class DescribeEipPriceResponseParams extends AbstractModel
 
     /**
      * BandwidthPrices 各流量方向的带宽价格明细。
-     * PathBasedBandwidthIP 线路返回多项（bandwidthPrice 为 null）；其他线路返回单项（trafficType=ALL）。
+     * PathBasedBandwidthIP线路返回多项（bandwidthPrice为null）；其他线路返回单项（trafficType=ALL）。
      *
      * @var list<BandwidthPriceResponseItem>|null
      */

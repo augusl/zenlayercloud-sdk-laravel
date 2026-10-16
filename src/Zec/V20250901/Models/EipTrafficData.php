@@ -31,8 +31,7 @@ class EipTrafficData extends AbstractModel
 
     /**
      * Time 数据时间。
-     * 按照ISO8601标准表示，并且使用UTC时间。
-     * 格式为：YYYY-MM-ddTHH:mm:ssZ。
+     * 按照ISO8601标准表示，使用UTC时间，格式为：YYYY-MM-ddTHH:mm:ssZ。
      */
     public ?string $time = null;
 }

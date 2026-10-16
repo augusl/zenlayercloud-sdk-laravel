@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class CrossRegionBandwidthPreviousPrices extends AbstractModel
 {
     /**
-     * CrossRegionBandwidthPrice 变更前内网跨区域带宽的价格。
+     * CrossRegionBandwidthPrice 变更前VPC跨区域带宽的价格。
      */
     public ?PriceItem $crossRegionBandwidthPrice = null;
 }

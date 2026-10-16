@@ -22,13 +22,19 @@ ServiceProvider 与 Facade、可发布的连接配置、基于 `Illuminate\Http\
 
 - **虚拟机 (VM)** — API 版本 `2026-04-01`，共 62 个 Action。
 - **IP Transit (IPT)** — API 版本 `2024-09-01`，共 12 个 Action。
-- **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 234 个 Action。
+- **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 239 个 Action。
 
-当前生成代码合计包含 308 个 Action、1,071 个模型类。上游版本与已知文档差异记录在
+当前生成代码合计包含 313 个 Action、1,088 个模型类。上游版本与已知文档差异记录在
 [UPSTREAM.md](UPSTREAM.md)。
 
 支持范围内的每个 Action 都映射为一个带强类型 Request / Response 的 PHP 方法，
 IDE 全程提示。
+
+升级到本次快照时，请将 IPT 的 `RemoteIptAvailableRoutingType` 引用改为官方新名称
+`IPTransitAvailableRoutingType`。ZEC 的 `cidrBlock` 现在只表示 VPC 主网段，附属网段由
+`secondaryCidrBlocks` 返回；增删附属网段请使用 `AssociateVpcCidrBlock` /
+`UnassociateVpcCidrBlock`，不再向 `ModifyVpcAttribute` 传逗号分隔的多网段列表。
+详见 [UPSTREAM.md](UPSTREAM.md)。
 
 ---
 
@@ -45,6 +51,9 @@ IDE 全程提示。
 
 64 位要求是有意保留的：官方 VM/IPT/ZEC schema 包含多处有符号 `int64` 计数器和限额，
 32 位 PHP 整数无法无损表示。
+
+框架/PHP 组合遵循 Laravel 的[官方支持范围](https://laravel.com/docs/13.x/releases#support-policy)：
+Laravel 11 对应 PHP 8.2–8.4，Laravel 12 对应 PHP 8.2–8.5，Laravel 13 对应 PHP 8.3–8.5。
 
 Laravel 11 仍为已有项目保留兼容性测试，但其官方安全维护期已经结束；新生产项目应使用
 仍在官方支持期内的 Laravel 版本。

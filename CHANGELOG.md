@@ -8,6 +8,13 @@ All notable changes to this project are documented here. This project follows
 
 ### Added
 
+- Five ZEC Actions for secondary VPC CIDRs, EIP connection monitoring, and
+  border-gateway interconnection CIDR updates, with 16 models, from Go SDK
+  `v0.2.55` / Python SDK `2.0.76`.
+- IPT traffic `period` / `statistic` parameters and modification-pricing/order
+  `marketingInfo`, including the typed `MarketingInfo` model.
+- ZEC instance placement-group selection, border-gateway interconnection CIDR
+  configuration/editability, and VPC secondary CIDR responses.
 - Eight ZEC Actions for BYO ASN management and public IPv6 listing/deletion,
   together with 27 typed models, from Go SDK `v0.2.54` / Python SDK `2.0.75`.
 - IPT BGP tier selection for pricing and creation, available tier/peer ASN
@@ -33,6 +40,14 @@ All notable changes to this project are documented here. This project follows
 
 ### Changed
 
+- Followed the official IPT model rename from `RemoteIptAvailableRoutingType`
+  to `IPTransitAvailableRoutingType`; applications must update old imports and
+  type references. No legacy alias is included.
+- Aligned VPC usage with the official primary/secondary CIDR model:
+  `cidrBlock` is the primary CIDR, `secondaryCidrBlocks` lists secondary CIDRs,
+  and `ModifyVpcAttribute` updates only the primary CIDR.
+- Synchronized to 313 Actions / 1,088 models and refreshed links to the
+  reorganized official documentation.
 - Synchronized the supported surface to 308 Actions and 1,071 models without
   changing API versions, public transport behavior, or package dependencies.
 - Updated upstream notes on VPC CIDR replacement/quotas, instance naming,
@@ -70,6 +85,8 @@ All notable changes to this project are documented here. This project follows
 
 ### Fixed
 
+- Excluded Laravel 11 / PHP 8.5 from the supported CI matrix and documented
+  the PHP ranges officially supported by each Laravel major version.
 - Reject trailing newlines in `request_client`, including after truncation,
   before constructing HTTP headers.
 - Reject control characters in Bearer tokens and access-key IDs at the HTTP

@@ -19,6 +19,7 @@ class ModifyVpcsAttributeRequest extends AbstractModel
 {
     /**
      * VpcIds 需要修改的VPC ID列表。
+     * 可通过调用 ~~DescribeVpcs~~ 获取。
      *
      * @var list<string>|null
      */

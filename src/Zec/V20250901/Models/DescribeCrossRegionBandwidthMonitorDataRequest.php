@@ -18,12 +18,13 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class DescribeCrossRegionBandwidthMonitorDataRequest extends AbstractModel
 {
     /**
-     * CrossRegionBandwidthId 要查询的内网跨区域带宽ID。
+     * CrossRegionBandwidthId 要查询的VPC跨区域带宽ID。
+     * 可通过调用 ~~DescribeCrossRegionBandwidth~~ 获取。
      */
     public ?string $crossRegionBandwidthId = null;
 
     /**
-     * MetricType 内网跨区域带宽监控指标类型。
+     * MetricType VPC跨区域带宽监控指标类型。
      */
     public ?string $metricType = null;
 

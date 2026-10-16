@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * ModifyImagesAttributesRequest
+ */
 class ModifyImagesAttributesRequest extends AbstractModel
 {
     /**
      * ImageIds 待修改属性的镜像ID列表。
+     * 可通过调用 ~~DescribeImages~~ 获取。
      *
      * @var list<string>|null
      */

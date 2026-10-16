@@ -12,6 +12,9 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DescribeUnmanagedEgressIpsRequest
+ */
 class DescribeUnmanagedEgressIpsRequest extends AbstractModel
 {
     /**
@@ -23,11 +26,13 @@ class DescribeUnmanagedEgressIpsRequest extends AbstractModel
 
     /**
      * RegionId 按照节点ID过滤。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 
     /**
      * VpcId 按照所属VPC的唯一ID过滤。
+     * 可通过调用 ~~DescribeVpcs~~ 获取。
      */
     public ?string $vpcId = null;
 

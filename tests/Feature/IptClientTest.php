@@ -42,6 +42,7 @@ final class IptClientTest extends TestCase
         self::assertSame('FRA-A', $response->response->supportSet[0]->dataCenter->dcId);
         self::assertSame('BGP', $response->response->supportSet[0]->availableRoutingTypes[0]->routingType);
         $routing = $response->response->supportSet[0]->availableRoutingTypes[0];
+        self::assertInstanceOf(Models\IPTransitAvailableRoutingType::class, $routing);
         self::assertSame(['STANDARD', 'PREMIUM'], $routing->availableBgpTiers);
         self::assertInstanceOf(Models\RiptPeerAsn::class, $routing->peerAsns[0]);
         self::assertSame('STANDARD', $routing->peerAsns[0]->tier);
@@ -115,5 +116,66 @@ final class IptClientTest extends TestCase
     public static function bgpTierProvider(): array
     {
         return ['server default' => [null], 'standard' => ['STANDARD'], 'premium' => ['PREMIUM']];
+    }
+
+    #[DataProvider('trafficSamplingProvider')]
+    public function test_traffic_sampling_parameters_preserve_server_defaults(?int $period, ?string $statistic): void
+    {
+        Http::fake(['*' => Http::response(['response' => ['requestId' => 'traffic-test']], 200)]);
+
+        ZenlayerCloud::ipt()->DescribeIPTransitTraffic(
+            (new Models\DescribeIPTransitTrafficRequest)->fromArray([
+                'iptId' => 'ipt-test', 'period' => $period, 'statistic' => $statistic,
+            ]),
+        );
+
+        $expected = ['iptId' => 'ipt-test'];
+        if ($period !== null) {
+            $expected['period'] = $period;
+        }
+        if ($statistic !== null) {
+            $expected['statistic'] = $statistic;
+        }
+        Http::assertSent(fn (Request $request): bool => $request->header('x-zc-action')[0] === 'DescribeIPTransitTraffic'
+            && $request->data() === $expected);
+        Http::assertSentCount(1);
+    }
+
+    /** @return array<string,array{?int,?string}> */
+    public static function trafficSamplingProvider(): array
+    {
+        return ['server defaults' => [null, null], 'average' => [300, 'Average'], 'maximum' => [20, 'Maximum']];
+    }
+
+    #[DataProvider('marketingInfoProvider')]
+    public function test_marketing_info_is_identical_in_pricing_and_modification(?bool $usePocVoucher): void
+    {
+        Http::fake(['*' => Http::response(['response' => ['requestId' => 'marketing-test']], 200)]);
+        $marketing = $usePocVoucher === null ? null : ['discountCode' => 'review-discount', 'usePocVoucher' => $usePocVoucher];
+        $payload = ['iptId' => 'ipt-test', 'type' => 'ADD_CIDR_BLOCK', 'marketingInfo' => $marketing];
+        $pricing = (new Models\InquiryModifyIPTransitPriceRequest)->fromArray($payload);
+        $modification = (new Models\ModifyIPTransitConfigRequest)->fromArray($payload);
+
+        ZenlayerCloud::ipt()->InquiryModifyIPTransitPrice($pricing);
+        ZenlayerCloud::ipt()->ModifyIPTransitConfig($modification);
+
+        if ($marketing === null) {
+            unset($payload['marketingInfo']);
+            self::assertNull($pricing->marketingInfo);
+        } else {
+            self::assertInstanceOf(Models\MarketingInfo::class, $pricing->marketingInfo);
+            self::assertSame($usePocVoucher, $modification->marketingInfo->usePocVoucher);
+        }
+        foreach (['InquiryModifyIPTransitPrice', 'ModifyIPTransitConfig'] as $action) {
+            Http::assertSent(fn (Request $request): bool => $request->header('x-zc-action')[0] === $action
+                && $request->data() === $payload);
+        }
+        Http::assertSentCount(2);
+    }
+
+    /** @return array<string,array{?bool}> */
+    public static function marketingInfoProvider(): array
+    {
+        return ['omitted' => [null], 'explicit false' => [false], 'voucher requested' => [true]];
     }
 }

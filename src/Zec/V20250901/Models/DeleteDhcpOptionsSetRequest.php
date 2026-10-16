@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DeleteDhcpOptionsSetRequest
+ */
 class DeleteDhcpOptionsSetRequest extends AbstractModel
 {
     /**
-     * DhcpOptionsSetId DHCP 选项集ID。
+     * DhcpOptionsSetId DHCP选项集ID。
+     * 可通过调用 ~~DescribeDhcpOptionsSets~~ 获取。
      */
     public ?string $dhcpOptionsSetId = null;
 }

@@ -20,7 +20,7 @@ class InquiryPriceCreateCrossRegionBandwidthResponseParams extends AbstractModel
     public ?string $requestId = null;
 
     /**
-     * CrossRegionBandwidthPrice 内网跨区域带宽的价格。
+     * CrossRegionBandwidthPrice VPC跨区域带宽的价格。
      */
     public ?PriceItem $crossRegionBandwidthPrice = null;
 }

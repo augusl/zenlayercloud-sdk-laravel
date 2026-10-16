@@ -33,6 +33,7 @@ class DescribePlacementGroupsRequest extends AbstractModel
 
     /**
      * ZoneId 根据置放组所属可用区筛选。
+     * 可通过调用 ~~DescribeZones~~ 获取。
      */
     public ?string $zoneId = null;
 

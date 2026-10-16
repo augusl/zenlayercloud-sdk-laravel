@@ -19,6 +19,7 @@ class DescribeSubnetRegionsRequest extends AbstractModel
 {
     /**
      * RegionIds 根据节点ID过滤。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      *
      * @var list<string>|null
      */

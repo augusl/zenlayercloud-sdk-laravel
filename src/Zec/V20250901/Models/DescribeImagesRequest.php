@@ -19,6 +19,7 @@ class DescribeImagesRequest extends AbstractModel
 {
     /**
      * ZoneId 查询镜像所在的可用区ID。
+     * 可通过调用 ~~DescribeZones~~ 获取。
      */
     public ?string $zoneId = null;
 

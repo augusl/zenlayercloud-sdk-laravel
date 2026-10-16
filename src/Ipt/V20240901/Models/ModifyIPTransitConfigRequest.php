@@ -70,4 +70,10 @@ class ModifyIPTransitConfigRequest extends AbstractModel
      * type=ADD_CIDR_BLOCK 时有效，默认 BGP_IP。
      */
     public ?string $ipNetworkType = null;
+
+    /**
+     * MarketingInfo 市场活动相关信息，含是否使用 POC 代金券。
+     * type=ADD_CIDR_BLOCK 时有效；系统不存在可用 POC 代金券时，本次追加 IP 的下单会失败。
+     */
+    public ?MarketingInfo $marketingInfo = null;
 }

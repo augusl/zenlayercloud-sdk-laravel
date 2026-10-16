@@ -19,6 +19,7 @@ class InquiryPriceChangeUnmanagedEgressIpInternetChargeTypeRequest extends Abstr
 {
     /**
      * UnmanagedEgressIpId 要操作的非托管出口IP。
+     * 可通过调用 ~~DescribeUnmanagedEgressIps~~ 获取。
      */
     public ?string $unmanagedEgressIpId = null;
 

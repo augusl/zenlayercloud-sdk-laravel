@@ -18,8 +18,9 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class DescribeVmInventoryCapacityRequest extends AbstractModel
 {
     /**
-     * RegionIds 节点 ID 列表，格式如 asia-north-1。
+     * RegionIds 节点ID列表，格式如asia-north-1。
      * 不传则返回全部节点。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      *
      * @var list<string>|null
      */

@@ -19,6 +19,7 @@ class UnassociateEipAddressRequest extends AbstractModel
 {
     /**
      * EipIds 要解绑的弹性公网IP的ID列表。
+     * 可通过调用 ~~DescribeEips~~ 获取。
      *
      * @var list<string>|null
      */

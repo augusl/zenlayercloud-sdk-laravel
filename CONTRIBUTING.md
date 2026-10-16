@@ -76,7 +76,7 @@ are regenerated from an upstream Zenlayer Cloud schema source by
 need to run the generator.
 
 ```bash
-ZENLAYER_GO_TAG=v0.2.54
+ZENLAYER_GO_TAG=v0.2.55
 git clone --branch "$ZENLAYER_GO_TAG" https://github.com/zenlayer/zenlayercloud-sdk-go.git
 composer codegen -- /path/to/zenlayercloud-sdk-go/zenlayercloud
 composer lint:fix         # Pint may want to format the new files
@@ -117,9 +117,9 @@ documented compatibility override there before adding any new override.
 6. Open the PR against `main` with a clear description, including the
    motivation and any tradeoffs.
 
-CI will run every supported combination in the PHP 8.2 / 8.3 / 8.4 / 8.5
-and Laravel 11 / 12 / 13 matrix (Laravel 13 on PHP 8.2 is excluded because
-that framework version requires PHP 8.3 or newer).
+CI follows Laravel's [official PHP support matrix](https://laravel.com/docs/13.x/releases#support-policy):
+Laravel 11 on PHP 8.2–8.4, Laravel 12 on PHP 8.2–8.5, and Laravel 13 on PHP 8.3–8.5.
+Laravel 11 on PHP 8.5 and Laravel 13 on PHP 8.2 are excluded.
 Reviewers may ask for changes — please keep the discussion friendly and
 focused on the code.
 

@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * ConfigEipProbeRequest
+ */
 class ConfigEipProbeRequest extends AbstractModel
 {
     /**
      * EipId 配置公网探测的EIP ID。
+     * 可通过调用 ~~DescribeEips~~ 获取。
      */
     public ?string $eipId = null;
 
@@ -25,7 +29,8 @@ class ConfigEipProbeRequest extends AbstractModel
     public ?bool $disableIcmp = null;
 
     /**
-     * TcpPort TCP探测端口, [1-65535]。
+     * TcpPort TCP探测端口。
+     * 取值范围：1~65535。
      * 不传表示不开启。
      */
     public ?int $tcpPort = null;

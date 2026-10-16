@@ -18,13 +18,13 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class InstanceTypeCapacityItem extends AbstractModel
 {
     /**
-     * InstanceType CPU 实例类型，如 z2a、z2i、z4a。
+     * InstanceType CPU实例类型，如z2a、z2i、z4a。
      */
     public ?string $instanceType = null;
 
     /**
-     * GpuSpec GPU 型号，如 z4a.g.C49。
-     * 仅 GPU 实例返回此字段。
+     * GpuSpec GPU型号，如z4a.g.C49。
+     * 仅GPU实例返回此字段。
      */
     public ?string $gpuSpec = null;
 

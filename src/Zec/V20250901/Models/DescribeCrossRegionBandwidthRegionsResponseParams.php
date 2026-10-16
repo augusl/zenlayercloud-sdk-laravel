@@ -20,7 +20,7 @@ class DescribeCrossRegionBandwidthRegionsResponseParams extends AbstractModel
     public ?string $requestId = null;
 
     /**
-     * RegionIds 支持售卖内网跨区域带宽的节点ID集合。
+     * RegionIds 支持售卖VPC跨区域带宽的节点ID集合。
      *
      * @var list<string>|null
      */

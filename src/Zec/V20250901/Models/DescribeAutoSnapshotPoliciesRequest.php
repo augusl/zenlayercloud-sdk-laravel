@@ -26,6 +26,7 @@ class DescribeAutoSnapshotPoliciesRequest extends AbstractModel
 
     /**
      * ZoneIds 根据自动快照策略的可用区ID进行过滤。
+     * 可通过调用 ~~DescribeZones~~ 获取。
      *
      * @var list<string>|null
      */

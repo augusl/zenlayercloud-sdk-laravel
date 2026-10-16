@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class QosPolicyGroupMember extends AbstractModel
 {
     /**
-     * ResourceId IP 资源的ID。
+     * ResourceId IP资源的ID。
      */
     public ?string $resourceId = null;
 

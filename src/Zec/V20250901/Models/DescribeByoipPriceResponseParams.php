@@ -20,7 +20,7 @@ class DescribeByoipPriceResponseParams extends AbstractModel
     public ?string $requestId = null;
 
     /**
-     * ByoipPrices BYOIP 价格列表。
+     * ByoipPrices BYOIP价格列表。
      *
      * @var list<PriceItem>|null
      */

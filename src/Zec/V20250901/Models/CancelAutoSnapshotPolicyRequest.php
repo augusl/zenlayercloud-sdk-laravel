@@ -12,15 +12,20 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * CancelAutoSnapshotPolicyRequest
+ */
 class CancelAutoSnapshotPolicyRequest extends AbstractModel
 {
     /**
      * AutoSnapshotPolicyId 自动快照策略ID。
+     * 可通过调用 ~~DescribeAutoSnapshotPolicies~~ 获取。
      */
     public ?string $autoSnapshotPolicyId = null;
 
     /**
      * DiskIds 要移除的磁盘ID列表。
+     * 可通过调用 ~~DescribeDisks~~ 获取。
      *
      * @var list<string>|null
      */

@@ -20,12 +20,12 @@ class DescribeCrossRegionBandwidthResponseParams extends AbstractModel
     public ?string $requestId = null;
 
     /**
-     * TotalCount 匹配筛选条件的内网跨区域带宽的总数量。
+     * TotalCount 匹配筛选条件的VPC跨区域带宽的总数量。
      */
     public ?int $totalCount = null;
 
     /**
-     * DataSet 返回分页的内网跨区域带宽的集合数据。
+     * DataSet 返回分页的VPC跨区域带宽的集合数据。
      *
      * @var list<CrossRegionBandwidthInfo>|null
      */

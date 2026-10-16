@@ -19,6 +19,7 @@ class ModifyEipTrafficPackageRequest extends AbstractModel
 {
     /**
      * EipId EIP唯一标识ID。
+     * 可通过调用 ~~DescribeEips~~ 获取。
      */
     public ?string $eipId = null;
 

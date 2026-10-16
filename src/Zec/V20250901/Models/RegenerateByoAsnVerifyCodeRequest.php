@@ -18,7 +18,8 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class RegenerateByoAsnVerifyCodeRequest extends AbstractModel
 {
     /**
-     * ByoAsnId 待重新生成校验码的 BYO ASN 的ID。
+     * ByoAsnId 待重新生成校验码的BYO ASN的ID。
+     * 可通过调用 ~~DescribeByoAsns~~ 获取。
      */
     public ?string $byoAsnId = null;
 }

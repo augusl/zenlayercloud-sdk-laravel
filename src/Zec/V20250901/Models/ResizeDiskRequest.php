@@ -12,11 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * ResizeDiskRequest
+ */
 class ResizeDiskRequest extends AbstractModel
 {
     /**
      * DiskId 云硬盘ID。
-     * 通过DescribeDisks接口查询。
+     * 通过 ~~DescribeDisks~~ 接口查询。
      */
     public ?string $diskId = null;
 

@@ -19,6 +19,7 @@ class DeleteSubnetRequest extends AbstractModel
 {
     /**
      * SubnetId 要删除的子网ID。
+     * 可通过调用 ~~DescribeSubnets~~ 获取。
      */
     public ?string $subnetId = null;
 }

@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DescribeNetworkInterfacePublicIPv6Request
+ */
 class DescribeNetworkInterfacePublicIPv6Request extends AbstractModel
 {
     /**
      * NicId 网卡ID。
+     * 可通过调用 ~~DescribeNetworkInterfaces~~ 获取。
      */
     public ?string $nicId = null;
 }

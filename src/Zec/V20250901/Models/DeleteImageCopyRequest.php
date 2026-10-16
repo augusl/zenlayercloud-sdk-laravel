@@ -12,15 +12,20 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DeleteImageCopyRequest
+ */
 class DeleteImageCopyRequest extends AbstractModel
 {
     /**
-     * ImageId 自定义镜像 ID。
+     * ImageId 自定义镜像ID。
+     * 可通过调用 ~~DescribeImages~~ 获取。
      */
     public ?string $imageId = null;
 
     /**
-     * RegionIds 待删除副本的区域 ID 列表。
+     * RegionIds 待删除副本的区域ID列表。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      *
      * @var list<string>|null
      */

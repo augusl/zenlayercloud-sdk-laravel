@@ -19,6 +19,7 @@ class DescribeEipPriceRequest extends AbstractModel
 {
     /**
      * RegionId 创建EIP所在的节点ID。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 
@@ -63,6 +64,7 @@ class DescribeEipPriceRequest extends AbstractModel
     /**
      * CidrId 指定CIDR ID，使用CIDR内分配弹性IP。
      * 该字段和`eipV4Type`不能同时指定。
+     * 可通过调用 ~~DescribeCidrs~~ 获取。
      */
     public ?string $cidrId = null;
 

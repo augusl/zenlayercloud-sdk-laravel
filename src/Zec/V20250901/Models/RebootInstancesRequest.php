@@ -19,6 +19,7 @@ class RebootInstancesRequest extends AbstractModel
 {
     /**
      * InstanceIds 待重启虚拟机实例ID列表。
+     * 可通过调用 ~~DescribeInstances~~ 获取。
      *
      * @var list<string>|null
      */

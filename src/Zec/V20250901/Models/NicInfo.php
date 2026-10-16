@@ -79,7 +79,7 @@ class NicInfo extends AbstractModel
     public ?string $ipv6Cidr = null;
 
     /**
-     * SecondaryIpv4s 网卡上的辅助 IPv4 地址。
+     * SecondaryIpv4s 网卡上的辅助IPv4地址。
      *
      * @var list<string>|null
      */

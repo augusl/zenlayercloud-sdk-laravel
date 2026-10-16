@@ -19,6 +19,7 @@ class RenewCidrRequest extends AbstractModel
 {
     /**
      * CidrId 要恢复的CIDR ID。
+     * 可通过调用 ~~DescribeCidrs~~ 获取。
      */
     public ?string $cidrId = null;
 }

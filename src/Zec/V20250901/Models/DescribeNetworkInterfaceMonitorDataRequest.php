@@ -19,6 +19,7 @@ class DescribeNetworkInterfaceMonitorDataRequest extends AbstractModel
 {
     /**
      * NicId 网卡唯一标识ID。
+     * 可通过调用 ~~DescribeNetworkInterfaces~~ 获取。
      */
     public ?string $nicId = null;
 

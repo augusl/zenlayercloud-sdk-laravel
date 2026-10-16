@@ -20,7 +20,7 @@ class RegenerateByoAsnVerifyCodeResponseParams extends AbstractModel
     public ?string $requestId = null;
 
     /**
-     * ByoAsnId BYO ASN 的ID。
+     * ByoAsnId BYO ASN的ID。
      */
     public ?string $byoAsnId = null;
 
@@ -36,13 +36,13 @@ class RegenerateByoAsnVerifyCodeResponseParams extends AbstractModel
 
     /**
      * VerifyCode 新的校验码。
-     * 旧校验码立即失效，需要客户将新校验码写入 RIR 上该ASN的 aut-num 对象。
+     * 旧校验码立即失效，需要客户将新校验码写入RIR上该ASN的aut-num对象。
      */
     public ?string $verifyCode = null;
 
     /**
-     * ExportDeclaration 完整的 export 声明语句。
-     * 客户直接复制该语句更新 RIR 上该ASN的 aut-num 对象即可。
+     * ExportDeclaration 完整的export声明语句。
+     * 客户直接复制该语句更新RIR上该ASN的aut-num对象即可。
      */
     public ?string $exportDeclaration = null;
 }

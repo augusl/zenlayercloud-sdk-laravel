@@ -19,6 +19,7 @@ class DescribeInterconnectBorderGatewayRegionsRequest extends AbstractModel
 {
     /**
      * RegionId 节点ID，用于过滤指定节点。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 

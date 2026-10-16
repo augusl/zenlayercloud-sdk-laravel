@@ -20,6 +20,7 @@ class CreatePlacementGroupRequest extends AbstractModel
     /**
      * ZoneId 置放组所属可用区ID。
      * 置放组的管理范围为zone维度。
+     * 可通过调用 ~~DescribeZones~~ 获取。
      */
     public ?string $zoneId = null;
 
@@ -32,7 +33,7 @@ class CreatePlacementGroupRequest extends AbstractModel
 
     /**
      * PartitionNum 置放组的分区数。
-     * 最小是2，默认为3。
+     * 最小是2。
      * 决定置放组最大可关联实例数。
      */
     public ?int $partitionNum = null;

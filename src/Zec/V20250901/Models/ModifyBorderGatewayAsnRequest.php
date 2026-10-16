@@ -19,6 +19,7 @@ class ModifyBorderGatewayAsnRequest extends AbstractModel
 {
     /**
      * ZbgId 要修改的边界网关ID。
+     * 可通过调用 ~~DescribeBorderGateways~~ 获取。
      */
     public ?string $zbgId = null;
 

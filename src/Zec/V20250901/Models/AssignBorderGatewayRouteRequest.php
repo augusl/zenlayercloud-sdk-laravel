@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * AssignBorderGatewayRouteRequest
+ */
 class AssignBorderGatewayRouteRequest extends AbstractModel
 {
     /**
      * ZbgId 边界网关ID。
+     * 可通过调用 ~~DescribeBorderGateways~~ 获取。
      */
     public ?string $zbgId = null;
 

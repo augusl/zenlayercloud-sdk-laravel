@@ -19,6 +19,7 @@ class ModifyCidrAttributeRequest extends AbstractModel
 {
     /**
      * CidrId 要修改CIDR地址段的ID。
+     * 可通过调用 ~~DescribeCidrs~~ 获取。
      */
     public ?string $cidrId = null;
 

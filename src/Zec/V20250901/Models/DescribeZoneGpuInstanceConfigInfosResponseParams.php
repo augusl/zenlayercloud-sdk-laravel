@@ -20,7 +20,7 @@ class DescribeZoneGpuInstanceConfigInfosResponseParams extends AbstractModel
     public ?string $requestId = null;
 
     /**
-     * InstanceTypeQuotaSet GPU 规格售卖信息列表。
+     * InstanceTypeQuotaSet GPU规格售卖信息列表。
      *
      * @var list<GpuInstanceTypeQuotaItem>|null
      */

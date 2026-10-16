@@ -220,4 +220,122 @@ final class ZecClientTest extends TestCase
             ]]],
         ];
     }
+
+    /** @param array<string,string> $payload */
+    #[DataProvider('networkMutationProvider')]
+    public function test_new_network_actions_preserve_official_payload_and_response(string $action, array $payload): void
+    {
+        Http::fake(['*' => Http::response(['requestId' => 'outer-test', 'response' => ['requestId' => 'inner-test']], 200)]);
+        $class = 'ZenlayerCloud\\Laravel\\Zec\\V20250901\\Models\\'.$action.'Request';
+
+        $response = ZenlayerCloud::zec()->{$action}((new $class)->fromArray($payload));
+
+        self::assertSame('outer-test', $response->requestId);
+        self::assertSame('inner-test', $response->response->requestId);
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://console.zenlayer.com/api/v2/zec'
+            && $request->header('x-zc-action')[0] === $action
+            && $request->header('x-zc-service')[0] === 'zec'
+            && $request->header('x-zc-version')[0] === '2025-09-01'
+            && $request->data() === $payload);
+        Http::assertSentCount(1);
+    }
+
+    /** @return array<string,array{string,array<string,string>}> */
+    public static function networkMutationProvider(): array
+    {
+        return [
+            'associate secondary CIDR' => ['AssociateVpcCidrBlock', ['vpcId' => 'vpc-test', 'cidrBlock' => '10.1.0.0/16']],
+            'unassociate secondary CIDR' => ['UnassociateVpcCidrBlock', ['vpcId' => 'vpc-test', 'cidrBlock' => '10.1.0.0/16']],
+            'modify interconnect CIDR' => ['ModifyBorderGatewayInterconnectCidr', ['zbgId' => 'zbg-test', 'interConnectCidr' => '169.254.0.0/27']],
+        ];
+    }
+
+    public function test_vpcs_preserve_primary_and_secondary_cidrs_separately(): void
+    {
+        Http::fake(['*' => Http::response(['response' => ['totalCount' => 2, 'dataSet' => [
+            ['vpcId' => 'vpc-secondary', 'cidrBlock' => '10.0.0.0/16', 'secondaryCidrBlocks' => ['10.1.0.0/16', '10.2.0.0/16']],
+            ['vpcId' => 'vpc-primary', 'cidrBlock' => '10.3.0.0/16', 'secondaryCidrBlocks' => []],
+        ]]], 200)]);
+
+        $response = ZenlayerCloud::zec()->DescribeVpcs(new Models\DescribeVpcsRequest);
+
+        self::assertInstanceOf(Models\VpcInfo::class, $response->response->dataSet[0]);
+        self::assertSame('10.0.0.0/16', $response->response->dataSet[0]->cidrBlock);
+        self::assertSame(['10.1.0.0/16', '10.2.0.0/16'], $response->response->dataSet[0]->secondaryCidrBlocks);
+        self::assertSame([], $response->response->dataSet[1]->secondaryCidrBlocks);
+    }
+
+    public function test_instance_placement_group_and_border_gateway_fields_are_preserved(): void
+    {
+        Http::fake(['*' => Http::response(['response' => ['requestId' => 'create-test']], 200)]);
+        $instance = ['zoneId' => 'SEL-A', 'placementGroupId' => 'pg-test'];
+        $gateway = ['regionId' => 'asia-east-1', 'interConnectCidr' => '169.254.0.0/27'];
+
+        ZenlayerCloud::zec()->CreateZecInstances((new Models\CreateZecInstancesRequest)->fromArray($instance));
+        ZenlayerCloud::zec()->CreateBorderGateway((new Models\CreateBorderGatewayRequest)->fromArray($gateway));
+
+        Http::assertSent(fn (Request $request): bool => $request->header('x-zc-action')[0] === 'CreateZecInstances'
+            && $request->data() == $instance);
+        Http::assertSent(fn (Request $request): bool => $request->header('x-zc-action')[0] === 'CreateBorderGateway'
+            && $request->data() == $gateway);
+        self::assertSame('{}', (new Models\CreateZecInstancesRequest)->toJson());
+        self::assertSame('{}', (new Models\CreateBorderGatewayRequest)->toJson());
+        Http::assertSentCount(2);
+    }
+
+    public function test_border_gateway_editable_flag_preserves_false(): void
+    {
+        Http::fake(['*' => Http::response(['response' => ['dataSet' => [[
+            'zbgId' => 'zbg-test', 'interConnectCidr' => '169.254.0.0/27', 'interconnectCidrEditable' => false,
+        ]]]], 200)]);
+
+        $response = ZenlayerCloud::zec()->DescribeBorderGateways(new Models\DescribeBorderGatewaysRequest);
+        $gateway = $response->response->dataSet[0];
+
+        self::assertInstanceOf(Models\ZbgInfo::class, $gateway);
+        self::assertFalse($gateway->interconnectCidrEditable);
+        self::assertSame('169.254.0.0/27', $gateway->interConnectCidr);
+    }
+
+    public function test_eip_concurrent_connections_hydrate_float_and_null_metrics(): void
+    {
+        Http::fake(['*' => Http::response(['response' => [
+            'maxValue' => 1.5, 'minValue' => 0, 'avgValue' => 0.5,
+            'dataList' => [['time' => '2026-10-17T00:00:00Z', 'value' => 0], ['time' => '2026-10-17T00:01:00Z', 'value' => null]],
+        ]], 200)]);
+        $payload = ['instanceId' => 'instance-test', 'metricType' => 'CONCURRENT_CONNECTIONS', 'step' => 1];
+
+        $response = ZenlayerCloud::zec()->DescribeEipConcurrentConnsMonitorData(
+            (new Models\DescribeEipConcurrentConnsMonitorDataRequest)->fromArray($payload),
+        );
+
+        self::assertSame(1.5, $response->response->maxValue);
+        self::assertSame(0.0, $response->response->minValue);
+        self::assertInstanceOf(Models\MetricValue::class, $response->response->dataList[0]);
+        self::assertSame(0.0, $response->response->dataList[0]->value);
+        self::assertNull($response->response->dataList[1]->value);
+        Http::assertSent(fn (Request $request): bool => $request->header('x-zc-action')[0] === 'DescribeEipConcurrentConnsMonitorData'
+            && $request->data() === $payload);
+    }
+
+    public function test_eip_new_connections_hydrate_typed_directional_metrics(): void
+    {
+        Http::fake(['*' => Http::response(['response' => [
+            'allMaxValue' => 1.5, 'allMinValue' => 0, 'inAvgValue' => 0.5, 'outAvgValue' => null,
+            'dataList' => [['time' => '2026-10-17T00:00:00Z', 'allValue' => 1.5, 'inValue' => 0, 'outValue' => null]],
+        ]], 200)]);
+        $payload = ['eipId' => 'eip-test', 'metricType' => 'NEW_CONNECTIONS', 'step' => 5];
+
+        $response = ZenlayerCloud::zec()->DescribeEipNewConnsMonitorData(
+            (new Models\DescribeEipNewConnsMonitorDataRequest)->fromArray($payload),
+        );
+
+        self::assertSame(1.5, $response->response->allMaxValue);
+        self::assertSame(0.0, $response->response->allMinValue);
+        self::assertInstanceOf(Models\NewConnsValue::class, $response->response->dataList[0]);
+        self::assertSame(0.0, $response->response->dataList[0]->inValue);
+        self::assertNull($response->response->dataList[0]->outValue);
+        Http::assertSent(fn (Request $request): bool => $request->header('x-zc-action')[0] === 'DescribeEipNewConnsMonitorData'
+            && $request->data() === $payload);
+    }
 }

@@ -19,6 +19,7 @@ class ModifySubnetsAttributeRequest extends AbstractModel
 {
     /**
      * SubnetIds 需要修改的子网ID列表。
+     * 可通过调用 ~~DescribeSubnets~~ 获取。
      *
      * @var list<string>|null
      */

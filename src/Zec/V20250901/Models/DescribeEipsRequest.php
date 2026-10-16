@@ -12,32 +12,36 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DescribeEipsRequest
+ */
 class DescribeEipsRequest extends AbstractModel
 {
     /**
-     * EipIds 按照 EIP 的唯一 ID 过滤。
+     * EipIds 按照EIP的唯一ID过滤。
      *
      * @var list<string>|null
      */
     public ?array $eipIds = null;
 
     /**
-     * RegionId 按照 EIP 所属节点ID过滤。
+     * RegionId 按照EIP所属节点ID过滤。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 
     /**
-     * Name 按照 EIP 的显示名称过滤，该字段支持模糊匹配。
+     * Name 按照EIP的显示名称过滤，该字段支持模糊匹配。
      */
     public ?string $name = null;
 
     /**
-     * Status 按照 EIP 的状态过滤。
+     * Status 按照EIP的状态过滤。
      */
     public ?string $status = null;
 
     /**
-     * IsDefault 按照 EIP 的默认属性进行过滤。
+     * IsDefault 按照EIP的默认属性进行过滤。
      */
     public ?bool $isDefault = null;
 
@@ -53,42 +57,44 @@ class DescribeEipsRequest extends AbstractModel
     public ?int $pageNum = null;
 
     /**
-     * PrivateIpAddress 按照 EIP 绑定的内网 IP 过滤。
+     * PrivateIpAddress 按照EIP绑定的内网IP过滤。
      */
     public ?string $privateIpAddress = null;
 
     /**
-     * IpAddress 按照 EIP 的 IP 过滤。
+     * IpAddress 按照EIP的IP过滤。
      */
     public ?string $ipAddress = null;
 
     /**
-     * IpAddresses 按照 EIP 的 IP列表过滤。
+     * IpAddresses 按照EIP的IP列表过滤。
      *
      * @var list<string>|null
      */
     public ?array $ipAddresses = null;
 
     /**
-     * InstanceId 按照 EIP 绑定的实例 ID 过滤。
-     * 该字段过滤出该实例所绑定的网卡上的 EIP。
+     * InstanceId 按照EIP绑定的实例ID过滤。
+     * 该字段过滤出该实例所绑定的网卡上的EIP。
+     * 可通过调用 ~~DescribeInstances~~ 获取。
      */
     public ?string $instanceId = null;
 
     /**
-     * AssociatedId 按照 EIP 绑定的资源 ID 过滤。
+     * AssociatedId 按照EIP绑定的资源ID过滤。
      */
     public ?string $associatedId = null;
 
     /**
-     * CidrIds 按照 EIP 所属的CIDR ID列表 过滤。
+     * CidrIds 按照EIP所属的CIDR ID过滤。
+     * 可通过调用 ~~DescribeCidrs~~ 获取。
      *
      * @var list<string>|null
      */
     public ?array $cidrIds = null;
 
     /**
-     * ResourceGroupId 按照 EIP 所属的资源组ID过滤。
+     * ResourceGroupId 按照EIP所属的资源组ID过滤。
      */
     public ?string $resourceGroupId = null;
 
@@ -109,13 +115,13 @@ class DescribeEipsRequest extends AbstractModel
     public ?array $tags = null;
 
     /**
-     * InternetChargeType 按照 EIP 的网络计费方式过滤。
+     * InternetChargeType 按照EIP的网络计费方式过滤。
      */
     public ?string $internetChargeType = null;
 
     /**
-     * PrefixLength 按照 EIP 的掩码长度过滤。
-     * 32 表示单 IP，20–31 表示网段。
+     * PrefixLength 按照EIP的掩码长度过滤。
+     * 32表示单IP，20–31表示网段。
      */
     public ?int $prefixLength = null;
 

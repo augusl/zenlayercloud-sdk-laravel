@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class DnatEntry extends AbstractModel
 {
     /**
-     * DnatEntryId DNAT规则 ID。
+     * DnatEntryId DNAT规则ID。
      */
     public ?string $dnatEntryId = null;
 

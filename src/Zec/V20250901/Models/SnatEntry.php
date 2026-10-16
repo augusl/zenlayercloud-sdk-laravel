@@ -18,13 +18,14 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class SnatEntry extends AbstractModel
 {
     /**
-     * SnatEntryId SNAT规则 ID。
+     * SnatEntryId SNAT规则ID。
      */
     public ?string $snatEntryId = null;
 
     /**
-     * Cidrs CIDR网段，不传默认是0.0.0.0/0。
-     * `cidrs` 和 `snatSubnets` 不会同时存在。
+     * Cidrs CIDR网段。
+     * 不传时默认为`0.0.0.0/0`。
+     * `cidrs`和`snatSubnets`不会同时存在。
      *
      * @var list<string>|null
      */

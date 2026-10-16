@@ -19,6 +19,7 @@ class InquiryPriceCreateDisksRequest extends AbstractModel
 {
     /**
      * ZoneId 可用区ID。
+     * 可通过调用 ~~DescribeZones~~ 获取。
      */
     public ?string $zoneId = null;
 
@@ -35,9 +36,8 @@ class InquiryPriceCreateDisksRequest extends AbstractModel
 
     /**
      * DiskCategory 云硬盘种类。
-     * Basic NVMe SSD: 经济型 NVMe SSD。
-     * Standard NVMe SSD: 标准型 NVMe SSD。
-     * 默认为Standard NVMe SSD。
+     * Basic NVMe SSD: 经济型NVMe SSD。
+     * Standard NVMe SSD: 标准型NVMe SSD。
      */
     public ?string $diskCategory = null;
 }

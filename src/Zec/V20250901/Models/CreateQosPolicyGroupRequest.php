@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * CreateQosPolicyGroupRequest
+ */
 class CreateQosPolicyGroupRequest extends AbstractModel
 {
     /**
      * RegionId QoS策略组所在地域ID。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 

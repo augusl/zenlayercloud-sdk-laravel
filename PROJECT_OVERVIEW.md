@@ -10,9 +10,9 @@ aligned with Zenlayer's official Go and Python SDKs.
 | Service | API version | Actions | Models |
 |---------|-------------|--------:|-------:|
 | Virtual Machine (VM) | `2026-04-01` | 62 | 213 |
-| IP Transit (IPT) | `2024-09-01` | 12 | 60 |
-| Elastic Compute (ZEC) | `2025-09-01` | 234 | 798 |
-| **Total** | | **308** | **1,071** |
+| IP Transit (IPT) | `2024-09-01` | 12 | 61 |
+| Elastic Compute (ZEC) | `2025-09-01` | 239 | 814 |
+| **Total** | | **313** | **1,088** |
 
 Only the latest VM, IPT, and ZEC versions are shipped. Other Zenlayer services
 and older API versions are deliberately out of scope. Exact upstream revisions

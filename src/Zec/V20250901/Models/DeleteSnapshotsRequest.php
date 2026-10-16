@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DeleteSnapshotsRequest
+ */
 class DeleteSnapshotsRequest extends AbstractModel
 {
     /**
      * SnapshotIds 快照ID列表。
+     * 可通过调用 ~~DescribeSnapshots~~ 获取。
      *
      * @var list<string>|null
      */

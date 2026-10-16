@@ -58,4 +58,10 @@ class InquiryModifyIPTransitPriceRequest extends AbstractModel
      * type=ADD_CIDR_BLOCK 时有效，默认 BGP_IP。
      */
     public ?string $ipNetworkType = null;
+
+    /**
+     * MarketingInfo 市场活动相关信息，含是否使用 POC 代金券。
+     * type=ADD_CIDR_BLOCK 时有效；询价口径需与实际下单一致。
+     */
+    public ?MarketingInfo $marketingInfo = null;
 }

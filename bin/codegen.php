@@ -371,7 +371,7 @@ final class DocumentedSchemaOverrides
             }
 
             $field['doc'] = "ForceShutdown 是否强制关机。\n"
-                .'不指定时默认为 true。详见 https://docs.console.zenlayer.com/api-reference/compute/vm/virtual-machine-instance/stopinstances';
+                .'不指定时默认为 true。详见 https://docs.console.zenlayer.com/api-reference/legacy/vm/virtual-machine-instance/stopinstances';
 
             return;
         }
@@ -676,7 +676,7 @@ $jobs = [
         'outClient' => ROOT.'/src/Vm/V20260401/VmClient.php',
         'outModels' => ROOT.'/src/Vm/V20260401/Models',
         'description' => 'Zenlayer Cloud Virtual Machine (VM)',
-        'referenceUrl' => 'https://docs.console.zenlayer.com/api-reference/compute/vm',
+        'referenceUrl' => 'https://docs.console.zenlayer.com/api-reference/legacy/vm/overview',
     ],
     [
         'modelsSrc' => $schemaSrc.'/ipt20240901/models.go',
@@ -688,7 +688,7 @@ $jobs = [
         'outClient' => ROOT.'/src/Ipt/V20240901/IptClient.php',
         'outModels' => ROOT.'/src/Ipt/V20240901/Models',
         'description' => 'Zenlayer Cloud IP Transit (IPT)',
-        'referenceUrl' => 'https://docs.console.zenlayer.com/api-reference/cn/networking/ipt',
+        'referenceUrl' => 'https://docs.console.zenlayer.com/api-reference/ipt/overview',
     ],
     [
         'modelsSrc' => $schemaSrc.'/zec20250901/models.go',
@@ -700,7 +700,7 @@ $jobs = [
         'outClient' => ROOT.'/src/Zec/V20250901/ZecClient.php',
         'outModels' => ROOT.'/src/Zec/V20250901/Models',
         'description' => 'Zenlayer Cloud Elastic Compute (ZEC)',
-        'referenceUrl' => 'https://docs.console.zenlayer.com/api-reference/compute/zec',
+        'referenceUrl' => 'https://docs.console.zenlayer.com/api-reference/zec/overview',
     ],
 ];
 

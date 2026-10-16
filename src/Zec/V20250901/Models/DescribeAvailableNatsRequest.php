@@ -19,6 +19,7 @@ class DescribeAvailableNatsRequest extends AbstractModel
 {
     /**
      * ZbgId 要查询需要绑定的边界网关ID。
+     * 可通过调用 ~~DescribeBorderGateways~~ 获取。
      */
     public ?string $zbgId = null;
 }

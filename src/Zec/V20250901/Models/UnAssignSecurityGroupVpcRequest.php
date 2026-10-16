@@ -19,6 +19,7 @@ class UnAssignSecurityGroupVpcRequest extends AbstractModel
 {
     /**
      * VpcId 要解绑的VPC ID。
+     * 可通过调用 ~~DescribeVpcs~~ 获取。
      */
     public ?string $vpcId = null;
 }

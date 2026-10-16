@@ -25,12 +25,12 @@ class IPTransitDatacenter extends AbstractModel
     /**
      * AvailableRoutingTypes 该数据中心可用的路由模式列表。
      *
-     * @var list<RemoteIptAvailableRoutingType>|null
+     * @var list<IPTransitAvailableRoutingType>|null
      */
     public ?array $availableRoutingTypes = null;
 
     /** @var array<string,class-string<AbstractModel>> */
     protected static array $_typeMap = [
-        'availableRoutingTypes' => RemoteIptAvailableRoutingType::class,
+        'availableRoutingTypes' => IPTransitAvailableRoutingType::class,
     ];
 }

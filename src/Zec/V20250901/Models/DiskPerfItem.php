@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class DiskPerfItem extends AbstractModel
 {
     /**
-     * MaxIops 未开启突发时的最大 IOPS。
+     * MaxIops 未开启突发时的最大IOPS。
      */
     public ?int $maxIops = null;
 
@@ -28,7 +28,7 @@ class DiskPerfItem extends AbstractModel
     public ?int $maxBandwidth = null;
 
     /**
-     * IopsBurst 开启突发后的 IOPS。
+     * IopsBurst 开启突发后的IOPS。
      */
     public ?int $iopsBurst = null;
 

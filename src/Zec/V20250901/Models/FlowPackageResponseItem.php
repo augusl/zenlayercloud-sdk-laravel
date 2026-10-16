@@ -24,7 +24,7 @@ class FlowPackageResponseItem extends AbstractModel
     public ?string $trafficType = null;
 
     /**
-     * FlowPackage 该方向的流量包大小，单位 TB。
+     * FlowPackage 该方向的流量包大小，单位TB。
      */
     public ?float $flowPackage = null;
 }

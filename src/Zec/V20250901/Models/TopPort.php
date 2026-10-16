@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class TopPort extends AbstractModel
 {
     /**
-     * Protocol 协议。
+     * Protocol 攻击流量的协议。
      */
     public ?string $protocol = null;
 

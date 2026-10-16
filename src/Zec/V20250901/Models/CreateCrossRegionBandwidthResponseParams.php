@@ -25,7 +25,7 @@ class CreateCrossRegionBandwidthResponseParams extends AbstractModel
     public ?string $orderNumber = null;
 
     /**
-     * CrossRegionBandwidthId 内网跨区域带宽唯一ID。
+     * CrossRegionBandwidthId VPC跨区域带宽唯一ID。
      */
     public ?string $crossRegionBandwidthId = null;
 }

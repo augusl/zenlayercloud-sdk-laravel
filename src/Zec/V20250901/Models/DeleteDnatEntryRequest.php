@@ -12,10 +12,13 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DeleteDnatEntryRequest
+ */
 class DeleteDnatEntryRequest extends AbstractModel
 {
     /**
-     * DnatEntryId DNAT规则 ID。
+     * DnatEntryId DNAT规则ID。
      */
     public ?string $dnatEntryId = null;
 }

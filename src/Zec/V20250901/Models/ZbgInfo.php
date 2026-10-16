@@ -48,6 +48,11 @@ class ZbgInfo extends AbstractModel
     public ?string $interConnectCidr = null;
 
     /**
+     * InterconnectCidrEditable 互联IP网段当前是否允许修改，已加入Cloud Router时为false。
+     */
+    public ?bool $interconnectCidrEditable = null;
+
+    /**
      * CreateTime 创建时间。
      */
     public ?string $createTime = null;

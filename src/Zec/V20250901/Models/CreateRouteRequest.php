@@ -12,10 +12,14 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * CreateRouteRequest
+ */
 class CreateRouteRequest extends AbstractModel
 {
     /**
      * VpcId VPC的ID。
+     * 可通过调用 ~~DescribeVpcs~~ 获取。
      */
     public ?string $vpcId = null;
 
@@ -32,7 +36,7 @@ class CreateRouteRequest extends AbstractModel
 
     /**
      * SourceCidrBlock 源IP地址CIDR。
-     * `路由类型`配置`RouteTypePolicy(策略路由)`时需指定。
+     * 路由类型为`RouteTypePolicy`（策略路由）时需要指定。
      */
     public ?string $sourceCidrBlock = null;
 
@@ -64,13 +68,13 @@ class CreateRouteRequest extends AbstractModel
     /**
      * NextHotId 下一跳资源ID。
      * 目前只支持网卡ID。
-     * 该字段已废弃， 请使用`nextHopId`。
+     * 该字段已废弃，请使用`nextHopId`。
      */
     public ?string $nextHotId = null;
 
     /**
      * Name 路由名称。
-     * 名称长度为 2 到 63 个字符，仅支持字母、数字、连字符 (-) 、下划线(_) 、斜杠(/) 、和句点 (.)，且开头和结尾必须是字母或数字。
+     * 名称长度为2到63个字符，仅支持字母、数字、连字符（-）、下划线（_）、斜杠（/）和英文句点（.），且开头和结尾必须是字母或数字。
      */
     public ?string $name = null;
 }

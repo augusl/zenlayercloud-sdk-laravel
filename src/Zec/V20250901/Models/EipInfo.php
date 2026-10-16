@@ -18,12 +18,12 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class EipInfo extends AbstractModel
 {
     /**
-     * EipId EIP 的唯一 ID。
+     * EipId EIP的唯一ID。
      */
     public ?string $eipId = null;
 
     /**
-     * Name EIP 的名称。
+     * Name EIP的名称。
      */
     public ?string $name = null;
 
@@ -44,7 +44,7 @@ class EipInfo extends AbstractModel
     public ?bool $isDefault = null;
 
     /**
-     * Status EIP 的状态。
+     * Status EIP的状态。
      */
     public ?string $status = null;
 
@@ -56,7 +56,7 @@ class EipInfo extends AbstractModel
     public ?array $publicIpAddresses = null;
 
     /**
-     * PrivateIpAddress EIP 绑定的内网IP地址。
+     * PrivateIpAddress EIP绑定的内网IP地址。
      */
     public ?string $privateIpAddress = null;
 
@@ -77,56 +77,56 @@ class EipInfo extends AbstractModel
     public ?string $networkLineType = null;
 
     /**
-     * InternetChargeType EIP 的网络计费方式。
+     * InternetChargeType EIP的网络计费方式。
      */
     public ?string $internetChargeType = null;
 
     /**
-     * CidrId EIP 来自的CIDR地址段ID。
+     * CidrId EIP来自的CIDR地址段ID。
      */
     public ?string $cidrId = null;
 
     /**
      * Deprecated: NicId 已废弃，请不要使用。
-     * NicId EIP 关联的网卡ID。
-     * 该字段已废弃，请使用 `associatedId` 字段。
+     * NicId EIP关联的网卡ID。
+     * 该字段已废弃，请使用`associatedId`字段。
      *
      * @deprecated
      */
     public ?string $nicId = null;
 
     /**
-     * AssociatedId EIP 绑定的资源ID。
+     * AssociatedId EIP绑定的资源ID。
      * 可能为负载均衡ID、网卡ID或者NAT网关ID。
      */
     public ?string $associatedId = null;
 
     /**
-     * AssociatedType EIP 资源类型。
+     * AssociatedType EIP资源类型。
      * 可能为负载均衡ID、网卡ID或者NAT网关ID。
      */
     public ?string $associatedType = null;
 
     /**
-     * InstanceId EIP 绑定的实例ID。
+     * InstanceId EIP绑定的实例ID。
      * 当且仅当`associatedType`字段为`NIC`时可能有值。
      */
     public ?string $instanceId = null;
 
     /**
-     * BindType EIP 绑定类型。
+     * BindType EIP绑定类型。
      */
     public ?string $bindType = null;
 
     /**
-     * FlowPackage EIP 流量包大小。
+     * FlowPackage EIP流量包大小。
      * 仅当网络计费方式为流量计费时可取到值。
      * 该字段可能为null。
      */
     public ?float $flowPackage = null;
 
     /**
-     * FlowPackages EIP 多方向流量包列表。
+     * FlowPackages EIP多方向流量包列表。
      * 仅当网络计费方式为流量计费时可取到值。
      * 该字段可能为null。
      *
@@ -135,7 +135,7 @@ class EipInfo extends AbstractModel
     public ?array $flowPackages = null;
 
     /**
-     * Bandwidth EIP 的带宽限速。
+     * Bandwidth EIP的带宽限速。
      * 单位为Mbps。
      */
     public ?int $bandwidth = null;
@@ -146,7 +146,7 @@ class EipInfo extends AbstractModel
     public ?string $rateLimitMode = null;
 
     /**
-     * EipGeoRefs EIP 的地理位置信息。
+     * EipGeoRefs EIP的地理位置信息。
      *
      * @var list<EipGeoInfo>|null
      */
@@ -160,28 +160,28 @@ class EipInfo extends AbstractModel
     public ?array $blockInfoList = null;
 
     /**
-     * CreateTime EIP 的创建时间。
+     * CreateTime EIP的创建时间。
      */
     public ?string $createTime = null;
 
     /**
-     * ExpiredTime EIP 的到期时间。
+     * ExpiredTime EIP的到期时间。
      * 该字段可能为null。
      */
     public ?string $expiredTime = null;
 
     /**
-     * ResourceGroupId EIP 关联的资源组ID。
+     * ResourceGroupId EIP关联的资源组ID。
      */
     public ?string $resourceGroupId = null;
 
     /**
-     * ResourceGroupName EIP 关联的资源组名称。
+     * ResourceGroupName EIP关联的资源组名称。
      */
     public ?string $resourceGroupName = null;
 
     /**
-     * BandwidthCluster EIP 关联的带宽组ID。
+     * BandwidthCluster EIP关联的带宽组ID。
      */
     public ?BandwidthClusterInfo $bandwidthCluster = null;
 
@@ -197,7 +197,7 @@ class EipInfo extends AbstractModel
 
     /**
      * PrefixLength 掩码长度。
-     * 32 表示单 IP，25–31 表示 IP 块。
+     * 32表示单IP，25–31表示IP块。
      */
     public ?int $prefixLength = null;
 

@@ -20,7 +20,7 @@ class AvailableLanIpResponseParams extends AbstractModel
     public ?string $requestId = null;
 
     /**
-     * LanIps 可与指定 EIP 绑定的 vNIC 与内网 IP 组合列表。
+     * LanIps 可与指定EIP绑定的vNIC与内网IP组合列表。
      *
      * @var list<PrivateIpInfo>|null
      */

@@ -19,6 +19,7 @@ class DeleteRouteRequest extends AbstractModel
 {
     /**
      * RouteId 路由ID。
+     * 可通过调用 ~~DescribeRoutes~~ 获取。
      */
     public ?string $routeId = null;
 }

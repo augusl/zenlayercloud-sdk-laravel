@@ -25,7 +25,7 @@ class DescribeByoAsnsResponseParams extends AbstractModel
     public ?int $totalCount = null;
 
     /**
-     * DataSet BYO ASN 结果集。
+     * DataSet BYO ASN结果集。
      *
      * @var list<ByoAsnInfo>|null
      */

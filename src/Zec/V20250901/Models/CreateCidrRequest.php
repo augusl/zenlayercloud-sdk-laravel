@@ -19,6 +19,7 @@ class CreateCidrRequest extends AbstractModel
 {
     /**
      * RegionId 节点ID。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 

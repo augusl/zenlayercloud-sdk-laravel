@@ -19,6 +19,7 @@ class StartAgentMonitorRequest extends AbstractModel
 {
     /**
      * InstanceId 要操作的实例ID。
+     * 可通过调用 ~~DescribeInstances~~ 获取。
      */
     public ?string $instanceId = null;
 }

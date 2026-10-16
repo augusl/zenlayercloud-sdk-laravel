@@ -31,6 +31,7 @@ class DescribeCrossRegionBandwidthRequest extends AbstractModel
 
     /**
      * VpcId 按照所属的VPC的ID过滤。
+     * 可通过调用 ~~DescribeVpcs~~ 获取。
      */
     public ?string $vpcId = null;
 

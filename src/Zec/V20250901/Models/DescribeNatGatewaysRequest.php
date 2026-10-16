@@ -12,15 +12,20 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DescribeNatGatewaysRequest
+ */
 class DescribeNatGatewaysRequest extends AbstractModel
 {
     /**
      * RegionId 节点ID。
+     * 可通过调用 ~~DescribeRegions~~ 获取。
      */
     public ?string $regionId = null;
 
     /**
-     * VpcId 根据NAT网关所属的VPC网络 ID过滤。
+     * VpcId 根据NAT网关所属的VPC网络ID过滤。
+     * 可通过调用 ~~DescribeVpcs~~ 获取。
      */
     public ?string $vpcId = null;
 
@@ -44,6 +49,7 @@ class DescribeNatGatewaysRequest extends AbstractModel
 
     /**
      * SecurityGroupId 根据NAT网关所属的安全组ID过滤。
+     * 可通过调用 ~~DescribeSecurityGroups~~ 获取。
      */
     public ?string $securityGroupId = null;
 

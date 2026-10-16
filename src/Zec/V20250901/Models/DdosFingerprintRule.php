@@ -54,13 +54,14 @@ class DdosFingerprintRule extends AbstractModel
 
     /**
      * Offset 报文载荷特征的偏移量。
-     * TCP/UDP payload 的偏移 [0-1500]。
+     * TCP/UDP payload的偏移。
+     * 取值范围：0~1500。
      */
     public ?int $offset = null;
 
     /**
      * MatchBytes 检测载荷。
-     * 不含0x 的16进制 小写 补足2位。
+     * 不含0x的16进制 小写 补足2位。
      */
     public ?string $matchBytes = null;
 

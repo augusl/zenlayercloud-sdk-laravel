@@ -12,6 +12,9 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DescribeVpcsRequest
+ */
 class DescribeVpcsRequest extends AbstractModel
 {
     /**
@@ -31,6 +34,7 @@ class DescribeVpcsRequest extends AbstractModel
     /**
      * CidrBlock 根据VPC的IPv4 CIDR过滤。
      * 支持模糊查询。
+     * 主网段与附属网段都会参与匹配，即命中任一网段的VPC都会被返回。
      */
     public ?string $cidrBlock = null;
 

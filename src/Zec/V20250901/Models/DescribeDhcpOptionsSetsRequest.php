@@ -12,24 +12,28 @@ namespace ZenlayerCloud\Laravel\Zec\V20250901\Models;
 
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
+/**
+ * DescribeDhcpOptionsSetsRequest
+ */
 class DescribeDhcpOptionsSetsRequest extends AbstractModel
 {
     /**
-     * DhcpOptionsSetIds DHCP 选项集的 ID。
-     * 最多支持输入 20 个 DHCP 选项集的 ID。
+     * DhcpOptionsSetIds DHCP选项集的ID。
+     * 最多支持输入20个DHCP选项集的ID。
      *
      * @var list<string>|null
      */
     public ?array $dhcpOptionsSetIds = null;
 
     /**
-     * DhcpOptionsSetName DHCP 选项集的名称。
+     * DhcpOptionsSetName DHCP选项集的名称。
      * 该字段支持模糊搜索。
      */
     public ?string $dhcpOptionsSetName = null;
 
     /**
-     * SubnetId 关联的子网 ID。
+     * SubnetId 关联的子网ID。
+     * 可通过调用 ~~DescribeSubnets~~ 获取。
      */
     public ?string $subnetId = null;
 

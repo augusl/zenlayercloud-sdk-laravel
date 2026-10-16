@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class CreateByoipRequest extends AbstractModel
 {
     /**
-     * ByoipList 待创建的 BYOIP 列表。
+     * ByoipList 待创建的BYOIP列表。
      *
      * @var list<ByoipCreateItem>|null
      */
@@ -30,13 +30,13 @@ class CreateByoipRequest extends AbstractModel
     public ?MarketingInfo $marketingInfo = null;
 
     /**
-     * ResourceGroupId 创建后 BYOIP 所在的资源组ID。
+     * ResourceGroupId 创建后BYOIP所在的资源组ID。
      * 如不指定则放入默认资源组。
      */
     public ?string $resourceGroupId = null;
 
     /**
-     * Tags 创建 BYOIP 时关联的标签。
+     * Tags 创建BYOIP时关联的标签。
      * 注意：关联「标签键」不能重复。
      */
     public ?TagAssociation $tags = null;

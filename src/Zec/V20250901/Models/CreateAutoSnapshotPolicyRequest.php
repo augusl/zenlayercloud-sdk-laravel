@@ -19,6 +19,7 @@ class CreateAutoSnapshotPolicyRequest extends AbstractModel
 {
     /**
      * ZoneId 可用区ID。
+     * 可通过调用 ~~DescribeZones~~ 获取。
      */
     public ?string $zoneId = null;
 
@@ -32,7 +33,7 @@ class CreateAutoSnapshotPolicyRequest extends AbstractModel
 
     /**
      * RepeatWeekDays 自动快照的重复日期。
-     * 单位为天，周期为星期，例如 1 表示周一。
+     * 单位为天，周期为星期，例如1表示周一。
      *
      * @var list<int>|null
      */
@@ -40,8 +41,8 @@ class CreateAutoSnapshotPolicyRequest extends AbstractModel
 
     /**
      * Hours 指定定期快照策略的触发时间。
-     * 使用 UTC 时间，单位为小时。
-     * 00:00 ~ 23:00 共 24 个时间点可选，1表示 01:00，依此类推。
+     * 使用UTC时间，单位为小时。
+     * 00:00 ~ 23:00共24个时间点可选，1表示01:00，依此类推。
      *
      * @var list<int>|null
      */
@@ -49,7 +50,7 @@ class CreateAutoSnapshotPolicyRequest extends AbstractModel
 
     /**
      * RetentionDays 自动快照的保留时间，单位为天。
-     * 如果该值设置-1，则代表永久保留。
+     * 如果设置为-1，则代表永久保留。
      * 默认为永久保存。
      * 取值范围：-1或[1,65535]。
      */
