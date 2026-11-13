@@ -18,12 +18,12 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class CreateIPTransitRequest extends AbstractModel
 {
     /**
-     * IptName IP Transit名称。
+     * IptName Internet名称。
      */
     public ?string $iptName = null;
 
     /**
-     * IptDescription IP Transit描述。
+     * IptDescription Internet描述。
      */
     public ?string $iptDescription = null;
 
@@ -39,8 +39,8 @@ class CreateIPTransitRequest extends AbstractModel
 
     /**
      * IptDcId 本端数据中心 ID。
-     * 为空代表本地连接（Local IPT）。
-     * 传 `haConfig` 创建高可用 IP Transit 时必传。
+     * 为空代表本地连接（Local Internet）。
+     * 传 `haConfig` 创建高可用 Internet 时必传。
      */
     public ?string $iptDcId = null;
 
@@ -76,7 +76,7 @@ class CreateIPTransitRequest extends AbstractModel
 
     /**
      * Bfd BFD 配置。
-     * 传 `haConfig` 创建高可用 IP Transit 时必传，且后续不允许关闭。
+     * 传 `haConfig` 创建高可用 Internet 时必传，且后续不允许关闭。
      */
     public ?BFDConfig $bfd = null;
 
@@ -108,8 +108,8 @@ class CreateIPTransitRequest extends AbstractModel
 
     /**
      * ZbgRegionId ZBG 接入节点 ID。
-     * 非空时走 Router RIPT 流程，与 `haConfig` 互斥。
-     * 调用 ~~zec:DescribeInterconnectBorderGatewayRegions~~ 以获取可用的节点信息。
+     * 非空时走基于 Router 的 Internet 流程，与 `haConfig` 互斥。
+     * 调用 **zec:DescribeInterconnectBorderGatewayRegions** 以获取可用的节点信息。
      */
     public ?string $zbgRegionId = null;
 
@@ -122,7 +122,7 @@ class CreateIPTransitRequest extends AbstractModel
     /**
      * PublicInterconnectNetmask 公网互联块掩码。
      * 非空启用公网地址互联，仅 BGP / Static 路由支持。
-     * 合法值见 ~~DescribeIPTransitDatacenters~~ 响应中 availableRoutingTypes[].publicInterconnectNetmasks。
+     * 合法值见 **DescribeIPTransitDatacenters** 响应中 availableRoutingTypes[].publicInterconnectNetmasks。
      */
     public ?int $publicInterconnectNetmask = null;
 

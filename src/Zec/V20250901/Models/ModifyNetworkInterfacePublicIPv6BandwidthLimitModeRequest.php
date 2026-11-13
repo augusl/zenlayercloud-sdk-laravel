@@ -19,7 +19,7 @@ class ModifyNetworkInterfacePublicIPv6BandwidthLimitModeRequest extends Abstract
 {
     /**
      * Ipv6CidrId IPv6 CIDR的ID。
-     * 可通过调用 ~~DescribeIpv6Cidrs~~ 获取。
+     * 可通过调用 **DescribeIpv6Cidrs** 获取。
      */
     public ?string $ipv6CidrId = null;
 

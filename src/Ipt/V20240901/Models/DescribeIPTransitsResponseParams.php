@@ -25,7 +25,7 @@ class DescribeIPTransitsResponseParams extends AbstractModel
     public ?int $totalCount = null;
 
     /**
-     * DataSet IP Transit结果集。
+     * DataSet Internet结果集。
      *
      * @var list<IPTransit>|null
      */

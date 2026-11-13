@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class DescribeIPTransitsRequest extends AbstractModel
 {
     /**
-     * IptIds IP Transit ID 列表。
+     * IptIds Internet ID 列表。
      * 最多支持 100 个 ID 查询。
      *
      * @var list<string>|null
@@ -26,14 +26,14 @@ class DescribeIPTransitsRequest extends AbstractModel
     public ?array $iptIds = null;
 
     /**
-     * IptName IP Transit名称。
+     * IptName Internet名称。
      * 模糊匹配。
      */
     public ?string $iptName = null;
 
     /**
      * ResourceGroupId 资源组 ID。
-     * 不传则返回该用户可见的所有资源组内的IP Transit。
+     * 不传则返回该用户可见的所有资源组内的Internet。
      */
     public ?string $resourceGroupId = null;
 

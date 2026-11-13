@@ -19,13 +19,13 @@ class CreateDnatEntryRequest extends AbstractModel
 {
     /**
      * NatGatewayId NAT网关ID。
-     * 可通过调用 ~~DescribeNatGateways~~ 获取。
+     * 可通过调用 **DescribeNatGateways** 获取。
      */
     public ?string $natGatewayId = null;
 
     /**
      * EipId DNAT规则添加的弹性公网ID。
-     * 可通过调用 ~~DescribeEips~~ 获取。
+     * 可通过调用 **DescribeEips** 获取。
      */
     public ?string $eipId = null;
 

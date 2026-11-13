@@ -19,7 +19,7 @@ class ModifyDhcpOptionsSetAttributesRequest extends AbstractModel
 {
     /**
      * DhcpOptionsSetId DHCP选项集ID。
-     * 可通过调用 ~~DescribeDhcpOptionsSets~~ 获取。
+     * 可通过调用 **DescribeDhcpOptionsSets** 获取。
      */
     public ?string $dhcpOptionsSetId = null;
 

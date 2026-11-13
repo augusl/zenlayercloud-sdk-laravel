@@ -44,6 +44,12 @@ class EipInfo extends AbstractModel
     public ?bool $isDefault = null;
 
     /**
+     * IsCustomized 是否为自定义地址。
+     * true 表示该EIP的公网IP是从默认EIP池中手动指定的，计入自定义地址EIP配额；来自CIDR的EIP恒为false。
+     */
+    public ?bool $isCustomized = null;
+
+    /**
      * Status EIP的状态。
      */
     public ?string $status = null;

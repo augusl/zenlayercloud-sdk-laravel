@@ -19,7 +19,7 @@ class CreateHaVipRequest extends AbstractModel
 {
     /**
      * SubnetId HaVip所属子网ID。
-     * 可通过调用 ~~DescribeSubnets~~ 获取。
+     * 可通过调用 **DescribeSubnets** 获取。
      */
     public ?string $subnetId = null;
 
@@ -39,7 +39,7 @@ class CreateHaVipRequest extends AbstractModel
     /**
      * SecurityGroupId 安全组ID。
      * 不填时使用VPC默认安全组。
-     * 可通过调用 ~~DescribeSecurityGroups~~ 获取。
+     * 可通过调用 **DescribeSecurityGroups** 获取。
      */
     public ?string $securityGroupId = null;
 

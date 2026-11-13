@@ -19,7 +19,7 @@ class InquiryPriceModifyIpv6BandwidthRequest extends AbstractModel
 {
     /**
      * Ipv6Id 要操作的公网IPv6。
-     * 可通过调用 ~~DescribeIpv6Addresses~~ 获取。
+     * 可通过调用 **DescribeIpv6Addresses** 获取。
      */
     public ?string $ipv6Id = null;
 

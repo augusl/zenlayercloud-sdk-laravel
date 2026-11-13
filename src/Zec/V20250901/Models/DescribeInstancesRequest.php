@@ -27,13 +27,13 @@ class DescribeInstancesRequest extends AbstractModel
 
     /**
      * ZoneId 实例所属的可用区ID。
-     * 可通过调用 ~~DescribeZones~~ 获取。
+     * 可通过调用 **DescribeZones** 获取。
      */
     public ?string $zoneId = null;
 
     /**
      * ImageId 镜像ID。
-     * 可通过调用 ~~DescribeImages~~ 获取。
+     * 可通过调用 **DescribeImages** 获取。
      */
     public ?string $imageId = null;
 

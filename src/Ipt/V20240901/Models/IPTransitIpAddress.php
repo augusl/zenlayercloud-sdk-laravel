@@ -13,7 +13,7 @@ namespace ZenlayerCloud\Laravel\Ipt\V20240901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * IPTransitIpAddress IP Transit公网 IP 地址信息。
+ * IPTransitIpAddress Internet公网 IP 地址信息。
  */
 class IPTransitIpAddress extends AbstractModel
 {

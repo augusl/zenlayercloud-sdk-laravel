@@ -16,7 +16,7 @@ class DeleteCidrsRequest extends AbstractModel
 {
     /**
      * CidrIds 要删除的cidrId列表。
-     * 可通过调用 ~~DescribeCidrs~~ 获取。
+     * 可通过调用 **DescribeCidrs** 获取。
      *
      * @var list<string>|null
      */

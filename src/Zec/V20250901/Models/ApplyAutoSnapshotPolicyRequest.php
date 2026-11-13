@@ -19,13 +19,13 @@ class ApplyAutoSnapshotPolicyRequest extends AbstractModel
 {
     /**
      * AutoSnapshotPolicyId 自动快照策略ID。
-     * 可通过调用 ~~DescribeAutoSnapshotPolicies~~ 获取。
+     * 可通过调用 **DescribeAutoSnapshotPolicies** 获取。
      */
     public ?string $autoSnapshotPolicyId = null;
 
     /**
      * DiskIds 要添加的磁盘ID列表。
-     * 可通过调用 ~~DescribeDisks~~ 获取。
+     * 可通过调用 **DescribeDisks** 获取。
      *
      * @var list<string>|null
      */

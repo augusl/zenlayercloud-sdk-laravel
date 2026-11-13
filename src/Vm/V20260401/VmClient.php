@@ -15,7 +15,7 @@ use ZenlayerCloud\Laravel\Common\AbstractClient;
 /**
  * Zenlayer Cloud Virtual Machine (VM) client (API version 2026-04-01).
  *
- * Each public method maps 1:1 to an official Action name. The public API
+ * Each public method maps 1:1 to an official Action name. The official service
  * reference is at https://docs.console.zenlayer.com/api-reference/legacy/vm/overview;
  * UPSTREAM.md records any Action currently present only in the official SDKs.
  * Method names remain PascalCase so the protocol mapping is unambiguous.

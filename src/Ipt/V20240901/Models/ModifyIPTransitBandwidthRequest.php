@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class ModifyIPTransitBandwidthRequest extends AbstractModel
 {
     /**
-     * IptId IP Transit ID。
+     * IptId Internet ID。
      */
     public ?string $iptId = null;
 

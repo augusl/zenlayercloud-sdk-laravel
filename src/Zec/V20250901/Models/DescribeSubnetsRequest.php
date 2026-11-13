@@ -37,7 +37,7 @@ class DescribeSubnetsRequest extends AbstractModel
 
     /**
      * RegionId 根据子网所在的节点进行筛选。
-     * 可通过调用 ~~DescribeRegions~~ 获取。
+     * 可通过调用 **DescribeRegions** 获取。
      */
     public ?string $regionId = null;
 
@@ -54,7 +54,7 @@ class DescribeSubnetsRequest extends AbstractModel
     /**
      * VpcIds 根据所属VPC的ID进行筛选。
      * 最多支持100个VPC ID。
-     * 可通过调用 ~~DescribeVpcs~~ 获取。
+     * 可通过调用 **DescribeVpcs** 获取。
      *
      * @var list<string>|null
      */
@@ -62,7 +62,7 @@ class DescribeSubnetsRequest extends AbstractModel
 
     /**
      * DhcpOptionsSetId 子网绑定的DHCP选项集ID。
-     * 可通过调用 ~~DescribeDhcpOptionsSets~~ 获取。
+     * 可通过调用 **DescribeDhcpOptionsSets** 获取。
      */
     public ?string $dhcpOptionsSetId = null;
 

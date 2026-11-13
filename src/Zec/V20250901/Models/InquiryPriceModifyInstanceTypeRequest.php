@@ -19,13 +19,13 @@ class InquiryPriceModifyInstanceTypeRequest extends AbstractModel
 {
     /**
      * InstanceId 要变更规格的实例ID。
-     * 可通过调用 ~~DescribeInstances~~ 获取。
+     * 可通过调用 **DescribeInstances** 获取。
      */
     public ?string $instanceId = null;
 
     /**
      * InstanceType 变更的目标实例规格。
-     * 普通实例取值可通过 ~~DescribeZoneInstanceConfigInfos~~ 获得；GPU实例取值可通过 ~~DescribeZoneGpuInstanceConfigInfos~~ 获得。
+     * 普通实例取值可通过 **DescribeZoneInstanceConfigInfos** 获得；GPU实例取值可通过 **DescribeZoneGpuInstanceConfigInfos** 获得。
      */
     public ?string $instanceType = null;
 }

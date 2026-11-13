@@ -19,13 +19,14 @@ class InquiryPriceResizeDiskRequest extends AbstractModel
 {
     /**
      * DiskId 云硬盘ID。
-     * 可通过调用 ~~DescribeDisks~~ 获取。
+     * 可通过调用 **DescribeDisks** 获取。
      */
     public ?string $diskId = null;
 
     /**
      * DiskSize 云硬盘扩容后的目标大小。
      * 单位：GiB。
+     * 不能小于当前云硬盘大小。
      */
     public ?int $diskSize = null;
 }

@@ -70,6 +70,11 @@ class Ipv6CidrInfo extends AbstractModel
     public ?int $netmask = null;
 
     /**
+     * SubnetMaskLength 该CIDR拆分成子网时使用的掩码长度。
+     */
+    public ?int $subnetMaskLength = null;
+
+    /**
      * PoolId Pool的ID。
      * 表示该CIDR所属的公网IP池。
      */

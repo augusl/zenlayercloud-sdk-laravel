@@ -128,4 +128,21 @@ final class SignerTest extends TestCase
             $signer->sign(...$args),
         );
     }
+
+    #[DataProvider('stsTokenProvider')]
+    public function test_sts_signature_matches_official_go_vector(string $securityToken): void
+    {
+        // Official Go v0.2.59 signRequest, with only its clock fixed to this
+        // timestamp in the independent verification harness.
+        self::assertSame(
+            'ZC2-HMAC-SHA256 Credential=STS.key, SignedHeaders=content-type;host;x-zc-security-token, Signature=a9aa785413324a378e0e96c4ddeacb479ebe38de2f03444524b08176e42e9f91',
+            (new Signer)->sign('POST', 'console.zenlayer.com', 'application/json', '{}', 1700000000, 'STS.key', 'sts-secret', $securityToken),
+        );
+    }
+
+    /** @return array<string,array{string}> */
+    public static function stsTokenProvider(): array
+    {
+        return ['mixed case' => ['zst_AbC-def_123'], 'canonical whitespace' => ['  zst_AbC-def_123  ']];
+    }
 }

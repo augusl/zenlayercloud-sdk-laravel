@@ -33,7 +33,7 @@ class DescribeDhcpOptionsSetsRequest extends AbstractModel
 
     /**
      * SubnetId 关联的子网ID。
-     * 可通过调用 ~~DescribeSubnets~~ 获取。
+     * 可通过调用 **DescribeSubnets** 获取。
      */
     public ?string $subnetId = null;
 

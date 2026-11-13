@@ -26,7 +26,7 @@ class InquiryCreateIPTransitPriceResponseParams extends AbstractModel
     public ?PriceItem $privateConnectPrice = null;
 
     /**
-     * IptBandwidthPrice IP Transit带宽价格。
+     * IptBandwidthPrice Internet带宽价格。
      */
     public ?PriceItem $iptBandwidthPrice = null;
 

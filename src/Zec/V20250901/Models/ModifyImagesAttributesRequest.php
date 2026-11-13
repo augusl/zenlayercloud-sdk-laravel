@@ -19,7 +19,7 @@ class ModifyImagesAttributesRequest extends AbstractModel
 {
     /**
      * ImageIds 待修改属性的镜像ID列表。
-     * 可通过调用 ~~DescribeImages~~ 获取。
+     * 可通过调用 **DescribeImages** 获取。
      *
      * @var list<string>|null
      */

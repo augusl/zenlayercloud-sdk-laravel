@@ -15,7 +15,7 @@ use ZenlayerCloud\Laravel\Common\AbstractClient;
 /**
  * Zenlayer Cloud Elastic Compute (ZEC) client (API version 2025-09-01).
  *
- * Each public method maps 1:1 to an official Action name. The public API
+ * Each public method maps 1:1 to an official Action name. The official service
  * reference is at https://docs.console.zenlayer.com/api-reference/zec/overview;
  * UPSTREAM.md records any Action currently present only in the official SDKs.
  * Method names remain PascalCase so the protocol mapping is unambiguous.
@@ -627,6 +627,30 @@ class ZecClient extends AbstractClient
     }
 
     /**
+     * 授权其他账号把一张网卡绑定到它自己的实例上。
+     */
+    public function CreateNetworkInterfacePermission(#[\SensitiveParameter] Models\CreateNetworkInterfacePermissionRequest $request): Models\CreateNetworkInterfacePermissionResponse
+    {
+        return $this->call('CreateNetworkInterfacePermission', $request, Models\CreateNetworkInterfacePermissionResponse::class);
+    }
+
+    /**
+     * 查询网卡授权给其他账号的记录。
+     */
+    public function DescribeNetworkInterfacePermissions(#[\SensitiveParameter] Models\DescribeNetworkInterfacePermissionsRequest $request): Models\DescribeNetworkInterfacePermissionsResponse
+    {
+        return $this->call('DescribeNetworkInterfacePermissions', $request, Models\DescribeNetworkInterfacePermissionsResponse::class);
+    }
+
+    /**
+     * 删除一条网卡授权。
+     */
+    public function DeleteNetworkInterfacePermission(#[\SensitiveParameter] Models\DeleteNetworkInterfacePermissionRequest $request): Models\DeleteNetworkInterfacePermissionResponse
+    {
+        return $this->call('DeleteNetworkInterfacePermission', $request, Models\DeleteNetworkInterfacePermissionResponse::class);
+    }
+
+    /**
      * 查询账户下的公网IP池信息，支持按IP池ID、地域或名称进行筛选，支持分页查询。
      */
     public function DescribePools(#[\SensitiveParameter] Models\DescribePoolsRequest $request): Models\DescribePoolsResponse
@@ -744,6 +768,54 @@ class ZecClient extends AbstractClient
     public function DescribeByoipPrice(#[\SensitiveParameter] Models\DescribeByoipPriceRequest $request): Models\DescribeByoipPriceResponse
     {
         return $this->call('DescribeByoipPrice', $request, Models\DescribeByoipPriceResponse::class);
+    }
+
+    /**
+     * 查询指定掩码和数量的IPv6 CIDR地址块价格。
+     */
+    public function DescribeIpv6CidrPrice(#[\SensitiveParameter] Models\DescribeIpv6CidrPriceRequest $request): Models\DescribeIpv6CidrPriceResponse
+    {
+        return $this->call('DescribeIpv6CidrPrice', $request, Models\DescribeIpv6CidrPriceResponse::class);
+    }
+
+    /**
+     * 修改IPv6 CIDR地址段的属性。 目前只能修改名称。
+     */
+    public function ModifyIpv6CidrAttribute(#[\SensitiveParameter] Models\ModifyIpv6CidrAttributeRequest $request): Models\ModifyIpv6CidrAttributeResponse
+    {
+        return $this->call('ModifyIpv6CidrAttribute', $request, Models\ModifyIpv6CidrAttributeResponse::class);
+    }
+
+    /**
+     * 购买指定掩码和数量的IPv6 CIDR地址段。
+     */
+    public function CreateIpv6Cidr(#[\SensitiveParameter] Models\CreateIpv6CidrRequest $request): Models\CreateIpv6CidrResponse
+    {
+        return $this->call('CreateIpv6Cidr', $request, Models\CreateIpv6CidrResponse::class);
+    }
+
+    /**
+     * 查询指定节点当前可售的IPv6 CIDR掩码档位、库存与单价。
+     */
+    public function DescribeIpv6CidrNetmasks(#[\SensitiveParameter] Models\DescribeIpv6CidrNetmasksRequest $request): Models\DescribeIpv6CidrNetmasksResponse
+    {
+        return $this->call('DescribeIpv6CidrNetmasks', $request, Models\DescribeIpv6CidrNetmasksResponse::class);
+    }
+
+    /**
+     * 查询支持售卖IPv6 CIDR地址块的节点信息。
+     */
+    public function DescribeIpv6CidrRegions(#[\SensitiveParameter] Models\DescribeIpv6CidrRegionsRequest $request): Models\DescribeIpv6CidrRegionsResponse
+    {
+        return $this->call('DescribeIpv6CidrRegions', $request, Models\DescribeIpv6CidrRegionsResponse::class);
+    }
+
+    /**
+     * 查询各区域各线路的BYOIP支持状态，包括已支持、计划支持和暂不支持。
+     */
+    public function DescribeByoipRegionAvailability(#[\SensitiveParameter] Models\DescribeByoipRegionAvailabilityRequest $request): Models\DescribeByoipRegionAvailabilityResponse
+    {
+        return $this->call('DescribeByoipRegionAvailability', $request, Models\DescribeByoipRegionAvailabilityResponse::class);
     }
 
     /**
@@ -976,6 +1048,14 @@ class ZecClient extends AbstractClient
     public function DescribeEipNewConnsMonitorData(#[\SensitiveParameter] Models\DescribeEipNewConnsMonitorDataRequest $request): Models\DescribeEipNewConnsMonitorDataResponse
     {
         return $this->call('DescribeEipNewConnsMonitorData', $request, Models\DescribeEipNewConnsMonitorDataResponse::class);
+    }
+
+    /**
+     * 批量修改多个弹性公网IP（EIP）的自定义封堵阈值，所有EIP使用同一组阈值。
+     */
+    public function ModifyEipsBlockThreshold(#[\SensitiveParameter] Models\ModifyEipsBlockThresholdRequest $request): Models\ModifyEipsBlockThresholdResponse
+    {
+        return $this->call('ModifyEipsBlockThreshold', $request, Models\ModifyEipsBlockThresholdResponse::class);
     }
 
     /**
@@ -1571,6 +1651,14 @@ class ZecClient extends AbstractClient
     }
 
     /**
+     * 查询一段时间的NAT网关每秒新建连接数（CPS，All/In/Out）监控数据。
+     */
+    public function DescribeNatGatewayNewConnsMonitorData(#[\SensitiveParameter] Models\DescribeNatGatewayNewConnsMonitorDataRequest $request): Models\DescribeNatGatewayNewConnsMonitorDataResponse
+    {
+        return $this->call('DescribeNatGatewayNewConnsMonitorData', $request, Models\DescribeNatGatewayNewConnsMonitorDataResponse::class);
+    }
+
+    /**
      * 创建一个DDoS防护策略。
      */
     public function CreatePolicy(#[\SensitiveParameter] Models\CreatePolicyRequest $request): Models\CreatePolicyResponse
@@ -1659,7 +1747,7 @@ class ZecClient extends AbstractClient
     }
 
     /**
-     * 查询账户下的安全组信息，支持按安全组ID或名称进行筛选，支持分页查询。
+     * 查询账户下的安全组信息，支持按安全组ID、名称或是否为默认安全组进行筛选，支持分页查询。
      */
     public function DescribeSecurityGroups(#[\SensitiveParameter] Models\DescribeSecurityGroupsRequest $request): Models\DescribeSecurityGroupsResponse
     {

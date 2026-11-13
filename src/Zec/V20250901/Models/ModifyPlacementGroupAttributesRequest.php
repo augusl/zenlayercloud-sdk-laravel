@@ -19,7 +19,7 @@ class ModifyPlacementGroupAttributesRequest extends AbstractModel
 {
     /**
      * PlacementGroupId 置放组ID。
-     * 可通过调用 ~~DescribePlacementGroups~~ 获取。
+     * 可通过调用 **DescribePlacementGroups** 获取。
      */
     public ?string $placementGroupId = null;
 

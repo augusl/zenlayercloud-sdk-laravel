@@ -19,7 +19,7 @@ class ChangeEipBindTypeRequest extends AbstractModel
 {
     /**
      * EipId 要更换绑定模式的EIP ID。
-     * 可通过调用 ~~DescribeEips~~ 获取。
+     * 可通过调用 **DescribeEips** 获取。
      */
     public ?string $eipId = null;
 

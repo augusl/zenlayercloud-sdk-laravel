@@ -45,6 +45,7 @@ final class HttpClientFactoryTest extends TestCase
         $response = $client->build($config)
             ->withHeaders([
                 'Authorization' => 'Bearer top-secret-token',
+                'x-zc-security-token' => 'zst-private-security-token',
                 'x-zc-service' => 'vm',
                 'x-zc-action' => 'CreateInstances',
             ])
@@ -55,6 +56,7 @@ final class HttpClientFactoryTest extends TestCase
         self::assertCount(2, $logger->records);
         $serialized = json_encode($logger->records, JSON_THROW_ON_ERROR);
         self::assertStringNotContainsString('top-secret-token', $serialized);
+        self::assertStringNotContainsString('zst-private-security-token', $serialized);
         self::assertStringNotContainsString('request-secret', $serialized);
         self::assertStringNotContainsString('response-secret', $serialized);
         self::assertStringContainsString('CreateInstances', $serialized);

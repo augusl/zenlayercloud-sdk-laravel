@@ -25,7 +25,7 @@ class CreateDisksRequest extends AbstractModel
 
     /**
      * ZoneId 云硬盘所属的可用区ID。
-     * 可通过调用 ~~DescribeZones~~ 获取。
+     * 可通过调用 **DescribeZones** 获取。
      */
     public ?string $zoneId = null;
 
@@ -59,14 +59,14 @@ class CreateDisksRequest extends AbstractModel
 
     /**
      * InstanceId 云硬盘挂载的实例ID。
-     * 可通过调用 ~~DescribeInstances~~ 获取。
+     * 可通过调用 **DescribeInstances** 获取。
      */
     public ?string $instanceId = null;
 
     /**
      * InstanceIds 要绑定的实例ID。
      * 数量需要与`diskAmount`字段一致，每个云硬盘各绑定一个不同实例；与`instanceId`同时传递时以`instanceId`为准。
-     * 可通过调用 ~~DescribeInstances~~ 获取。
+     * 可通过调用 **DescribeInstances** 获取。
      *
      * @var list<string>|null
      */
@@ -88,7 +88,7 @@ class CreateDisksRequest extends AbstractModel
     /**
      * SnapshotId 使用快照ID进行创建。
      * 如果传入则根据此快照创建云硬盘，快照的云盘类型必须为数据盘快照。
-     * 可通过调用 ~~DescribeSnapshots~~ 获取。
+     * 可通过调用 **DescribeSnapshots** 获取。
      */
     public ?string $snapshotId = null;
 

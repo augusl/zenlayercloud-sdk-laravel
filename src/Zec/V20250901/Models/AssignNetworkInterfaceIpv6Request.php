@@ -19,7 +19,7 @@ class AssignNetworkInterfaceIpv6Request extends AbstractModel
 {
     /**
      * NicId 要添加IPv6的网卡ID。
-     * 可通过调用 ~~DescribeNetworkInterfaces~~ 获取。
+     * 可通过调用 **DescribeNetworkInterfaces** 获取。
      */
     public ?string $nicId = null;
 

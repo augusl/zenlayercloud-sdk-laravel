@@ -19,7 +19,7 @@ class ModifyEipBandwidthLimitModeRequest extends AbstractModel
 {
     /**
      * EipId 弹性公网IP的唯一ID。
-     * 可通过调用 ~~DescribeEips~~ 获取。
+     * 可通过调用 **DescribeEips** 获取。
      */
     public ?string $eipId = null;
 

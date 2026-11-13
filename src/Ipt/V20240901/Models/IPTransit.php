@@ -13,27 +13,27 @@ namespace ZenlayerCloud\Laravel\Ipt\V20240901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * IPTransit IP Transit信息。
+ * IPTransit Internet信息。
  */
 class IPTransit extends AbstractModel
 {
     /**
-     * IptId IP Transit ID。
+     * IptId Internet ID。
      */
     public ?string $iptId = null;
 
     /**
-     * IptName IP Transit名称。
+     * IptName Internet名称。
      */
     public ?string $iptName = null;
 
     /**
-     * IptDescription IP Transit描述。
+     * IptDescription Internet描述。
      */
     public ?string $iptDescription = null;
 
     /**
-     * DataCenter IP Transit所在数据中心。
+     * DataCenter Internet所在数据中心。
      */
     public ?DatacenterInfo $dataCenter = null;
 
@@ -153,7 +153,7 @@ class IPTransit extends AbstractModel
 
     /**
      * ZbgRegionId ZBG 区域 ID。
-     * ZBG 场景下的 IP Transit 将返回此字段。
+     * ZBG 场景下的 Internet 将返回此字段。
      */
     public ?string $zbgRegionId = null;
 

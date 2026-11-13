@@ -19,7 +19,7 @@ class VerifyByoAsnRequest extends AbstractModel
 {
     /**
      * ByoAsnId 待校验的BYO ASN的ID。
-     * 可通过调用 ~~DescribeByoAsns~~ 获取。
+     * 可通过调用 **DescribeByoAsns** 获取。
      */
     public ?string $byoAsnId = null;
 }

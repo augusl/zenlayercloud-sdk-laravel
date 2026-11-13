@@ -19,14 +19,14 @@ class ModifySubnetStackTypeRequest extends AbstractModel
 {
     /**
      * SubnetId 要操作的子网的ID。
-     * 可通过调用 ~~DescribeSubnets~~ 获取。
+     * 可通过调用 **DescribeSubnets** 获取。
      */
     public ?string $subnetId = null;
 
     /**
      * StackType 子网堆栈类型。
      * `IPv4_IPv6`: 开启公网IPv6; 公网或内网由`ipv6Type`指定。
-     * `IPv4`: 将关闭IPv6，关闭前须确保子网内已无IPv6地址被占用：网卡的IPv6通过 ~~UnassignNetworkInterfaceIpv6~~ 删除，负载均衡的IPv6 VIP通过 ~~DeleteIpv6Addresses~~ 删除。
+     * `IPv4`: 将关闭IPv6，关闭前须确保子网内已无IPv6地址被占用：网卡的IPv6通过 **UnassignNetworkInterfaceIpv6** 删除，负载均衡的IPv6 VIP通过 **DeleteIpv6Addresses** 删除。
      */
     public ?string $stackType = null;
 

@@ -26,7 +26,7 @@ class DescribeSnapshotsRequest extends AbstractModel
 
     /**
      * ZoneId 快照所属的可用区ID。
-     * 可通过调用 ~~DescribeZones~~ 获取。
+     * 可通过调用 **DescribeZones** 获取。
      */
     public ?string $zoneId = null;
 
@@ -37,7 +37,7 @@ class DescribeSnapshotsRequest extends AbstractModel
 
     /**
      * DiskIds 按照快照所属的云硬盘ID过滤。
-     * 可通过调用 ~~DescribeDisks~~ 获取。
+     * 可通过调用 **DescribeDisks** 获取。
      *
      * @var list<string>|null
      */

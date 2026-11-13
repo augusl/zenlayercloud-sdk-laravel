@@ -24,7 +24,7 @@ class ModifyDnatEntryRequest extends AbstractModel
 
     /**
      * EipId 修改DNAT关联的弹性公网IP ID。
-     * 可通过调用 ~~DescribeEips~~ 获取。
+     * 可通过调用 **DescribeEips** 获取。
      */
     public ?string $eipId = null;
 

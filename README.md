@@ -23,11 +23,15 @@ The package currently covers these Compute and Networking services:
 
 - **Virtual Machine (VM)** — API version `2026-04-01`, 62 actions.
 - **IP Transit (IPT)** — API version `2024-09-01`, 12 actions.
-- **Elastic Compute (ZEC)** — API version `2025-09-01`, 239 actions.
+- **Elastic Compute (ZEC)** — API version `2025-09-01`, 250 actions.
 
-The generated surface contains 313 Actions and 1,088 model classes in total.
+The generated surface contains 324 Actions and 1,130 model classes in total.
 Its upstream source and known documentation differences are recorded in
 [UPSTREAM.md](UPSTREAM.md).
+
+The official SDKs now deprecate all 12 IPT Actions in favor of SDN Internet.
+This package preserves the legacy IPT methods and routes; it does not silently
+redirect them or add an SDN client. See the [migration notes](UPSTREAM.md#ipt-deprecation).
 
 Every Action in the supported services is exposed as a typed PHP method backed
 by typed Request and Response model classes, so IDEs autocomplete the entire
@@ -81,6 +85,16 @@ Set credentials in your `.env`. Either an AccessKey pair (HMAC signing):
 ZENLAYER_SECRET_KEY_ID=AKID-your-key-id
 ZENLAYER_SECRET_KEY_PASSWORD=your-secret-key-password
 ```
+
+For STS, use the temporary AccessKey pair and also set:
+
+```dotenv
+ZENLAYER_SECURITY_TOKEN=your-temporary-security-token
+```
+
+If configuration was already published, add the `security_token` entry shown
+below to the selected connection. Obtain and renew STS credentials outside
+this package, then recreate or flush cached clients when replacing them.
 
 …or a personal access token (Bearer auth — takes precedence when set,
 generate one at <https://console.zenlayer.com/accessToken>):
@@ -261,6 +275,7 @@ return [
         'default' => [
             'secret_key_id'       => env('ZENLAYER_SECRET_KEY_ID'),
             'secret_key_password' => env('ZENLAYER_SECRET_KEY_PASSWORD'),
+            'security_token'      => env('ZENLAYER_SECURITY_TOKEN'), // STS only; optional
             'token'               => env('ZENLAYER_TOKEN'), // Bearer auth; wins over the key pair when set
             'endpoint'            => env('ZENLAYER_ENDPOINT', 'console.zenlayer.com'),
             'scheme'              => env('ZENLAYER_SCHEME', 'https'),

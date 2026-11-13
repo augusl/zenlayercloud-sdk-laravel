@@ -8,6 +8,14 @@ All notable changes to this project are documented here. This project follows
 
 ### Added
 
+- Eleven ZEC Actions for vNIC cross-account permissions, IPv6 CIDR purchase
+  and pricing, BYOIP region availability, batch EIP block thresholds, and NAT
+  new-connection monitoring, with 42 models, from Go `v0.2.59` / Python `2.0.79`.
+- Eight fields on existing ZEC models for customized EIPs, IPv6 CIDR source
+  filtering/subnet masks, default security-group filtering, and region metadata.
+- Optional STS authentication matching the official Go SDK, with
+  `StsCredential`, `security_token` configuration, and signed security-token
+  headers, without changing existing custom credential implementations.
 - Five ZEC Actions for secondary VPC CIDRs, EIP connection monitoring, and
   border-gateway interconnection CIDR updates, with 16 models, from Go SDK
   `v0.2.55` / Python SDK `2.0.76`.
@@ -40,6 +48,9 @@ All notable changes to this project are documented here. This project follows
 
 ### Changed
 
+- Synchronized to 324 Actions / 1,130 models without changing API versions or
+  package dependencies. All 12 legacy IPT Actions retain their original
+  routes and now carry the official SDN Internet deprecation/migration notices.
 - Followed the official IPT model rename from `RemoteIptAvailableRoutingType`
   to `IPTransitAvailableRoutingType`; applications must update old imports and
   type references. No legacy alias is included.
@@ -85,6 +96,8 @@ All notable changes to this project are documented here. This project follows
 
 ### Fixed
 
+- Reject truncated top-level model schemas before replacing any generated
+  output.
 - Excluded Laravel 11 / PHP 8.5 from the supported CI matrix and documented
   the PHP ranges officially supported by each Laravel major version.
 - Reject trailing newlines in `request_client`, including after truncation,

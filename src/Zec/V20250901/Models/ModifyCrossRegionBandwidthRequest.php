@@ -19,7 +19,7 @@ class ModifyCrossRegionBandwidthRequest extends AbstractModel
 {
     /**
      * CrossRegionBandwidthId 要调整的VPC跨区域带宽ID。
-     * 可通过调用 ~~DescribeCrossRegionBandwidth~~ 获取。
+     * 可通过调用 **DescribeCrossRegionBandwidth** 获取。
      */
     public ?string $crossRegionBandwidthId = null;
 

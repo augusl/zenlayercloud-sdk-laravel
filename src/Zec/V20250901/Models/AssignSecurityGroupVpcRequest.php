@@ -19,13 +19,13 @@ class AssignSecurityGroupVpcRequest extends AbstractModel
 {
     /**
      * VpcId 要操作的VPC ID。
-     * 可通过调用 ~~DescribeVpcs~~ 获取。
+     * 可通过调用 **DescribeVpcs** 获取。
      */
     public ?string $vpcId = null;
 
     /**
      * SecurityGroupId 要更换的目标安全组ID。
-     * 可通过调用 ~~DescribeSecurityGroups~~ 获取。
+     * 可通过调用 **DescribeSecurityGroups** 获取。
      */
     public ?string $securityGroupId = null;
 }

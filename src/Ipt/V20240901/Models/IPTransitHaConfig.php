@@ -13,7 +13,7 @@ namespace ZenlayerCloud\Laravel\Ipt\V20240901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * IPTransitHaConfig IP Transit HA配置信息。
+ * IPTransitHaConfig Internet HA配置信息。
  */
 class IPTransitHaConfig extends AbstractModel
 {

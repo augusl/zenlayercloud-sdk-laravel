@@ -32,13 +32,13 @@ class DescribeBorderGatewaysRequest extends AbstractModel
 
     /**
      * RegionId 根据边界网关所在的节点过滤。
-     * 可通过调用 ~~DescribeRegions~~ 获取。
+     * 可通过调用 **DescribeRegions** 获取。
      */
     public ?string $regionId = null;
 
     /**
      * VpcId 根据边界网关所属的VPC ID过滤。
-     * 可通过调用 ~~DescribeVpcs~~ 获取。
+     * 可通过调用 **DescribeVpcs** 获取。
      */
     public ?string $vpcId = null;
 

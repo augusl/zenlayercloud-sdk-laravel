@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace ZenlayerCloud\Laravel\Common;
 
 /**
- * Common contract for the two authentication modes Zenlayer Cloud supports,
+ * Common contract for Zenlayer Cloud authentication,
  * mirroring the upstream SDKs' credential interface:
  *
  *   - {@see Credential}      — HMAC request signing (AccessKey id + password).
+ *   - {@see StsCredential}   — temporary AccessKey pair and security token.
  *   - {@see TokenCredential} — `Authorization: Bearer <token>` (personal
  *     access token from https://console.zenlayer.com/accessToken).
  *

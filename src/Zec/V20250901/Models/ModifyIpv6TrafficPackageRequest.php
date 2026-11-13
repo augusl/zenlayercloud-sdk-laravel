@@ -19,7 +19,7 @@ class ModifyIpv6TrafficPackageRequest extends AbstractModel
 {
     /**
      * Ipv6Id IPv6唯一标识ID。
-     * 可通过调用 ~~DescribeIpv6Addresses~~ 获取。
+     * 可通过调用 **DescribeIpv6Addresses** 获取。
      */
     public ?string $ipv6Id = null;
 

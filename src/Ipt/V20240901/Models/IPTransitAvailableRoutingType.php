@@ -13,7 +13,7 @@ namespace ZenlayerCloud\Laravel\Ipt\V20240901\Models;
 use ZenlayerCloud\Laravel\Common\AbstractModel;
 
 /**
- * IPTransitAvailableRoutingType IP Transit可用路由模式信息。
+ * IPTransitAvailableRoutingType Internet可用路由模式信息。
  */
 class IPTransitAvailableRoutingType extends AbstractModel
 {

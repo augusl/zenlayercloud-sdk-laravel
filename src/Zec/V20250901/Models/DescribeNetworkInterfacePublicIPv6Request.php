@@ -19,7 +19,7 @@ class DescribeNetworkInterfacePublicIPv6Request extends AbstractModel
 {
     /**
      * NicId 网卡ID。
-     * 可通过调用 ~~DescribeNetworkInterfaces~~ 获取。
+     * 可通过调用 **DescribeNetworkInterfaces** 获取。
      */
     public ?string $nicId = null;
 }

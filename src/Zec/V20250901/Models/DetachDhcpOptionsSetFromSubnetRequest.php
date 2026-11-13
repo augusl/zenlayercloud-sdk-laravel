@@ -19,7 +19,7 @@ class DetachDhcpOptionsSetFromSubnetRequest extends AbstractModel
 {
     /**
      * SubnetIds 要与DHCP选项集取消关联的子网ID集合。
-     * 可通过调用 ~~DescribeSubnets~~ 获取。
+     * 可通过调用 **DescribeSubnets** 获取。
      *
      * @var list<string>|null
      */

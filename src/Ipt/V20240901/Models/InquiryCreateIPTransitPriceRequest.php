@@ -24,7 +24,7 @@ class InquiryCreateIPTransitPriceRequest extends AbstractModel
 
     /**
      * IptDcId 本端数据中心 ID。
-     * 为空代表本地连接（Local IPT）。
+     * 为空代表本地连接（Local Internet）。
      */
     public ?string $iptDcId = null;
 
@@ -70,7 +70,7 @@ class InquiryCreateIPTransitPriceRequest extends AbstractModel
     /**
      * BgpTier BGP 档位。
      * 不传默认 PREMIUM（优质档）。
-     * `zbgRegionId` 非空（基于 router 的 IP Transit）时不支持 STANDARD。
+     * `zbgRegionId` 非空（基于 Router 的 Internet）时不支持 STANDARD。
      */
     public ?string $bgpTier = null;
 
@@ -91,7 +91,7 @@ class InquiryCreateIPTransitPriceRequest extends AbstractModel
 
     /**
      * ZbgRegionId ZBG 接入节点 ID。
-     * 非空时走 Router RIPT 询价流程。
+     * 非空时走基于 Router 的 Internet 询价流程。
      */
     public ?string $zbgRegionId = null;
 

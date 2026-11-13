@@ -19,7 +19,7 @@ class DescribeInstancesStatusRequest extends AbstractModel
 {
     /**
      * InstanceIds 要查询的实例ID列表。
-     * 可通过调用 ~~DescribeInstances~~ 获取。
+     * 可通过调用 **DescribeInstances** 获取。
      *
      * @var list<string>|null
      */

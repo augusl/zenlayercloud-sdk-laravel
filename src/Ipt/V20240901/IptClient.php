@@ -15,8 +15,8 @@ use ZenlayerCloud\Laravel\Common\AbstractClient;
 /**
  * Zenlayer Cloud IP Transit (IPT) client (API version 2024-09-01).
  *
- * Each public method maps 1:1 to an official Action name. The public API
- * reference is at https://docs.console.zenlayer.com/api-reference/ipt/overview;
+ * Each public method maps 1:1 to an official Action name. The official service
+ * reference is at https://github.com/zenlayer/zenlayercloud-sdk-go/tree/v0.2.59/zenlayercloud/ipt20240901;
  * UPSTREAM.md records any Action currently present only in the official SDKs.
  * Method names remain PascalCase so the protocol mapping is unambiguous.
  *
@@ -35,7 +35,9 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 查询IP Transit可连接数据中心。
+     * 查询Internet可连接数据中心。本接口已弃用，请改用 **sdn:DescribeInternetDatacenters**。
+     *
+     * @deprecated
      */
     public function DescribeIPTransitDatacenters(#[\SensitiveParameter] Models\DescribeIPTransitDatacentersRequest $request): Models\DescribeIPTransitDatacentersResponse
     {
@@ -43,7 +45,9 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 查询IP Transit可用 ASN。
+     * 查询Internet可用 ASN。本接口已弃用，请改用 **sdn:DescribeInternetAvailableAsns**。
+     *
+     * @deprecated
      */
     public function DescribeIPTransitAvailableAsns(#[\SensitiveParameter] Models\DescribeIPTransitAvailableAsnsRequest $request): Models\DescribeIPTransitAvailableAsnsResponse
     {
@@ -51,7 +55,9 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 查询IP Transit可用公网地址段。
+     * 查询Internet可用公网地址段。本接口已弃用，请改用 **sdn:DescribeInternetAvailableCidrBlocks**。
+     *
+     * @deprecated
      */
     public function DescribeIPTransitAvailableCidrBlocks(#[\SensitiveParameter] Models\DescribeIPTransitAvailableCidrBlocksRequest $request): Models\DescribeIPTransitAvailableCidrBlocksResponse
     {
@@ -59,7 +65,9 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * IP Transit创建询价。
+     * Internet创建询价。本接口已弃用，请改用 **sdn:InquiryCreateInternetPrice**。
+     *
+     * @deprecated
      */
     public function InquiryCreateIPTransitPrice(#[\SensitiveParameter] Models\InquiryCreateIPTransitPriceRequest $request): Models\InquiryCreateIPTransitPriceResponse
     {
@@ -67,7 +75,9 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 创建IP Transit。
+     * 创建Internet。本接口已弃用，请改用 **sdn:CreateInternet**。
+     *
+     * @deprecated
      */
     public function CreateIPTransit(#[\SensitiveParameter] Models\CreateIPTransitRequest $request): Models\CreateIPTransitResponse
     {
@@ -75,7 +85,9 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 查询IP Transit列表。
+     * 查询Internet列表。本接口已弃用，请改用 **sdn:DescribeInternets**。
+     *
+     * @deprecated
      */
     public function DescribeIPTransits(#[\SensitiveParameter] Models\DescribeIPTransitsRequest $request): Models\DescribeIPTransitsResponse
     {
@@ -83,7 +95,9 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 修改IP Transit带宽。
+     * 修改Internet带宽。本接口已弃用，请改用 **sdn:ModifyInternetConfig**（`type=BANDWIDTH`）。
+     *
+     * @deprecated
      */
     public function ModifyIPTransitBandwidth(#[\SensitiveParameter] Models\ModifyIPTransitBandwidthRequest $request): Models\ModifyIPTransitBandwidthResponse
     {
@@ -91,7 +105,9 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 修改IP Transit属性。
+     * 修改Internet属性。本接口已弃用，请改用 **sdn:ModifyInternetsAttribute**。
+     *
+     * @deprecated
      */
     public function ModifyIPTransitsAttribute(#[\SensitiveParameter] Models\ModifyIPTransitsAttributeRequest $request): Models\ModifyIPTransitsAttributeResponse
     {
@@ -99,7 +115,9 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 删除IP Transit。
+     * 删除Internet。本接口已弃用，请改用 **sdn:DeleteInternet**。
+     *
+     * @deprecated
      */
     public function DeleteIPTransit(#[\SensitiveParameter] Models\DeleteIPTransitRequest $request): Models\DeleteIPTransitResponse
     {
@@ -107,7 +125,9 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 查询IP Transit流量。
+     * 查询Internet流量。本接口已弃用，请改用 **sdn:DescribeInternetTraffic**。
+     *
+     * @deprecated
      */
     public function DescribeIPTransitTraffic(#[\SensitiveParameter] Models\DescribeIPTransitTrafficRequest $request): Models\DescribeIPTransitTrafficResponse
     {
@@ -115,7 +135,9 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * IP Transit变配询价。
+     * Internet变配询价。本接口已弃用，请改用 **sdn:InquiryModifyInternetPrice**。
+     *
+     * @deprecated
      */
     public function InquiryModifyIPTransitPrice(#[\SensitiveParameter] Models\InquiryModifyIPTransitPriceRequest $request): Models\InquiryModifyIPTransitPriceResponse
     {
@@ -123,7 +145,9 @@ class IptClient extends AbstractClient
     }
 
     /**
-     * 修改IP Transit配置。
+     * 修改Internet配置。本接口已弃用，请改用 **sdn:ModifyInternetConfig**。
+     *
+     * @deprecated
      */
     public function ModifyIPTransitConfig(#[\SensitiveParameter] Models\ModifyIPTransitConfigRequest $request): Models\ModifyIPTransitConfigResponse
     {

@@ -11,12 +11,16 @@ aligned with Zenlayer's official Go and Python SDKs.
 |---------|-------------|--------:|-------:|
 | Virtual Machine (VM) | `2026-04-01` | 62 | 213 |
 | IP Transit (IPT) | `2024-09-01` | 12 | 61 |
-| Elastic Compute (ZEC) | `2025-09-01` | 239 | 814 |
-| **Total** | | **313** | **1,088** |
+| Elastic Compute (ZEC) | `2025-09-01` | 250 | 856 |
+| **Total** | | **324** | **1,130** |
 
 Only the latest VM, IPT, and ZEC versions are shipped. Other Zenlayer services
 and older API versions are deliberately out of scope. Exact upstream revisions
 and known documentation differences are maintained in [UPSTREAM.md](UPSTREAM.md).
+
+The 12 legacy IPT Actions remain available on their original routes but carry
+the official deprecation notices pointing to SDN Internet. SDN itself is not
+included in this package.
 
 ## Architecture
 
@@ -50,15 +54,22 @@ a build step.
 
 ## Authentication and signing
 
-Each connection uses one of two official authentication modes:
+Each connection uses one of the official authentication modes:
 
 - `TokenCredential`: `Authorization: Bearer <token>`; no HMAC headers.
 - `Credential`: AccessKey id/password with `ZC2-HMAC-SHA256`.
+- `StsCredential`: temporary AccessKey pair plus `x-zc-security-token`, as in
+  the official Go SDK. The header is included in the signature; its canonical
+  value is trimmed and lower-cased while the original token is sent on the wire.
 
-When both are configured, the token takes precedence. HMAC signing uses POST,
+When multiple modes are configured, Bearer takes precedence over STS and plain
+keys. STS credentials are supplied and renewed by the caller; no AssumeRole
+client or automatic refresh mechanism is included. HMAC signing uses POST,
 canonical URI `/`, an empty canonical query, signed headers
 `content-type;host`, SHA-256 payload hashing, and HMAC-SHA-256. Golden-vector
-tests protect byte-level compatibility with the official algorithm.
+tests protect byte-level compatibility with the official algorithm. STS also
+signs `x-zc-security-token`. The optional `SecurityTokenCredentialInterface`
+does not add methods to existing custom `CredentialInterface` implementations.
 
 The endpoint is normalized before both URL creation and signing. It accepts
 only `host[:port]` or `http(s)://host[:port]`; user info, paths, query strings,

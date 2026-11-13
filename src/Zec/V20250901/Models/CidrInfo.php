@@ -137,7 +137,7 @@ class CidrInfo extends AbstractModel
     public ?array $availableCidr = null;
 
     /**
-     * AvailableCount CIDR中当前可用的IP地址数量（= totalCount − 实际已占用地址数，网段(Block)型EIP按其掩码长度占用的全部地址计算）。
+     * AvailableCount CIDR中当前可用的IP地址数量（段内非`.0`/`.255`地址中未被占用的数量）。
      */
     public ?int $availableCount = null;
 

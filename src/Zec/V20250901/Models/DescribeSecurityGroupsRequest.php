@@ -31,6 +31,12 @@ class DescribeSecurityGroupsRequest extends AbstractModel
     public ?string $securityGroupName = null;
 
     /**
+     * IsDefault 根据是否为默认安全组筛选。
+     * 不传时不限。
+     */
+    public ?bool $isDefault = null;
+
+    /**
      * PageSize 返回的分页大小。
      */
     public ?int $pageSize = null;

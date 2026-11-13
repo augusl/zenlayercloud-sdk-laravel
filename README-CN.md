@@ -22,10 +22,14 @@ ServiceProvider 与 Facade、可发布的连接配置、基于 `Illuminate\Http\
 
 - **虚拟机 (VM)** — API 版本 `2026-04-01`，共 62 个 Action。
 - **IP Transit (IPT)** — API 版本 `2024-09-01`，共 12 个 Action。
-- **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 239 个 Action。
+- **弹性算力 (ZEC)** — API 版本 `2025-09-01`，共 250 个 Action。
 
-当前生成代码合计包含 313 个 Action、1,088 个模型类。上游版本与已知文档差异记录在
+当前生成代码合计包含 324 个 Action、1,130 个模型类。上游版本与已知文档差异记录在
 [UPSTREAM.md](UPSTREAM.md)。
+
+官方 SDK 已将全部 12 个 IPT Action 标记为弃用，推荐迁往 SDN Internet。
+本包保留旧 IPT 方法及原始路由，不自动转发，也未新增 SDN 客户端。
+详见[迁移说明](UPSTREAM.md#ipt-deprecation)。
 
 支持范围内的每个 Action 都映射为一个带强类型 Request / Response 的 PHP 方法，
 IDE 全程提示。
@@ -76,6 +80,15 @@ php artisan vendor:publish --tag=zenlayercloud-config
 ZENLAYER_SECRET_KEY_ID=AKID-你的密钥ID
 ZENLAYER_SECRET_KEY_PASSWORD=你的密钥密码
 ```
+
+使用 STS 时，填写临时 AccessKey 密钥对，并额外设置：
+
+```dotenv
+ZENLAYER_SECURITY_TOKEN=你的临时安全令牌
+```
+
+若之前已经发布配置文件，需要在对应连接中补上下面配置示例的 `security_token` 项。
+凭证的获取与续期由应用负责；替换凭证后请重新创建客户端或清空已缓存客户端。
 
 也可以用个人访问令牌（Bearer 认证，设置后优先于密钥对，
 在 <https://console.zenlayer.com/accessToken> 生成）：
@@ -246,6 +259,7 @@ return [
         'default' => [
             'secret_key_id'       => env('ZENLAYER_SECRET_KEY_ID'),
             'secret_key_password' => env('ZENLAYER_SECRET_KEY_PASSWORD'),
+            'security_token'      => env('ZENLAYER_SECURITY_TOKEN'), // 仅 STS 使用，可选
             'token'               => env('ZENLAYER_TOKEN'), // Bearer 认证；设置后优先于密钥对
             'endpoint'            => env('ZENLAYER_ENDPOINT', 'console.zenlayer.com'),
             'scheme'              => env('ZENLAYER_SCHEME', 'https'),

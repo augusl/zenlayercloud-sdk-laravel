@@ -25,7 +25,7 @@ class AcceleratorTypeQuotaItem extends AbstractModel
     /**
      * InstanceType 加速卡规格ID。
      * 例如：z2a.v.T1U.c16m64.1。
-     * 创建实例时将此值传入 ~~CreateZecInstances~~ 的instanceType参数。
+     * 创建实例时将此值传入 **CreateZecInstances** 的instanceType参数。
      */
     public ?string $instanceType = null;
 

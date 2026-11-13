@@ -27,7 +27,7 @@ class DescribeIpv6AddressesRequest extends AbstractModel
 
     /**
      * RegionId 按照公网IPv6所属节点ID过滤。
-     * 可通过调用 ~~DescribeRegions~~ 获取。
+     * 可通过调用 **DescribeRegions** 获取。
      */
     public ?string $regionId = null;
 

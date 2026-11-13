@@ -19,13 +19,13 @@ class InquiryPriceCreateInstanceRequest extends AbstractModel
 {
     /**
      * ZoneId 可用区ID。
-     * 可通过调用 ~~DescribeZones~~ 获取。
+     * 可通过调用 **DescribeZones** 获取。
      */
     public ?string $zoneId = null;
 
     /**
      * InstanceType 实例机型。
-     * 普通实例取值可通过 ~~DescribeZoneInstanceConfigInfos~~ 获得；GPU实例取值可通过 ~~DescribeZoneGpuInstanceConfigInfos~~ 获得。
+     * 普通实例取值可通过 **DescribeZoneInstanceConfigInfos** 获得；GPU实例取值可通过 **DescribeZoneGpuInstanceConfigInfos** 获得。
      */
     public ?string $instanceType = null;
 

@@ -19,13 +19,13 @@ class CreateBorderGatewayRequest extends AbstractModel
 {
     /**
      * RegionId 节点ID。
-     * 可通过调用 ~~DescribeRegions~~ 获取。
+     * 可通过调用 **DescribeRegions** 获取。
      */
     public ?string $regionId = null;
 
     /**
      * VpcId VPC ID。
-     * 可通过调用 ~~DescribeVpcs~~ 获取。
+     * 可通过调用 **DescribeVpcs** 获取。
      */
     public ?string $vpcId = null;
 
@@ -55,7 +55,7 @@ class CreateBorderGatewayRequest extends AbstractModel
     /**
      * AdvertisedSubnetIds 要宣告的子网ID集合。
      * 仅当`advertisedSubnet`取值为`PART`时该字段生效。
-     * 可通过调用 ~~DescribeSubnets~~ 获取。
+     * 可通过调用 **DescribeSubnets** 获取。
      *
      * @var list<string>|null
      */

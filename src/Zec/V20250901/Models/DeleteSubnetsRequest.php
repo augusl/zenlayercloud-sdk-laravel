@@ -19,7 +19,7 @@ class DeleteSubnetsRequest extends AbstractModel
 {
     /**
      * SubnetIds 要删除的子网ID列表。
-     * 可通过调用 ~~DescribeSubnets~~ 获取。
+     * 可通过调用 **DescribeSubnets** 获取。
      *
      * @var list<string>|null
      */

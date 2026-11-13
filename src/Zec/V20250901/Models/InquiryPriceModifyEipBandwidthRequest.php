@@ -19,7 +19,7 @@ class InquiryPriceModifyEipBandwidthRequest extends AbstractModel
 {
     /**
      * EipId 要操作的公网弹性IP。
-     * 可通过调用 ~~DescribeEips~~ 获取。
+     * 可通过调用 **DescribeEips** 获取。
      */
     public ?string $eipId = null;
 

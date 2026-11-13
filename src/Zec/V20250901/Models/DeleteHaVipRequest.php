@@ -19,7 +19,7 @@ class DeleteHaVipRequest extends AbstractModel
 {
     /**
      * HaVipId 高可用虚拟IP的ID。
-     * 可通过调用 ~~DescribeHaVips~~ 获取。
+     * 可通过调用 **DescribeHaVips** 获取。
      */
     public ?string $haVipId = null;
 }

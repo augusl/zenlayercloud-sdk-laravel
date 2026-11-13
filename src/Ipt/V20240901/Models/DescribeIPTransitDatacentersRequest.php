@@ -30,7 +30,7 @@ class DescribeIPTransitDatacentersRequest extends AbstractModel
 
     /**
      * ZbgRegionId ZBG 接入节点 ID。
-     * 非空时查询以该 ZBG 节点为接入侧的 Router RIPT 可连接 DC 列表。
+     * 非空时查询以该 ZBG 节点为接入侧的基于 Router 的 Internet 可连接 DC 列表。
      */
     public ?string $zbgRegionId = null;
 }

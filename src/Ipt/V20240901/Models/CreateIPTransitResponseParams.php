@@ -25,7 +25,7 @@ class CreateIPTransitResponseParams extends AbstractModel
     public ?string $orderNumber = null;
 
     /**
-     * IptId IP Transit ID。
+     * IptId Internet ID。
      */
     public ?string $iptId = null;
 }

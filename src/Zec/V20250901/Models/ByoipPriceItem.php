@@ -29,7 +29,7 @@ class ByoipPriceItem extends AbstractModel
 
     /**
      * RegionId 区域id。
-     * 可通过调用 ~~DescribeRegions~~ 获取。
+     * 可通过调用 **DescribeRegions** 获取。
      */
     public ?string $regionId = null;
 }

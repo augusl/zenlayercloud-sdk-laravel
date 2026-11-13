@@ -134,6 +134,19 @@ final class GeneratedApiSurfaceTest extends TestCase
         self::assertStringContainsString('默认为 true', $doc);
     }
 
+    public function test_ipt_actions_preserve_the_official_deprecation_notice(): void
+    {
+        foreach ((new ReflectionClass(IptClient::class))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            if ($method->getDeclaringClass()->getName() !== IptClient::class) {
+                continue;
+            }
+            $doc = $method->getDocComment();
+            self::assertIsString($doc);
+            self::assertStringContainsString('@deprecated', $doc);
+            self::assertStringContainsString('sdn:', $doc);
+        }
+    }
+
     public function test_latest_zec_regions_contract_hydrates_typed_region_items(): void
     {
         $response = (new DescribeRegionsResponse)->fromArray([
@@ -238,7 +251,18 @@ final class GeneratedApiSurfaceTest extends TestCase
                 'DescribeIPTransits',
                 'ModifyIPTransitConfig',
             ]],
-            'ZEC 20250901' => [ZecClient::class, 239, [
+            'ZEC 20250901' => [ZecClient::class, 250, [
+                'CreateNetworkInterfacePermission',
+                'DescribeNetworkInterfacePermissions',
+                'DeleteNetworkInterfacePermission',
+                'DescribeIpv6CidrPrice',
+                'ModifyIpv6CidrAttribute',
+                'CreateIpv6Cidr',
+                'DescribeIpv6CidrNetmasks',
+                'DescribeIpv6CidrRegions',
+                'DescribeByoipRegionAvailability',
+                'ModifyEipsBlockThreshold',
+                'DescribeNatGatewayNewConnsMonitorData',
                 'AssociateVpcCidrBlock',
                 'UnassociateVpcCidrBlock',
                 'ModifyBorderGatewayInterconnectCidr',
@@ -285,7 +309,7 @@ final class GeneratedApiSurfaceTest extends TestCase
             'ZEC models' => [
                 dirname(__DIR__, 2).'/src/Zec/V20250901/Models',
                 'ZenlayerCloud\\Laravel\\Zec\\V20250901\\Models',
-                814,
+                856,
             ],
         ];
     }

@@ -30,6 +30,10 @@ return [
             'secret_key_id' => env('ZENLAYER_SECRET_KEY_ID'),
             'secret_key_password' => env('ZENLAYER_SECRET_KEY_PASSWORD'),
 
+            // For a temporary STS AccessKey pair, also supply its security token.
+            // The caller is responsible for obtaining and renewing credentials.
+            'security_token' => env('ZENLAYER_SECURITY_TOKEN'),
+
             // ...or with a personal access token (Bearer auth). When a token is
             // set it takes precedence over the AccessKey pair above.
             // Generate one at https://console.zenlayer.com/accessToken.

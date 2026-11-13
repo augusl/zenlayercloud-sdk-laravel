@@ -26,7 +26,7 @@ class DescribeIpv6CidrsRequest extends AbstractModel
 
     /**
      * RegionId 根据CIDR所在的节点ID进行过滤。
-     * 可通过调用 ~~DescribeRegions~~ 获取。
+     * 可通过调用 **DescribeRegions** 获取。
      */
     public ?string $regionId = null;
 
@@ -39,6 +39,12 @@ class DescribeIpv6CidrsRequest extends AbstractModel
      * CidrBlock 根据CIDR地址进行过滤。
      */
     public ?string $cidrBlock = null;
+
+    /**
+     * Source 根据CIDR来源进行过滤。
+     * CONSOLE表示从Zenlayer购买，BYOIP表示客户自带IP。
+     */
+    public ?string $source = null;
 
     /**
      * Asn 根据ASN编号进行过滤。

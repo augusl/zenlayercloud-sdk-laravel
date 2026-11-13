@@ -19,7 +19,7 @@ class DescribeInstanceMonitorDataRequest extends AbstractModel
 {
     /**
      * InstanceId 实例唯一标识ID。
-     * 可通过调用 ~~DescribeInstances~~ 获取。
+     * 可通过调用 **DescribeInstances** 获取。
      */
     public ?string $instanceId = null;
 

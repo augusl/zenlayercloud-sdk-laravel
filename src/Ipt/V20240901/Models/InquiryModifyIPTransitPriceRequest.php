@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class InquiryModifyIPTransitPriceRequest extends AbstractModel
 {
     /**
-     * IptId IP Transit 实例 ID。
+     * IptId Internet 实例 ID。
      */
     public ?string $iptId = null;
 

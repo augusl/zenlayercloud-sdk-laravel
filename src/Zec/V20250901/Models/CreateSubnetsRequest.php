@@ -20,7 +20,7 @@ class CreateSubnetsRequest extends AbstractModel
     /**
      * VpcId 需要添加子网的VPC ID。
      * 批量创建的子网均属于同一个VPC。
-     * 可通过调用 ~~DescribeVpcs~~ 获取。
+     * 可通过调用 **DescribeVpcs** 获取。
      */
     public ?string $vpcId = null;
 

@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class DescribeIPTransitTrafficRequest extends AbstractModel
 {
     /**
-     * IptId IP Transit ID。
+     * IptId Internet ID。
      */
     public ?string $iptId = null;
 

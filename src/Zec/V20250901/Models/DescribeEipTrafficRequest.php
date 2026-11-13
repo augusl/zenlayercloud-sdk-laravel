@@ -19,7 +19,7 @@ class DescribeEipTrafficRequest extends AbstractModel
 {
     /**
      * EipId 要查询的弹性IP ID。
-     * 可通过调用 ~~DescribeEips~~ 获取。
+     * 可通过调用 **DescribeEips** 获取。
      */
     public ?string $eipId = null;
 

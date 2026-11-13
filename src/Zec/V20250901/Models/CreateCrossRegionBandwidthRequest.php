@@ -19,7 +19,7 @@ class CreateCrossRegionBandwidthRequest extends AbstractModel
 {
     /**
      * VpcId 创建VPC跨区域带宽所在的VPC ID。
-     * 可通过调用 ~~DescribeVpcs~~ 获取。
+     * 可通过调用 **DescribeVpcs** 获取。
      */
     public ?string $vpcId = null;
 

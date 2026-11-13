@@ -338,4 +338,149 @@ final class ZecClientTest extends TestCase
         Http::assertSent(fn (Request $request): bool => $request->header('x-zc-action')[0] === 'DescribeEipNewConnsMonitorData'
             && $request->data() === $payload);
     }
+
+    /**
+     * @param  array<string,mixed>  $payload
+     * @param  array<string,mixed>  $result
+     */
+    #[DataProvider('addedActionProvider')]
+    public function test_added_actions_preserve_the_official_contract(string $action, array $payload, array $result): void
+    {
+        Http::fake(['*' => Http::response(['requestId' => 'outer', 'response' => $result + ['requestId' => 'inner']], 200)]);
+        $class = 'ZenlayerCloud\\Laravel\\Zec\\V20250901\\Models\\'.$action.'Request';
+        $request = (new $class)->fromArray($payload);
+
+        $response = ZenlayerCloud::zec()->{$action}($request);
+
+        self::assertSame('outer', $response->requestId);
+        self::assertEquals($result + ['requestId' => 'inner'], $response->response->toArray());
+        Http::assertSent(fn (Request $sent): bool => $sent->url() === 'https://console.zenlayer.com/api/v2/zec'
+            && $sent->header('x-zc-action') === [$action]
+            && $sent->header('x-zc-version') === ['2025-09-01']
+            && $sent->header('x-zc-service') === ['zec']
+            && $sent->data() === $payload);
+        Http::assertSentCount(1);
+        if ($payload === []) {
+            self::assertSame('{}', $request->toJson());
+        }
+        if (isset($payload['netmask'])) {
+            self::assertInstanceOf(Models\Ipv6NetmaskInfo::class, $request->netmask);
+        }
+    }
+
+    /** @return array<string,array{string,array<string,mixed>,array<string,mixed>}> */
+    public static function addedActionProvider(): array
+    {
+        return [
+            'grant NIC permission' => ['CreateNetworkInterfacePermission',
+                ['nicId' => 'nic-test', 'granteeCid' => '12345', 'permission' => 'INSTANCE_ATTACH'],
+                ['permissionId' => 'permission-test']],
+            'list NIC permissions' => ['DescribeNetworkInterfacePermissions',
+                ['nicIds' => ['nic-test'], 'permissionIds' => ['permission-test'], 'pageSize' => 10, 'pageNum' => 1],
+                ['totalCount' => 1, 'dataSet' => [['permissionId' => 'permission-test', 'nicId' => 'nic-test', 'granteeCid' => '12345', 'permission' => 'INSTANCE_ATTACH']]]],
+            'delete NIC permission' => ['DeleteNetworkInterfacePermission', ['permissionId' => 'permission-test', 'force' => false], []],
+            'IPv6 CIDR price' => ['DescribeIpv6CidrPrice',
+                ['regionId' => 'asia-east-1', 'networkLineType' => 'PremiumBGP', 'netmask' => ['netmask' => 64, 'amount' => 2],
+                    'instanceChargePostpaid' => ['period' => 1], 'marketingOptions' => ['usePocVoucher' => false]],
+                ['cidrPrice' => ['unitPrice' => 1.25]]],
+            'rename IPv6 CIDR' => ['ModifyIpv6CidrAttribute', ['cidrId' => 'cidr-test', 'name' => 'test-cidr'], []],
+            'purchase IPv6 CIDRs' => ['CreateIpv6Cidr',
+                ['regionId' => 'asia-east-1', 'networkLineType' => 'PremiumBGP', 'netmask' => ['netmask' => 64, 'amount' => 2],
+                    'subnetMaskLength' => 72, 'instanceChargePostpaid' => ['period' => 1], 'marketingOptions' => ['usePocVoucher' => false]],
+                ['cidrIds' => ['cidr-a', 'cidr-b'], 'orderNumber' => 'order-test']],
+            'available IPv6 netmasks' => ['DescribeIpv6CidrNetmasks', ['regionId' => 'asia-east-1', 'instanceChargePostpaid' => ['period' => 1]],
+                ['netmaskSet' => [['netmask' => 64, 'networkLineTypes' => [['networkLineType' => 'PremiumBGP', 'stock' => 0, 'price' => ['unitPrice' => 1.25]]]]]]],
+            'IPv6 CIDR regions' => ['DescribeIpv6CidrRegions', [],
+                ['regionSet' => [['discount' => 0.5, 'regionId' => 'asia-east-1', 'location' => 'Shanghai', 'wideRegionName' => 'APAC', 'wideRegionTitle' => 'Asia Pacific']]]],
+            'BYOIP region availability' => ['DescribeByoipRegionAvailability', [],
+                ['regions' => [['regionId' => 'asia-east-1', 'location' => 'Shanghai', 'lineAvailabilities' => [['network' => 'PremiumBGP', 'status' => 'SUPPORTED']]]]]],
+            'batch EIP thresholds' => ['ModifyEipsBlockThreshold',
+                ['eipIds' => ['eip-a', 'eip-b'], 'enable' => false, 'bps' => 4294967296, 'pps' => 0, 'inCps' => 0, 'outCps' => 0],
+                ['failedEips' => []]],
+            'NAT new connections' => ['DescribeNatGatewayNewConnsMonitorData',
+                ['natGatewayId' => 'nat-test', 'metricType' => 'NEW_CONNECTIONS', 'startTime' => '2026-11-13T00:00:00Z', 'endTime' => '2026-11-13T00:05:00Z', 'step' => 1],
+                ['allMaxValue' => 1.5, 'allMinValue' => 0, 'dataList' => [['time' => '2026-11-13T00:00:00Z', 'allValue' => 1.5, 'inValue' => 0]]]],
+        ];
+    }
+
+    public function test_new_nested_network_models_are_hydrated(): void
+    {
+        Http::fakeSequence()
+            ->push(['response' => ['netmaskSet' => [['netmask' => 64, 'networkLineTypes' => [['networkLineType' => 'PremiumBGP', 'stock' => 0, 'price' => ['unitPrice' => 1.25]]]]]]])
+            ->push(['response' => ['regions' => [['regionId' => 'asia-east-1', 'lineAvailabilities' => [['network' => 'PremiumBGP', 'status' => 'SUPPORTED']]]]]])
+            ->push(['response' => ['dataList' => [['time' => '2026-11-13T00:00:00Z', 'allValue' => 1.5, 'inValue' => 0, 'outValue' => null]]]]);
+
+        $netmasks = ZenlayerCloud::zec()->DescribeIpv6CidrNetmasks(new Models\DescribeIpv6CidrNetmasksRequest)->response->netmaskSet;
+        self::assertInstanceOf(Models\Ipv6CidrNetmaskInfo::class, $netmasks[0]);
+        self::assertInstanceOf(Models\Ipv6CidrLineTypeInfo::class, $netmasks[0]->networkLineTypes[0]);
+        self::assertInstanceOf(Models\PriceItem::class, $netmasks[0]->networkLineTypes[0]->price);
+        self::assertSame(0, $netmasks[0]->networkLineTypes[0]->stock);
+        self::assertSame(1.25, $netmasks[0]->networkLineTypes[0]->price->unitPrice);
+
+        $regions = ZenlayerCloud::zec()->DescribeByoipRegionAvailability(new Models\DescribeByoipRegionAvailabilityRequest)->response->regions;
+        self::assertInstanceOf(Models\ByoipRegionAvailability::class, $regions[0]);
+        self::assertInstanceOf(Models\ByoipLineAvailability::class, $regions[0]->lineAvailabilities[0]);
+
+        $values = ZenlayerCloud::zec()->DescribeNatGatewayNewConnsMonitorData(new Models\DescribeNatGatewayNewConnsMonitorDataRequest)->response->dataList;
+        self::assertInstanceOf(Models\NatNewConnsValue::class, $values[0]);
+        self::assertSame(1.5, $values[0]->allValue);
+        self::assertSame(0.0, $values[0]->inValue);
+        self::assertNull($values[0]->outValue);
+    }
+
+    public function test_batch_eip_threshold_failures_are_returned_without_retrying_writes(): void
+    {
+        Http::fake(['*' => Http::response(['response' => ['failedEips' => [[
+            'eipId' => 'eip-b', 'errorCode' => 'INVALID_PARAMETER', 'errorMsg' => 'Cannot modify this EIP.',
+        ]]]], 200)]);
+
+        $response = ZenlayerCloud::zec()->ModifyEipsBlockThreshold(
+            (new Models\ModifyEipsBlockThresholdRequest)->fromArray(['eipIds' => ['eip-a', 'eip-b'], 'enable' => false]),
+        );
+
+        self::assertCount(1, $response->response->failedEips);
+        self::assertInstanceOf(Models\ModifyEipsBlockThresholdFailedItem::class, $response->response->failedEips[0]);
+        self::assertSame('eip-b', $response->response->failedEips[0]->eipId);
+        self::assertSame('INVALID_PARAMETER', $response->response->failedEips[0]->errorCode);
+        Http::assertSentCount(1);
+    }
+
+    /** @param array<string,bool|string> $payload */
+    #[DataProvider('newFilterProvider')]
+    public function test_new_filters_are_sent_without_overriding_server_defaults(string $action, array $payload): void
+    {
+        Http::fake(['*' => Http::response(['response' => (object) []], 200)]);
+        $class = 'ZenlayerCloud\\Laravel\\Zec\\V20250901\\Models\\'.$action.'Request';
+
+        ZenlayerCloud::zec()->{$action}((new $class)->fromArray($payload));
+
+        Http::assertSent(fn (Request $sent): bool => $sent->data() === $payload);
+        self::assertSame('{}', (new $class)->toJson());
+    }
+
+    /** @return array<string,array{string,array<string,bool|string>}> */
+    public static function newFilterProvider(): array
+    {
+        return [
+            'customized EIPs false' => ['DescribeEips', ['isCustomized' => false]],
+            'default security groups false' => ['DescribeSecurityGroups', ['isDefault' => false]],
+            'purchased IPv6 CIDRs' => ['DescribeIpv6Cidrs', ['source' => 'CONSOLE']],
+            'BYO IPv6 CIDRs' => ['DescribeIpv6Cidrs', ['source' => 'BYOIP']],
+        ];
+    }
+
+    public function test_added_existing_model_fields_are_preserved(): void
+    {
+        Http::fakeSequence()
+            ->push(['response' => ['dataSet' => [['isCustomized' => false]]]])
+            ->push(['response' => ['dataSet' => [['cidrId' => 'cidr-test', 'subnetMaskLength' => 72]]]])
+            ->push(['response' => ['regionSet' => [['regionId' => 'asia-east-1', 'location' => 'Shanghai', 'wideRegionName' => 'APAC', 'wideRegionTitle' => 'Asia Pacific']]]]);
+
+        self::assertFalse(ZenlayerCloud::zec()->DescribeEips(new Models\DescribeEipsRequest)->response->dataSet[0]->isCustomized);
+        self::assertSame(72, ZenlayerCloud::zec()->DescribeIpv6Cidrs(new Models\DescribeIpv6CidrsRequest)->response->dataSet[0]->subnetMaskLength);
+        $region = ZenlayerCloud::zec()->DescribeRegions(new Models\DescribeRegionsRequest)->response->regionSet[0];
+        self::assertSame('Shanghai', $region->location);
+        self::assertSame('APAC', $region->wideRegionName);
+        self::assertSame('Asia Pacific', $region->wideRegionTitle);
+    }
 }

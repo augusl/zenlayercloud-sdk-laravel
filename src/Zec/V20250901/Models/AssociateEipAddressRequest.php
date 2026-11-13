@@ -19,13 +19,13 @@ class AssociateEipAddressRequest extends AbstractModel
 {
     /**
      * LoadBalancerId 负载均衡实例的ID。
-     * 仅`ipStackType`为`IPv4`的负载均衡可绑定弹性IP——负载均衡只支持单栈，`IPv6`的公网地址通过 ~~zlb:AssignLoadBalancerIpv6~~ 接口分配。
+     * 仅`ipStackType`为`IPv4`的负载均衡可绑定弹性IP——负载均衡只支持单栈，`IPv6`的公网地址通过 **zlb:AssignLoadBalancerIpv6** 接口分配。
      */
     public ?string $loadBalancerId = null;
 
     /**
      * NicId 虚拟网卡的ID。
-     * 可通过调用 ~~DescribeNetworkInterfaces~~ 获取。
+     * 可通过调用 **DescribeNetworkInterfaces** 获取。
      */
     public ?string $nicId = null;
 
@@ -37,14 +37,14 @@ class AssociateEipAddressRequest extends AbstractModel
 
     /**
      * NatId NAT网关的ID。
-     * 可通过调用 ~~DescribeNatGateways~~ 获取。
+     * 可通过调用 **DescribeNatGateways** 获取。
      */
     public ?string $natId = null;
 
     /**
      * EipIds 要绑定的EIP的ID。
      * EIP必须是未绑定状态。
-     * 可通过调用 ~~DescribeEips~~ 获取。
+     * 可通过调用 **DescribeEips** 获取。
      *
      * @var list<string>|null
      */
@@ -52,7 +52,7 @@ class AssociateEipAddressRequest extends AbstractModel
 
     /**
      * HaVipId 高可用虚拟IP的ID。
-     * 可通过调用 ~~DescribeHaVips~~ 获取。
+     * 可通过调用 **DescribeHaVips** 获取。
      */
     public ?string $haVipId = null;
 

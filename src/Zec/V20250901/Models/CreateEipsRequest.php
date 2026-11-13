@@ -19,7 +19,7 @@ class CreateEipsRequest extends AbstractModel
 {
     /**
      * RegionId 创建EIP所在的节点ID。
-     * 可通过调用 ~~DescribeRegions~~ 获取。
+     * 可通过调用 **DescribeRegions** 获取。
      */
     public ?string $regionId = null;
 
@@ -80,7 +80,7 @@ class CreateEipsRequest extends AbstractModel
     /**
      * CidrId 指定CIDR ID，使用CIDR内分配弹性IP。
      * 该字段和`eipV4Type`不能同时指定。
-     * 可通过调用 ~~DescribeCidrs~~ 获取。
+     * 可通过调用 **DescribeCidrs** 获取。
      */
     public ?string $cidrId = null;
 
@@ -89,6 +89,7 @@ class CreateEipsRequest extends AbstractModel
      * 不指定`cidrId`时，从公网IP池按此地址开始顺序分配（仅支持`prefixLength`为32）；指定`cidrId`时，从该CIDR内按此地址开始分配。
      * `prefixLength`为32时填纯IPv4地址；`prefixLength`小于32时必须同时指定`cidrId`，填带掩码的起始网段（掩码须与`prefixLength`一致，如`88.0.5.64/26`）。
      * 指定`cidrId`时，该起始地址/网段必须是所选CIDR当前可分配的候选之一。
+     * 不指定`cidrId`时，创建的IP数量计入自定义地址EIP配额（`ZEC_Custom_address_EIPs_per_team`）；指定`cidrId`时不占用该配额。
      */
     public ?string $publicIp = null;
 
@@ -131,14 +132,14 @@ class CreateEipsRequest extends AbstractModel
     /**
      * InstanceId 要绑定的实例ID。
      * 本批次创建的EIP全部绑定到该实例。
-     * 可通过调用 ~~DescribeInstances~~ 获取。
+     * 可通过调用 **DescribeInstances** 获取。
      */
     public ?string $instanceId = null;
 
     /**
      * InstanceIds 要绑定的实例ID集合。
      * 数量需要与`amount`字段一致，每个EIP各绑定一个不同实例；与`instanceId`同时传递时以`instanceId`为准。
-     * 可通过调用 ~~DescribeInstances~~ 获取。
+     * 可通过调用 **DescribeInstances** 获取。
      *
      * @var list<string>|null
      */

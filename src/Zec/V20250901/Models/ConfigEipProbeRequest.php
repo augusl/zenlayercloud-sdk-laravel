@@ -19,7 +19,7 @@ class ConfigEipProbeRequest extends AbstractModel
 {
     /**
      * EipId 配置公网探测的EIP ID。
-     * 可通过调用 ~~DescribeEips~~ 获取。
+     * 可通过调用 **DescribeEips** 获取。
      */
     public ?string $eipId = null;
 

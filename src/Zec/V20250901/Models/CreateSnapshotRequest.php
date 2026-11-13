@@ -19,7 +19,7 @@ class CreateSnapshotRequest extends AbstractModel
 {
     /**
      * DiskId 云硬盘ID。
-     * 可通过调用 ~~DescribeDisks~~ 获取。
+     * 可通过调用 **DescribeDisks** 获取。
      */
     public ?string $diskId = null;
 

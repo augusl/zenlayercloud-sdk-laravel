@@ -19,6 +19,7 @@ class BlockInfo extends AbstractModel
 {
     /**
      * Ip 被封堵的IP地址。
+     * 网段（IP块）类型的EIP为该网段的CIDR，阈值作用于段内每个IP。
      */
     public ?string $ip = null;
 

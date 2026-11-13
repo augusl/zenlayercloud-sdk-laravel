@@ -19,7 +19,7 @@ class ReplaceIp extends AbstractModel
 {
     /**
      * EipId 需要替换的弹性公网IP ID。
-     * 可通过调用 ~~DescribeEips~~ 获取。
+     * 可通过调用 **DescribeEips** 获取。
      */
     public ?string $eipId = null;
 
@@ -36,6 +36,7 @@ class ReplaceIp extends AbstractModel
      * TargetIp 需要变更的目标IP。
      * 如果未指定，将由系统随机分配。
      * 不能以`.0`或`.255`结尾（网络地址/广播地址不可用）。
+     * 指定后该EIP计入自定义地址EIP配额（`ZEC_Custom_address_EIPs_per_team`），若该EIP当前已是自定义地址则不额外占用；未指定时释放其占用的配额。
      */
     public ?string $targetIp = null;
 }

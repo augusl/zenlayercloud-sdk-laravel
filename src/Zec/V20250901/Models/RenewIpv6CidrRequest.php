@@ -19,7 +19,7 @@ class RenewIpv6CidrRequest extends AbstractModel
 {
     /**
      * CidrId IPv6地址块ID。
-     * 可通过调用 ~~DescribeCidrs~~ 获取。
+     * 可通过调用 **DescribeCidrs** 获取。
      */
     public ?string $cidrId = null;
 }

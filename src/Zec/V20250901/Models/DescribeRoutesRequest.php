@@ -27,7 +27,7 @@ class DescribeRoutesRequest extends AbstractModel
 
     /**
      * VpcId 根据路由关联的VPC ID过滤。
-     * 可通过调用 ~~DescribeVpcs~~ 获取。
+     * 可通过调用 **DescribeVpcs** 获取。
      */
     public ?string $vpcId = null;
 

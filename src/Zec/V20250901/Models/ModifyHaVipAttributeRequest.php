@@ -19,7 +19,7 @@ class ModifyHaVipAttributeRequest extends AbstractModel
 {
     /**
      * HaVipId 高可用虚拟IP的ID。
-     * 可通过调用 ~~DescribeHaVips~~ 获取。
+     * 可通过调用 **DescribeHaVips** 获取。
      */
     public ?string $haVipId = null;
 
@@ -34,7 +34,7 @@ class ModifyHaVipAttributeRequest extends AbstractModel
      * SecurityGroupId 安全组ID。
      * 若设置，则将HaVip绑定的安全组修改为指定安全组。
      * name与securityGroupId至少提供一个。
-     * 可通过调用 ~~DescribeSecurityGroups~~ 获取。
+     * 可通过调用 **DescribeSecurityGroups** 获取。
      */
     public ?string $securityGroupId = null;
 }

@@ -19,13 +19,13 @@ class ApplySnapshotRequest extends AbstractModel
 {
     /**
      * SnapshotId 快照唯一ID。
-     * 可通过调用 ~~DescribeSnapshots~~ 获取。
+     * 可通过调用 **DescribeSnapshots** 获取。
      */
     public ?string $snapshotId = null;
 
     /**
      * DiskId 云硬盘ID。
-     * 可通过调用 ~~DescribeDisks~~ 获取。
+     * 可通过调用 **DescribeDisks** 获取。
      */
     public ?string $diskId = null;
 }

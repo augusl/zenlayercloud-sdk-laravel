@@ -11,6 +11,7 @@ use ZenlayerCloud\Laravel\Common\CredentialInterface;
 use ZenlayerCloud\Laravel\Common\Exception\ZenlayerCloudSdkException;
 use ZenlayerCloud\Laravel\Common\Http\HttpClientFactory;
 use ZenlayerCloud\Laravel\Common\Signer;
+use ZenlayerCloud\Laravel\Common\StsCredential;
 use ZenlayerCloud\Laravel\Common\TokenCredential;
 use ZenlayerCloud\Laravel\Ipt\V20240901\IptClient;
 use ZenlayerCloud\Laravel\Vm\V20260401\VmClient;
@@ -157,6 +158,7 @@ class ZenlayerCloudManager
             'secret_key_id' => 'nullable-string',
             'secret_key_password' => 'nullable-string',
             'token' => 'nullable-string',
+            'security_token' => 'nullable-string',
             'endpoint' => 'string',
             'scheme' => 'string',
             'timeout' => 'int',
@@ -210,6 +212,15 @@ class ZenlayerCloudManager
         $token = $connection['token'] ?? null;
         if (is_string($token) && trim($token) !== '') {
             return new TokenCredential($token);
+        }
+
+        $securityToken = $connection['security_token'] ?? null;
+        if (is_string($securityToken) && trim($securityToken) !== '') {
+            return new StsCredential(
+                $connection['secret_key_id'] ?? '',
+                $connection['secret_key_password'] ?? '',
+                $securityToken,
+            );
         }
 
         return new Credential(

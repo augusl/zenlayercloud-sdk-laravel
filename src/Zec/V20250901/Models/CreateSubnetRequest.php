@@ -19,7 +19,7 @@ class CreateSubnetRequest extends AbstractModel
 {
     /**
      * VpcId 需要添加子网的VPC ID。
-     * 可通过调用 ~~DescribeVpcs~~ 获取。
+     * 可通过调用 **DescribeVpcs** 获取。
      */
     public ?string $vpcId = null;
 
@@ -34,7 +34,7 @@ class CreateSubnetRequest extends AbstractModel
     /**
      * RegionId 子网所在节点的ID。
      * 必须是VPC所在节点之一。
-     * 可通过调用 ~~DescribeRegions~~ 获取。
+     * 可通过调用 **DescribeRegions** 获取。
      */
     public ?string $regionId = null;
 
@@ -58,7 +58,7 @@ class CreateSubnetRequest extends AbstractModel
 
     /**
      * DhcpOptionsSetId 要绑定的DHCP选项集ID。
-     * 可通过调用 ~~DescribeDhcpOptionsSets~~ 获取。
+     * 可通过调用 **DescribeDhcpOptionsSets** 获取。
      */
     public ?string $dhcpOptionsSetId = null;
 

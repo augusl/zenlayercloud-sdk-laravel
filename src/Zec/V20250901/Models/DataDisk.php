@@ -19,13 +19,13 @@ class DataDisk extends AbstractModel
 {
     /**
      * DiskId 数据盘ID。
-     * 该参数仅作为 ~~DescribeInstances~~ 等查询类接口的返回参数，不可用于 ~~CreateZecInstances~~ 等写接口的入参。
+     * 该参数仅作为 **DescribeInstances** 等查询类接口的返回参数，不可用于 **CreateZecInstances** 等写接口的入参。
      */
     public ?string $diskId = null;
 
     /**
      * DiskName 云盘的名称。
-     * 该参数仅作为 ~~DescribeInstances~~ 等查询类接口的返回参数。
+     * 该参数仅作为 **DescribeInstances** 等查询类接口的返回参数。
      */
     public ?string $diskName = null;
 
@@ -37,7 +37,7 @@ class DataDisk extends AbstractModel
 
     /**
      * DiskAmount 数据盘数量。
-     * 该参数仅用于 ~~CreateZecInstances~~、~~InquiryPriceCreateInstance~~ 等接口的入参。
+     * 该参数仅用于 **CreateZecInstances**、**InquiryPriceCreateInstance** 等接口的入参。
      */
     public ?int $diskAmount = null;
 

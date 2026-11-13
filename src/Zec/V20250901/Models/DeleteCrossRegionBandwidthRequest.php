@@ -19,7 +19,7 @@ class DeleteCrossRegionBandwidthRequest extends AbstractModel
 {
     /**
      * CrossRegionBandwidthId 要删除的VPC跨区域带宽ID。
-     * 可通过调用 ~~DescribeCrossRegionBandwidth~~ 获取。
+     * 可通过调用 **DescribeCrossRegionBandwidth** 获取。
      */
     public ?string $crossRegionBandwidthId = null;
 }

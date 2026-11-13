@@ -41,6 +41,11 @@ only request metadata and response status; it does not log Authorization
 headers or request/response bodies. Treat application-level HTTP middleware
 and custom log processors as separate parts of your security boundary.
 
+STS passwords and security tokens receive the same dump, serialization,
+logging, and transport-error redaction as the other credentials. Only the
+canonical token value used for signing is lower-cased; the transmitted token
+is preserved. Applications must renew temporary credentials before expiry.
+
 Wrapped transport, serialization, and parsing errors preserve diagnostic
 messages and codes without retaining the original error objects, whose trace
 arguments may contain request bodies, response bodies, or Authorization

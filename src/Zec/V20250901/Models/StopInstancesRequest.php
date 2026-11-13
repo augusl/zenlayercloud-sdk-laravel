@@ -19,7 +19,7 @@ class StopInstancesRequest extends AbstractModel
 {
     /**
      * InstanceIds 待关闭的实例ID。
-     * 可通过调用 ~~DescribeInstances~~ 获取。
+     * 可通过调用 **DescribeInstances** 获取。
      *
      * @var list<string>|null
      */

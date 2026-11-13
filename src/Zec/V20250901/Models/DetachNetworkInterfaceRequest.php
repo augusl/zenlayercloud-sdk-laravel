@@ -19,7 +19,7 @@ class DetachNetworkInterfaceRequest extends AbstractModel
 {
     /**
      * NicId 需要操作的网卡ID。
-     * 可通过调用 ~~DescribeNetworkInterfaces~~ 获取。
+     * 可通过调用 **DescribeNetworkInterfaces** 获取。
      */
     public ?string $nicId = null;
 }

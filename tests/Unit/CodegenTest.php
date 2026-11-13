@@ -102,6 +102,26 @@ final class CodegenTest extends TestCase
         ];
     }
 
+    public function test_truncated_model_schema_fails_before_replacing_any_output(): void
+    {
+        $this->writeSchemas('func (c *Client) DescribeThings(request *DescribeThingsRequest) (response *DescribeThingsResponse, err error)');
+        $schemaPath = $this->directory.'/schema/zec20250901/models.go';
+        $source = file_get_contents($schemaPath);
+        self::assertIsString($source);
+        file_put_contents($schemaPath, substr(rtrim($source), 0, -1));
+
+        $modelPath = $this->directory.'/src/Vm/V20260401/Models/Existing.php';
+        mkdir(dirname($modelPath), 0755, true);
+        file_put_contents($modelPath, 'existing model');
+
+        [$exitCode, $output] = $this->runGenerator();
+
+        self::assertSame(1, $exitCode, $output);
+        self::assertStringContainsString('Model struct [DescribeThingsResponse] is not closed', $output);
+        self::assertSame('existing model', file_get_contents($modelPath));
+        self::assertSame([$modelPath], glob(dirname($modelPath).'/*.php'));
+    }
+
     private function writeSchemas(string $lastServiceSignature): void
     {
         foreach (self::SERVICES as $service => [$version, $apiVersion]) {

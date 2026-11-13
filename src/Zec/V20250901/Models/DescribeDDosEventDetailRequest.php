@@ -24,7 +24,7 @@ class DescribeDDosEventDetailRequest extends AbstractModel
 
     /**
      * RegionId 区域节点ID。
-     * 可通过调用 ~~DescribeRegions~~ 获取。
+     * 可通过调用 **DescribeRegions** 获取。
      */
     public ?string $regionId = null;
 }

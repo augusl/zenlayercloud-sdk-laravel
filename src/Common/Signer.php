@@ -12,8 +12,8 @@ namespace ZenlayerCloud\Laravel\Common;
  *
  *  1. Build a canonical request string from the HTTP method, the canonical
  *     URI (always `/`), an empty canonical query string, the signed headers
- *     (`content-type`, `host`), and the SHA-256 hex digest of the request
- *     body.
+ *     (`content-type`, `host`, plus `x-zc-security-token` for STS), and the
+ *     SHA-256 hex digest of the request body.
  *  2. Build the string-to-sign by joining the signing algorithm, the request
  *     timestamp, and the SHA-256 hex digest of the canonical request.
  *  3. Compute the HMAC-SHA-256 of the string-to-sign using the caller's
@@ -27,6 +27,8 @@ final class Signer
 
     public const SIGNED_HEADERS = 'content-type;host';
 
+    public const SECURITY_TOKEN_HEADER = 'x-zc-security-token';
+
     /**
      * Produce the value for the `Authorization` HTTP header.
      */
@@ -39,6 +41,7 @@ final class Signer
         string $secretKeyId,
         #[\SensitiveParameter]
         string $secretKeyPassword,
+        #[\SensitiveParameter] ?string $securityToken = null,
     ): string {
         $hashedPayload = hash('sha256', $payload);
 
@@ -48,13 +51,20 @@ final class Signer
         // block and the signed-headers list — byte-for-byte matching Python's
         // `'%s\n%s\n%s\n%s\n%s\n%s'` format.
         $canonicalHeaders = "content-type:{$contentType}\nhost:{$host}\n";
+        $signedHeaders = self::SIGNED_HEADERS;
+        if ($securityToken !== null) {
+            // The official gateway trims and lower-cases signed token values.
+            // Only the canonical value changes; the wire token stays intact.
+            $canonicalHeaders .= self::SECURITY_TOKEN_HEADER.':'.strtolower(trim($securityToken))."\n";
+            $signedHeaders .= ';'.self::SECURITY_TOKEN_HEADER;
+        }
 
         $canonicalRequest = implode("\n", [
             $method,                  // POST
             '/',                      // canonicalUri
             '',                       // canonicalQueryString (empty for POST)
             $canonicalHeaders,        // ends with \n; the implode separator adds another
-            self::SIGNED_HEADERS,
+            $signedHeaders,
             $hashedPayload,
         ]);
 
@@ -68,7 +78,7 @@ final class Signer
             '%s Credential=%s, SignedHeaders=%s, Signature=%s',
             self::ALGORITHM,
             $secretKeyId,
-            self::SIGNED_HEADERS,
+            $signedHeaders,
             $signature,
         );
     }

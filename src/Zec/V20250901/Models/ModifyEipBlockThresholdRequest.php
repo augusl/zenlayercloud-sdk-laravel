@@ -19,8 +19,9 @@ class ModifyEipBlockThresholdRequest extends AbstractModel
 {
     /**
      * EipId 修改封堵阈值的EIP ID。
-     * 网段（IP块）类型的EIP不支持修改封堵阈值。
-     * 可通过调用 ~~DescribeEips~~ 获取。
+     * EIP状态须为已绑定（`BINDED`）或未绑定（`UNBIND`）。
+     * 网段（IP块）类型的EIP，阈值作用于段内每个IP，段内某个IP被封堵不影响段内其他IP。
+     * 可通过调用 **DescribeEips** 获取。
      */
     public ?string $eipId = null;
 

@@ -19,7 +19,7 @@ class ModifyBorderGatewaysAttributeRequest extends AbstractModel
 {
     /**
      * ZbgIds 边界网关的ID列表。
-     * 可通过调用 ~~DescribeBorderGateways~~ 获取。
+     * 可通过调用 **DescribeBorderGateways** 获取。
      *
      * @var list<string>|null
      */
@@ -43,7 +43,7 @@ class ModifyBorderGatewaysAttributeRequest extends AbstractModel
     /**
      * AdvertisedSubnetIds 要宣告的子网ID集合。
      * 仅当`advertisedSubnet`取值为`PART`时该字段生效。
-     * 可通过调用 ~~DescribeSubnets~~ 获取。
+     * 可通过调用 **DescribeSubnets** 获取。
      *
      * @var list<string>|null
      */

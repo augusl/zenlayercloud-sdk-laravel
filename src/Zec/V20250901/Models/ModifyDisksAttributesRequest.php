@@ -19,7 +19,7 @@ class ModifyDisksAttributesRequest extends AbstractModel
 {
     /**
      * DiskIds 需要修改的云盘ID列表。
-     * 可通过调用 ~~DescribeDisks~~ 获取。
+     * 可通过调用 **DescribeDisks** 获取。
      *
      * @var list<string>|null
      */

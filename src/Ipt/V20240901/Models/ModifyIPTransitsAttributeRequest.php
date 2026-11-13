@@ -18,7 +18,7 @@ use ZenlayerCloud\Laravel\Common\AbstractModel;
 class ModifyIPTransitsAttributeRequest extends AbstractModel
 {
     /**
-     * IptIds IP Transit ID 列表。
+     * IptIds Internet ID 列表。
      * 最多支持 100 个。
      *
      * @var list<string>|null
@@ -26,12 +26,12 @@ class ModifyIPTransitsAttributeRequest extends AbstractModel
     public ?array $iptIds = null;
 
     /**
-     * IptName IP Transit名称。
+     * IptName Internet名称。
      */
     public ?string $iptName = null;
 
     /**
-     * IptDescription IP Transit描述。
+     * IptDescription Internet描述。
      */
     public ?string $iptDescription = null;
 

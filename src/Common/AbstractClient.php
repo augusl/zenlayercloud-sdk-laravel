@@ -323,24 +323,45 @@ abstract class AbstractClient
             );
         }
 
-        $timestamp = time();
+        $securityToken = null;
+        $sensitive = [$secretKeyId, $secretKeyPassword];
+        if ($this->credential instanceof SecurityTokenCredentialInterface) {
+            $securityToken = $this->credential->getSecurityToken();
+            if (trim($securityToken) === '') {
+                throw new ZenlayerCloudSdkException(
+                    ZenlayerCloudSdkException::ERR_CREDENTIAL_MISSING,
+                    'SecurityToken must not be empty.',
+                );
+            }
+            if (preg_match('/[\x00-\x1F\x7F]/', $securityToken) === 1) {
+                throw new ZenlayerCloudSdkException(
+                    ZenlayerCloudSdkException::ERR_CONFIG_INVALID,
+                    'SecurityToken must not contain control characters.',
+                );
+            }
+            $sensitive[] = $securityToken;
+        }
 
-        return [
-            'headers' => [
-                'x-zc-signature-method' => Signer::ALGORITHM,
-                'x-zc-timestamp' => (string) $timestamp,
-                'Authorization' => $this->signer->sign(
-                    method: 'POST',
-                    host: $host,
-                    contentType: 'application/json',
-                    payload: $payload,
-                    timestamp: $timestamp,
-                    secretKeyId: $secretKeyId,
-                    secretKeyPassword: $secretKeyPassword,
-                ),
-            ],
-            'sensitive' => [$secretKeyId, $secretKeyPassword],
+        $timestamp = time();
+        $headers = [
+            'x-zc-signature-method' => Signer::ALGORITHM,
+            'x-zc-timestamp' => (string) $timestamp,
+            'Authorization' => $this->signer->sign(
+                method: 'POST',
+                host: $host,
+                contentType: 'application/json',
+                payload: $payload,
+                timestamp: $timestamp,
+                secretKeyId: $secretKeyId,
+                secretKeyPassword: $secretKeyPassword,
+                securityToken: $securityToken,
+            ),
         ];
+        if ($securityToken !== null) {
+            $headers[Signer::SECURITY_TOKEN_HEADER] = $securityToken;
+        }
+
+        return ['headers' => $headers, 'sensitive' => $sensitive];
     }
 
     /** @param list<string> $authenticationSecrets */

@@ -26,7 +26,7 @@ class DescribeEipsRequest extends AbstractModel
 
     /**
      * RegionId 按照EIP所属节点ID过滤。
-     * 可通过调用 ~~DescribeRegions~~ 获取。
+     * 可通过调用 **DescribeRegions** 获取。
      */
     public ?string $regionId = null;
 
@@ -44,6 +44,12 @@ class DescribeEipsRequest extends AbstractModel
      * IsDefault 按照EIP的默认属性进行过滤。
      */
     public ?bool $isDefault = null;
+
+    /**
+     * IsCustomized 按照EIP是否为自定义地址过滤。
+     * true 表示只返回从默认EIP池中手动指定公网IP的EIP。
+     */
+    public ?bool $isCustomized = null;
 
     /**
      * PageSize 返回的分页大小。
@@ -76,7 +82,7 @@ class DescribeEipsRequest extends AbstractModel
     /**
      * InstanceId 按照EIP绑定的实例ID过滤。
      * 该字段过滤出该实例所绑定的网卡上的EIP。
-     * 可通过调用 ~~DescribeInstances~~ 获取。
+     * 可通过调用 **DescribeInstances** 获取。
      */
     public ?string $instanceId = null;
 
@@ -87,7 +93,7 @@ class DescribeEipsRequest extends AbstractModel
 
     /**
      * CidrIds 按照EIP所属的CIDR ID过滤。
-     * 可通过调用 ~~DescribeCidrs~~ 获取。
+     * 可通过调用 **DescribeCidrs** 获取。
      *
      * @var list<string>|null
      */

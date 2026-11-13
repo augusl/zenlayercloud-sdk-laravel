@@ -26,7 +26,7 @@ class DescribeCidrsRequest extends AbstractModel
 
     /**
      * RegionId 根据CIDR所在的节点ID进行过滤。
-     * 可通过调用 ~~DescribeRegions~~ 获取。
+     * 可通过调用 **DescribeRegions** 获取。
      */
     public ?string $regionId = null;
 

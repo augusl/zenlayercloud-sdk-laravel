@@ -21,7 +21,7 @@ class InquiryModifyIPTransitPriceResponseParams extends AbstractModel
 
     /**
      * PrivateConnectPrice 专线（VLL）价格。
-     * BANDWIDTH 类型时可能有值，Router RIPT 为空。
+     * BANDWIDTH 类型时可能有值，基于 Router 的 Internet 为空。
      */
     public ?PriceItem $privateConnectPrice = null;
 
@@ -32,7 +32,7 @@ class InquiryModifyIPTransitPriceResponseParams extends AbstractModel
     public ?int $privateConnectBandwidth = null;
 
     /**
-     * IptPrice RIPT 带宽价格。
+     * IptPrice Internet 带宽价格。
      */
     public ?PriceItem $iptPrice = null;
 
